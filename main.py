@@ -2,12 +2,12 @@ from flask import Flask
 from flask import Flask, jsonify, request
 from src.models.userModel import userModel
 from src.entities.user import userEntity
-
+from src.cn.data_base_connection import Database
 
 
 app = Flask(__name__)
 
-@app.route('/users')
+@app.route('/users', methods=['GET'])
 def get_users():
     _user = userEntity('juan','0002')
     print(_user.name +" "+ _user.code )
@@ -34,4 +34,4 @@ def delete_user(index):
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
-    
+

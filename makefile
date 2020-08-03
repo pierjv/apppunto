@@ -7,3 +7,8 @@ run:
     	~/envs/appunto	
 	pip install -r requirements.txt
 	python main.py
+
+gce:
+	gcloud app create
+	gcloud app deploy app.yaml \
+		--project app-puntos-285220

@@ -3,7 +3,9 @@ from collections import namedtuple
  
 class userEntity:
 
-    def __init__(self,id=0,mail=None,social_name=None,full_name=None,address=None,document_number=None,type_user=None,photo=None,status=0,password=None):
+    def __init__(self,id=0,mail=None,social_name=None,full_name=None,address=None,
+                document_number=None,type_user=None,photo=None,status=None,password=None,
+                cellphone=None,about=None):
         self.id = id
         self.mail = mail
         self.social_name = social_name
@@ -12,16 +14,16 @@ class userEntity:
         self.document_number = document_number
         self.type_user = type_user
         self.photo = photo
-        self.status = status
+        self.cellphone = cellphone
+        self.about = about
         self.password = password
-        
+        self.status = status 
+
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
     
     def requestToClass(self,resquest):
         data = resquest.get_json() 
-        print(data)
-        print(json.dumps(data))
         data = json.dumps(data)
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
         self.id = values.id
@@ -32,5 +34,9 @@ class userEntity:
         self.document_number = values.document_number
         self.type_user = values.type_user
         self.photo = values.photo
-        self.status = 0 
+        self.cellphone = values.cellphone
+        self.about = values.about
         self.password = values.password
+        self.status = None 
+
+        

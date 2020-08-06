@@ -1,11 +1,12 @@
 import json
 from collections import namedtuple
+from src.entities.userStoreEntity import userStoreEntity
  
 class userEntity:
 
     def __init__(self,id=0,mail=None,social_name=None,full_name=None,address=None,
                 document_number=None,type_user=None,photo=None,status=None,password=None,
-                cellphone=None,about=None):
+                cellphone=None,about=None,user_store= None):
         self.id = id
         self.mail = mail
         self.social_name = social_name
@@ -17,7 +18,8 @@ class userEntity:
         self.cellphone = cellphone
         self.about = about
         self.password = password
-        self.status = status 
+        self.status = status
+        self.user_store = user_store 
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
@@ -37,6 +39,16 @@ class userEntity:
         self.cellphone = values.cellphone
         self.about = values.about
         self.password = values.password
-        self.status = None 
-
+        self.status = None
+        _user_store =[]
+        for us in values.user_store:
+            _userStoreEntity = userStoreEntity()
+            _userStoreEntity.id_user = us.id_user
+            _userStoreEntity.full_name = us.full_name
+            _userStoreEntity.address = us.address
+            _userStoreEntity.longitude = us.longitude
+            _userStoreEntity.latitude = us.latitude
+            _userStoreEntity.main = us.main
+            _user_store.append(_userStoreEntity)
+        self.user_store = _user_store 
         

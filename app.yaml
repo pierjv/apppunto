@@ -1,1 +1,6 @@
 runtime: python37
+
+handlers:
+- url: /(.*\.(gif|png|jpg|svg))$
+  static_files: static/\1
+  upload: static/.*\.(gif|png|jpg|svg)$

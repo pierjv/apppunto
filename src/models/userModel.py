@@ -12,6 +12,7 @@ class userModel(dbModel):
         _db = None
         _id_user = 0
         _status = 1
+        _i = 0
         try:
             _db = Database()
             _db.connect(self.host,self.port,self.user,self.password,self.database)
@@ -24,7 +25,17 @@ class userModel(dbModel):
                                 userEntity.address,userEntity.document_number,userEntity.type_user,
                                 userEntity.photo,userEntity.cellphone,userEntity.about,userEntity.password,_status))
             _id_user = _cur.fetchone()[0]
-            print('id: ' + str(_id_user))
+            userEntity.id = _id_user
+            
+            _sql_store = """INSERT INTO main.user_store (id_user, full_name, address, longitude, latitude, main, status) 
+                            VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
+            for us in userEntity.user_store:
+                _cur.execute(_sql_store, (_id_user,us.full_name,us.address,us.longitude,us.latitude,us.main,_status))
+                _id_user_store = _cur.fetchone()[0]
+                userEntity.user_store[_i].id = _id_user_store
+                userEntity.user_store[_i].id_user = _id_user
+                _i += 1
+
             _con_client.commit()
             _cur.close()
         except(Exception) as e:
@@ -33,7 +44,7 @@ class userModel(dbModel):
             if _db is not None:
                 _db.disconnect()
                 print("Se cerro la conexion")
-        return _id_user
+        return userEntity
 
     def delete_user(self,id):
         _db = None

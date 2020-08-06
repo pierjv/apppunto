@@ -6,9 +6,14 @@ from src.controllers.userController import userController
 from src.cn.data_base_connection import Database
 from src.controllers.userStoreController import userStoreController
 from src.controllers.serviceController import serviceController
+from src.controllers.loginController import loginController
 
 
 app = Flask(__name__)
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    return loginController().login_user(request)
 
 @app.route('/users', methods=['GET'])
 def get_users():

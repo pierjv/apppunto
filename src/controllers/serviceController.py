@@ -20,3 +20,19 @@ class serviceController(responseController):
             _message = responseController().messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+    
+    def get_services_by_user(self,index):
+        _message = None
+        _status = None
+        _data= None
+        try:
+            _serviceModel = serviceModel()
+            _data = _serviceModel.get_services_by_user(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+        

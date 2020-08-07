@@ -12,3 +12,6 @@ gce:
 	gcloud app create
 	gcloud app deploy app.yaml \
 		--project app-puntos-285220
+gcd:
+	gcloud app deploy app.yaml \
+		--project app-puntos-285220

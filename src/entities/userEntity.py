@@ -6,7 +6,7 @@ class userEntity:
 
     def __init__(self,id=0,mail=None,social_name=None,full_name=None,address=None,
                 document_number=None,type_user=None,photo=None,status=None,password=None,
-                cellphone=None,about=None,user_store= None):
+                cellphone=None,about=None,user_store= None,service = None):
         self.id = id
         self.mail = mail
         self.social_name = social_name
@@ -19,7 +19,7 @@ class userEntity:
         self.about = about
         self.password = password
         self.status = status
-        self.user_store = user_store 
+        self.user_store = user_store
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

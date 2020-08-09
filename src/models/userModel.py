@@ -108,6 +108,61 @@ class userModel(dbModel):
                 print("Se cerro la conexion")
         return _data_row
 
+    def get_user_by_id(self,id):
+        _db = None
+        _status = 1
+        _entity = None
+        _id_user = id
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT up.id, 
+                        up.mail, 
+                        up.social_name, 
+                        up.full_name, 
+                        up.address, 
+                        up.document_number, 
+                        up.type_user, 
+                        up.photo, 
+                        up.status, 
+                        up."password", 
+                        up.cellphone,
+                        up.about
+                    FROM   main.user_p up 
+                    WHERE  up.status = %s
+                        AND id = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_status,_id_user,))
+            _rows = _cur.fetchall()
+
+            if len(_rows) >= 1:
+                _entity= userEntity()
+                _entity.id  = _rows[0][0]
+                _entity.mail  = _rows[0][1] 
+                _entity.social_name  = _rows[0][2]
+                _entity.full_name  = _rows[0][3]
+                _entity.address  = _rows[0][4]
+                _entity.document_number  = _rows[0][5]
+                _entity.type_user  = _rows[0][6]
+                _entity.photo  = _rows[0][7]
+                _entity.status  = _rows[0][8]
+                _entity.password  = _rows[0][9]
+                _entity.cellphone  = _rows[0][10]
+                _entity.about  = _rows[0][11]
+
+            _cur.close()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _entity
+
     def update_user(self,userEntity):
         _db = None
         _id_user = 0

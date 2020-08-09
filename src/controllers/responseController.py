@@ -6,3 +6,4 @@ class responseController(object):
         self.messageOK = 'Proceso exitoso'
         self.messageInterruption = 'Presento una interrupcion: '
         self.messageFailUser = 'El usuario no existe o la clave es incorrecta'
+        self.userDontExist = 'El usuario no existe o'

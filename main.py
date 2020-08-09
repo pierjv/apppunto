@@ -31,26 +31,37 @@ def login():
 
 @app.route('/login', methods=['POST'])
 @jwt_required
-def login_user():
+def login_user(index):
     return loginController().login_user(request)
 
+@app.route('/recover/<int:index>', methods=['GET'])
+#@jwt_required
+def recover_password(index):
+    return loginController().recover_password(index)
+
+
+@app.route('/load', methods=['GET'])
+#@jwt_required
+def load():
+    return serviceController().get_services_load()
+
 @app.route('/services', methods=['GET'])
-@jwt_required
+#@jwt_required
 def get_services():
     return serviceController().get_services()
 
 @app.route('/services/<int:index>', methods=['GET'])
-@jwt_required
+#@jwt_required
 def get_services_by_user(index):
     return serviceController().get_services_by_user(index)
 
 @app.route('/userdateavailability/<int:index>', methods=['GET'])
-@jwt_required
+#@jwt_required
 def get_user_date_availability_by_user(index):
     return userDateAvailabilityController().get_user_date_availability_by_user(index)
 
 @app.route('/userdateavailability', methods=['POST'])
-@jwt_required
+#@jwt_required
 def update_user_date_availability():
     return userDateAvailabilityController().update_user_date_availability(request)
 
@@ -60,7 +71,7 @@ def get_users():
     return userController().get_users()
 
 @app.route('/users', methods=['POST'])
-@jwt_required
+#@jwt_required
 def add_user():
     return userController().add_user(request)
 

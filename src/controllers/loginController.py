@@ -3,12 +3,14 @@ from src.controllers.responseController import responseController
 from src.models.loginModel import loginModel
 from src.entities.loginEntity import loginEntity
 from src.entities.responseEntity import responseEntity
+from src.models.userModel import userModel
+from src.entities.userEntity import userEntity
 
 class loginController(responseController):
 
     def login_user(self,request):
         _message = None
-        _status = responseController().interruption
+        _status = self.interruption
         _userEntity = None
         try:
             _loginModel = loginModel()
@@ -16,13 +18,34 @@ class loginController(responseController):
             _loginEntity.requestToClass(request)
             _userEntity = _loginModel.login_user(_loginEntity)
             if _userEntity is None :
-                _status = responseController().failUser
-                _message = responseController().messageFailUser
+                _status = self.failUser
+                _message = self.messageFailUser
             else:
-                _status = responseController().OK
-                _message = responseController().messageOK
+                _status = self.OK
+                _message = self.messageOK
         except(Exception) as e:
-            _status = responseController().interruption
-            _message = responseController().messageInterruption + str(e)
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_userEntity).toJSON()
+    
+    def recover_password(self,id):
+        _message = None
+        _status = self.interruption
+        _entity = None
+        try:
+            _model = userModel()
+            _entity  = userEntity()
+            _entity = _model.get_user_by_id(id)
+            if _entity is None :
+                _status = self.failUser
+                _message = self.userDontExist
+            else:
+                _status = self.OK
+                _message = self.messageOK
+            print('Enviar SMS con el password: ' + _entity.password)
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_entity).toJSON()

@@ -30,8 +30,6 @@ class loginModel(dbModel):
                         up.document_number ,
                         up.type_user ,
                         up.photo,
-                        up.status,
-                        up."password" ,
                         up.cellphone ,
                         up.about ,
                         s.full_name  AS service, 
@@ -64,10 +62,8 @@ class loginModel(dbModel):
                 _userEntity.document_number  = _rows[0][5]
                 _userEntity.type_user  = _rows[0][6]
                 _userEntity.photo  = _rows[0][7]
-                _userEntity.status  = _rows[0][8]
-                _userEntity.password  = _rows[0][9]
-                _userEntity.cellphone  = _rows[0][10]
-                _userEntity.about  = _rows[0][11]
+                _userEntity.cellphone  = _rows[0][8]
+                _userEntity.about  = _rows[0][9]
 
             _cur.close()
         except(Exception) as e:

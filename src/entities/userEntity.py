@@ -18,7 +18,6 @@ class userEntity:
         self.cellphone = cellphone
         self.about = about
         self.password = password
-        self.status = status
         self.user_store = user_store
 
     def toJSON(self):
@@ -39,7 +38,6 @@ class userEntity:
         self.cellphone = values.cellphone
         self.about = values.about
         self.password = values.password
-        self.status = None
         _user_store =[]
         for us in values.user_store:
             _userStoreEntity = userStoreEntity()

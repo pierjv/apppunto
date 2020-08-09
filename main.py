@@ -12,33 +12,31 @@ from src.controllers.userStoreController import userStoreController
 from src.controllers.serviceController import serviceController
 from src.controllers.loginController import loginController
 from src.controllers.userDateAvailabilityController import userDateAvailabilityController
-from flask import Flask, jsonify, request
+from src.entities.loginEntity import tokenEntity
 
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'simirasestotupcexplota' 
+app.config['JWT_SECRET_KEY'] = 'cambiar_no_olvidar' 
 jwt = JWTManager(app)
 
 
 @app.route('/token', methods=['POST'])
-def login():
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
-    if username != 'test' or password != 'test':
-        return jsonify({"message": "usuario o password errado"}), 401  
-    ret = {'access_token': create_access_token(username)}
-    return jsonify(ret), 200
+def get_token():
+    entity = tokenEntity()
+    if entity.validate_request(request):
+        ret = {'access_token': create_access_token(entity.user)}
+        return jsonify(ret), 200
+    return jsonify({"message": "usuario o password errado"}), 401  
 
 @app.route('/login', methods=['POST'])
-@jwt_required
-def login_user(index):
+#@jwt_required
+def login_user():
     return loginController().login_user(request)
 
 @app.route('/recover/<int:index>', methods=['GET'])
 #@jwt_required
 def recover_password(index):
     return loginController().recover_password(index)
-
 
 @app.route('/load', methods=['GET'])
 #@jwt_required
@@ -55,6 +53,11 @@ def get_services():
 def get_services_by_user(index):
     return serviceController().get_services_by_user(index)
 
+@app.route('/userservice/<int:index>', methods=['GET'])
+#@jwt_required
+def get_user_by_id_service(index):
+    return userController().get_user_by_id_service(index)
+
 @app.route('/userdateavailability/<int:index>', methods=['GET'])
 #@jwt_required
 def get_user_date_availability_by_user(index):
@@ -66,7 +69,7 @@ def update_user_date_availability():
     return userDateAvailabilityController().update_user_date_availability(request)
 
 @app.route('/users', methods=['GET'])
-@jwt_required
+#@jwt_required
 def get_users():
     return userController().get_users()
 

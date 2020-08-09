@@ -72,3 +72,22 @@ class userController(responseController):
             _message = responseController().messageInterruption +str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_userEntity).toJSON()
+
+    def get_user_by_id_service(self,index):
+        _message = None
+        _status = self.interruption
+        _data = None
+        try:
+            _model = userModel()
+            _data = _model.get_user_by_id_service(index)
+            if _data is None or len(_data) < 1:
+                _status = self.OK
+                _message = self.dontExistValues
+            else:
+                _status = self.OK
+                _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()

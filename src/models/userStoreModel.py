@@ -9,7 +9,7 @@ class userStoreModel(dbModel):
     def __init__(self):
         dbModel.__init__(self)
 
-    def get_user_stores(self,id_user):
+    def get_user_stores_by_id_user(self,id_user):
         _db = None
         _status = 1
         _id_user = id_user

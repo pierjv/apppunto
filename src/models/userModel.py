@@ -18,7 +18,7 @@ class userModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.user_p(mail,social_name,full_name,address,document_number,type_user,photo,
+            _sql = """INSERT INTO main.user_p (mail,social_name,full_name,address,document_number,type_user,photo,
                       cellphone,about,password,status) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (userEntity.mail,userEntity.social_name,userEntity.full_name,

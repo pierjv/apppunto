@@ -13,7 +13,7 @@ from src.controllers.serviceController import serviceController
 from src.controllers.loginController import loginController
 from src.controllers.userDateAvailabilityController import userDateAvailabilityController
 from src.entities.loginEntity import tokenEntity
-
+from src.controllers.customerController import customerController
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'cambiar_no_olvidar' 
@@ -57,6 +57,21 @@ def get_services_by_user(index):
 #@jwt_required
 def get_user_by_id_service(index):
     return userController().get_user_by_id_service(index)
+
+@app.route('/customer', methods=['POST'])
+#@jwt_required
+def add_customer():
+    return customerController().add_customer(request)
+
+@app.route('/subservice/<int:index>', methods=['GET'])
+#@jwt_required
+def get_sub_services_by_id_user(index):
+    return serviceController().get_sub_services_by_id_user(index)
+
+@app.route('/rate', methods=['POST'])
+#@jwt_required
+def add_customer_rate():
+    return customerController().add_customer_rate(request)
 
 @app.route('/userdateavailability/<int:index>', methods=['GET'])
 #@jwt_required

@@ -35,7 +35,7 @@ class loginModel(dbModel):
                         s.full_name  AS service, 
                         s.url_image, 
                         ss.full_name AS sub_service, 
-                        uss.enabled 
+                        uss.enable
                     FROM   main.user_p up 
                         INNER JOIN main.user_service us 
                             ON up.id = us.id_user 

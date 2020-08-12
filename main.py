@@ -1,4 +1,3 @@
-from flask import Flask
 from flask import Flask, jsonify, request
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -14,6 +13,7 @@ from src.controllers.loginController import loginController
 from src.controllers.userDateAvailabilityController import userDateAvailabilityController
 from src.entities.loginEntity import tokenEntity
 from src.controllers.customerController import customerController
+from src.controllers.pushController import pushController 
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'cambiar_no_olvidar' 
@@ -107,6 +107,10 @@ def delete_user(index):
 @jwt_required
 def get_user_stores(index):
     return userStoreController().get_user_stores(index)
+
+@app.route('/send', methods=['GET'])
+def send_message():
+    return pushController().send_message()
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

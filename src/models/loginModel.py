@@ -4,6 +4,7 @@ from src.models.dbModel import dbModel
 from src.entities.userEntity import userEntity
 from src.entities.userStoreEntity import userStoreEntity
 from src.entities.loginEntity import loginEntity
+from src.entities.customerEntity import customerEntity
 
 class loginModel(dbModel):
 
@@ -73,3 +74,46 @@ class loginModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _userEntity
+    
+    def login_customer(self,loginEntity):
+        _db = None
+        _status = 1
+        _entity = None
+        try:
+            _mail = loginEntity.mail
+            _password = loginEntity.password
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT id, 
+                        mail, 
+                        full_name, 
+                        cellphone, 
+                        photo
+                    FROM   main.customer c 
+                    WHERE  c.status = %s
+                        AND c.mail = %s 
+                        AND c."password" = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_status,_mail,_password,))
+            _rows = _cur.fetchall()
+
+            if len(_rows) >= 1:
+                _entity= customerEntity()
+                _entity.id  = _rows[0][0]
+                _entity.mail  = _rows[0][1] 
+                _entity.full_name  = _rows[0][2]
+                _entity.cellphone  = _rows[0][3]
+                _entity.photo  = _rows[0][4]
+
+            _cur.close()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _entity

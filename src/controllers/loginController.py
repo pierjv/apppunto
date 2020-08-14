@@ -32,20 +32,41 @@ class loginController(responseController):
     def recover_password(self,id):
         _message = None
         _status = self.interruption
-        _entity = None
+        _password = None
         try:
             _model = userModel()
             _entity  = userEntity()
-            _entity = _model.get_user_by_id(id)
+            _password = _model.get_password_by_id(id)
             if _entity is None :
                 _status = self.failUser
                 _message = self.userDontExist
             else:
                 _status = self.OK
                 _message = self.messageOK
-            print('Enviar SMS con el password: ' + _entity.password)
+            print('Enviar SMS con el password: ' + _password)
         except(Exception) as e:
             _status = self.interruption
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
-        return responseEntity(_status,_message,_entity).toJSON()
+        return responseEntity(_status,_message,_password).toJSON()
+
+    def login_customer(self,request):
+        _message = None
+        _status = self.interruption
+        _userEntity = None
+        try:
+            _loginModel = loginModel()
+            _loginEntity  = loginEntity()
+            _loginEntity.requestToClass(request)
+            _userEntity = _loginModel.login_customer(_loginEntity)
+            if _userEntity is None :
+                _status = self.failUser
+                _message = self.messageFailUser
+            else:
+                _status = self.OK
+                _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_userEntity).toJSON()

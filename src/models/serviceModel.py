@@ -96,7 +96,8 @@ class serviceModel(dbModel):
             _con_client = _db.get_client()
             _sql = """SELECT s.id, 
                         s.full_name, 
-                        s.url_image, 
+                        s.url_image,
+                        s.color, 
                         ss.id        AS id_sub_service, 
                         ss.full_name AS sub_service_name 
                     FROM   main.service s 
@@ -113,14 +114,15 @@ class serviceModel(dbModel):
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
                 _serviceEntity.url_image  = row[2]
-                _sub_service = row[3]
+                _serviceEntity.color  = row[3]
+                _sub_service = row[4]
                 _sub_services = []
                 if _id_service_old  != _serviceEntity.id :
                     for se in _rows:
                         if row[0] == se[0] and _sub_service is not None:
                             _subServiceEntity = subServiceEntity()
-                            _subServiceEntity.id = se[3]
-                            _subServiceEntity.full_name = se[4]
+                            _subServiceEntity.id = se[4]
+                            _subServiceEntity.full_name = se[5]
                             _sub_services.append(_subServiceEntity)
 
                     _serviceEntity.sub_services = _sub_services

@@ -34,3 +34,13 @@ class tokenEntity:
         if self.user == values.user and self.password == values.password:
             _value = True
         return _value
+
+class loadEntity:
+
+    def __init__(self,services= None, type_documents = None,preferred_customer= None):
+        self.services = services
+        self.type_documents = type_documents
+        self.preferred_customer = preferred_customer
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

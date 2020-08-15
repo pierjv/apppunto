@@ -25,8 +25,6 @@ class chargeController(responseController):
         return 'OK'
     
     def charge(self):
-        #public= pk_test_qnFaGRJ7pNaggBVs
-        #privada = sk_test_D54Fy8BFCuTAZsF7
         public_key = 'pk_test_qnFaGRJ7pNaggBVs'
         private_key = 'sk_test_D54Fy8BFCuTAZsF7'
         print('token2')

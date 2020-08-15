@@ -17,9 +17,6 @@ from src.controllers.customerController import customerController
 from src.controllers.notificationController import notificationController
 from src.controllers.chargeController import chargeController
 
-import culqi
-import culqi.client as cul
-
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'cambiar_no_olvidar' 
 jwt = JWTManager(app)
@@ -62,7 +59,7 @@ def recover_password(index):
 
 @app.route('/load', methods=['GET'])
 def load():
-    return serviceController().get_services_load()
+    return loginController().get_load()
 
 @app.route('/services', methods=['GET'])
 @jwt_required
@@ -132,7 +129,7 @@ def get_user_stores(index):
 @app.route('/send', methods=['GET'])
 #@jwt_required    #pushController().send_message()
 def send_message():
-    return notificationController().send_message()
+    return notificationController().send_push_message()
 
 @app.route('/charge', methods=['GET'])
 #@jwt_required    #pushController().send_message()

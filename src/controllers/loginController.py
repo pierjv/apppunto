@@ -5,6 +5,7 @@ from src.entities.loginEntity import loginEntity
 from src.entities.responseEntity import responseEntity
 from src.models.userModel import userModel
 from src.entities.userEntity import userEntity
+from src.models.serviceModel import serviceModel
 
 class loginController(responseController):
 
@@ -43,7 +44,7 @@ class loginController(responseController):
             else:
                 _status = self.OK
                 _message = self.messageOK
-            print('Enviar SMS con el password: ' + _password)
+            print('Enviar SMS con el password: ' + _password )
         except(Exception) as e:
             _status = self.interruption
             _message = self.messageInterruption + str(e)
@@ -70,3 +71,18 @@ class loginController(responseController):
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_userEntity).toJSON()
+    
+    def get_load(self):
+        _message = None
+        _status = None
+        _data= None
+        try:
+            _model = loginModel()
+            _data = _model.get_load()
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()

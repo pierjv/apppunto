@@ -49,4 +49,10 @@ class userEntity:
             _userStoreEntity.main = us.main
             _user_store.append(_userStoreEntity)
         self.user_store = _user_store 
+
+class typeDocumentEntity:
+
+    def __init__(self,id=None,full_name= None):
+        self.id = id
+        self.full_name = full_name
         

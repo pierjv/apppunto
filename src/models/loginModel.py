@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.userEntity import userEntity
+from src.entities.userEntity import userEntity, typeDocumentEntity
 from src.entities.userStoreEntity import userStoreEntity
-from src.entities.loginEntity import loginEntity
+from src.entities.loginEntity import loginEntity , loadEntity
 from src.entities.customerEntity import customerEntity
+from src.entities.serviceEntity import serviceEntity
+from src.entities.subServiceEntity import subServiceEntity
 
 class loginModel(dbModel):
 
@@ -117,3 +119,74 @@ class loginModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _entity
+    
+    def get_load(self):
+        _db = None
+        _status = 1
+        _data_row = []
+        _data_documents = []
+        _loadEntity = None
+        try:
+            _loadEntity = loadEntity()
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql_services = """SELECT s.id, 
+                        s.full_name, 
+                        s.url_image,
+                        s.color, 
+                        ss.id        AS id_sub_service, 
+                        ss.full_name AS sub_service_name 
+                    FROM   main.service s 
+                        LEFT JOIN main.sub_service ss 
+                                ON s.id = ss.id_service 
+                    ORDER  BY 1;"""
+                                        
+            _cur = _con_client.cursor()
+            _cur.execute(_sql_services)
+            _rows = _cur.fetchall()
+            _id_service_old = None
+            for row in _rows:
+                _serviceEntity = serviceEntity()
+                _serviceEntity.id  = row[0]
+                _serviceEntity.full_name  = row[1] 
+                _serviceEntity.url_image  = row[2]
+                _serviceEntity.color  = row[3]
+                _sub_service = row[4]
+                _sub_services = []
+                if _id_service_old  != _serviceEntity.id :
+                    for se in _rows:
+                        if row[0] == se[0] and _sub_service is not None:
+                            _subServiceEntity = subServiceEntity()
+                            _subServiceEntity.id = se[4]
+                            _subServiceEntity.full_name = se[5]
+                            _sub_services.append(_subServiceEntity)
+
+                    _serviceEntity.sub_services = _sub_services
+                    _data_row.append(_serviceEntity)
+                    _id_service_old = _serviceEntity.id 
+
+            _loadEntity.services = _data_row
+
+            _sql_services = """SELECT id, full_name FROM main.type_document WHERE status = 1;"""
+            _cur.execute(_sql_services)
+            _rows = _cur.fetchall()
+
+            for row in _rows:
+                _typeDocumentoEntity = typeDocumentEntity()
+                _typeDocumentoEntity.id  = row[0]
+                _typeDocumentoEntity.full_name  = row[1] 
+                _data_documents.append(_typeDocumentoEntity)
+
+            _loadEntity.type_documents = _data_documents
+
+            _cur.close()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _loadEntity
+    

@@ -1,8 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.customerEntity import customerEntity
-from src.entities.customeRateEntity import customerRateEntity
+from src.entities.customerEntity import customerEntity,customerRateEntity
 
 class customerModel(dbModel):
 

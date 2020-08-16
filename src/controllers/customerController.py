@@ -1,8 +1,7 @@
 from src.models.customerModel import customerModel
-from src.entities.customerEntity import customerEntity
+from src.entities.customerEntity import customerEntity, customerRateEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
-from src.entities.customeRateEntity import customerRateEntity
 
 class customerController(responseController):
 

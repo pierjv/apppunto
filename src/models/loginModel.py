@@ -29,7 +29,7 @@ class loginModel(dbModel):
                         up.mail ,
                         up.social_name ,
                         up.full_name ,
-                        up.address ,
+                        up.id_type_document ,
                         up.document_number ,
                         up.type_user ,
                         up.photo,
@@ -61,7 +61,7 @@ class loginModel(dbModel):
                 _userEntity.mail  = _rows[0][1] 
                 _userEntity.social_name  = _rows[0][2]
                 _userEntity.full_name  = _rows[0][3]
-                _userEntity.address  = _rows[0][4]
+                _userEntity.id_type_document  = _rows[0][4]
                 _userEntity.document_number  = _rows[0][5]
                 _userEntity.type_user  = _rows[0][6]
                 _userEntity.photo  = _rows[0][7]

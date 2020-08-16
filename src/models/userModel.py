@@ -18,12 +18,13 @@ class userModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.user_p (mail,social_name,full_name,address,document_number,type_user,photo,
-                      cellphone,about,password,status) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
+            _sql = """INSERT INTO main.user_p (mail,social_name,full_name,document_number,type_user,photo,
+                      cellphone,about,password,id_type_document,status) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (userEntity.mail,userEntity.social_name,userEntity.full_name,
-                                userEntity.address,userEntity.document_number,userEntity.type_user,
-                                userEntity.photo,userEntity.cellphone,userEntity.about,userEntity.password,_status))
+                                userEntity.document_number,userEntity.type_user,
+                                userEntity.photo,userEntity.cellphone,userEntity.about,userEntity.password,
+                                userEntity.id_type_document,_status))
             _id_user = _cur.fetchone()[0]
             userEntity.id = _id_user
             
@@ -78,8 +79,8 @@ class userModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """SELECT id, mail, social_name, full_name, address, document_number, type_user, photo, 
-                      cellphone, about, status FROM main.user_p WHERE status = 1;"""
+            _sql = """SELECT id, mail, social_name, full_name, id_type_document, document_number, type_user, photo, 
+                      cellphone, about FROM main.user_p WHERE status = 1;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql)
             _rows = _cur.fetchall()
@@ -90,13 +91,12 @@ class userModel(dbModel):
                 _userEntity.mail  = row[1] 
                 _userEntity.social_name  = row[2]
                 _userEntity.full_name  = row[3]
-                _userEntity.address  = row[4]
+                _userEntity.id_type_document  = row[4]
                 _userEntity.document_number  = row[5]
                 _userEntity.type_user  = row[6]
                 _userEntity.photo  = row[7]
                 _userEntity.cellphone  = row[8]
                 _userEntity.about  = row[9]
-                _userEntity.status  = row[10]
                 _data_row.append(_userEntity)
 
             _cur.close()
@@ -123,7 +123,7 @@ class userModel(dbModel):
                         up.mail, 
                         up.social_name, 
                         up.full_name, 
-                        up.address, 
+                        up.id_type_document, 
                         up.document_number, 
                         up.type_user, 
                         up.photo, 
@@ -143,7 +143,7 @@ class userModel(dbModel):
                 _entity.mail  = _rows[0][1] 
                 _entity.social_name  = _rows[0][2]
                 _entity.full_name  = _rows[0][3]
-                _entity.address  = _rows[0][4]
+                _entity.id_type_document  = _rows[0][4]
                 _entity.document_number  = _rows[0][5]
                 _entity.type_user  = _rows[0][6]
                 _entity.photo  = _rows[0][7]
@@ -207,7 +207,7 @@ class userModel(dbModel):
                         up.mail, 
                         up.social_name, 
                         up.full_name, 
-                        up.address, 
+                        up.id_type_document, 
                         up.document_number, 
                         up.type_user, 
                         up.photo, 
@@ -230,7 +230,7 @@ class userModel(dbModel):
                 _entity.mail  = row[1] 
                 _entity.social_name  = row[2]
                 _entity.full_name  = row[3]
-                _entity.address  = row[4]
+                _entity.id_type_document  = row[4]
                 _entity.document_number  = row[5]
                 _entity.type_user  = row[6]
                 _entity.photo  = row[7]
@@ -256,11 +256,11 @@ class userModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """UPDATE main.user_p SET  mail= %s, social_name= %s, full_name= %s, address= %s, document_number= %s, 
+            _sql = """UPDATE main.user_p SET  mail= %s, social_name= %s, full_name= %s, id_type_document= %s, document_number= %s, 
                       type_user= %s, photo= %s cellphone=%s, about=%s WHERE id = %s and status = %s;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (userEntity.mail,userEntity.social_name,userEntity.full_name,
-                                userEntity.address,userEntity.document_number,userEntity.type_user,
+                                userEntity.id_type_document,userEntity.document_number,userEntity.type_user,
                                 userEntity.photo,userEntity.cellphone,userEntity.about,userEntity.id,_status))
             _id_user = userEntity.id
             _con_client.commit()

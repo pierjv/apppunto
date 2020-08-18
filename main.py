@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
@@ -48,7 +48,7 @@ def login_user():
     return loginController().login_user(request)
 
 @app.route('/logincustomer', methods=['POST'])
-#@jwt_required
+@jwt_required
 def login_customer():
     return loginController().login_customer(request)
 
@@ -134,16 +134,30 @@ def send_message():
 @app.route('/charge', methods=['GET'])
 #@jwt_required    #pushController().send_message()
 def charge():
-    #print(timedelta)
-    #print(culqi)
-    #print(culqi.client)
-    #print (dir(culqi))
-    #print (dir(culqi.client))
-
-    #client = cul.Culqi(public_key=public_key, private_key=private_key)
-    #print(culqi.client.Culqi)
     return chargeController().charge()
 
+
+################################### WEB ADMIN ###################################################
+#################################################################################################
+
+@app.route('/webadmin', methods=['GET'])
+def web_admin():
+    return render_template('index.html')
+
+@app.route('/wa_services', methods=['GET'])
+def wa_services():
+    print('1')
+    return render_template('wa_services.html')
+
+@app.route('/wa_sub_services', methods=['GET'])
+def wa_sub_services():
+    print('1')
+    return render_template('wa_sub_services.html')
+
+@app.route('/wa_dashboard', methods=['GET'])
+def wa_dashboard():
+    print('1')
+    return render_template('wa_dashboard.html')
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

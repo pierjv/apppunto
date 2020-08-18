@@ -28,7 +28,7 @@ class serviceModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = row[2]
+                _serviceEntity.url_image  = self.url_server + row[2]
                 _serviceEntity.status  = row[3]
                 _data_row.append(_serviceEntity)
 
@@ -72,7 +72,7 @@ class serviceModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = row[2]
+                _serviceEntity.url_image  = self.url_server + row[2]
                 _serviceEntity.enable  = row[3]
                 _data_row.append(_serviceEntity)
 
@@ -126,7 +126,7 @@ class serviceModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = row[2]
+                _serviceEntity.url_image  = self.url_server + row[2]
                 _serviceEntity.enable  = row[3]
                 _sub_services = []              
                 if _id_service_old  != _serviceEntity.id :

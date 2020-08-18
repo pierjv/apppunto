@@ -64,7 +64,7 @@ class loginModel(dbModel):
                 _userEntity.id_type_document  = _rows[0][4]
                 _userEntity.document_number  = _rows[0][5]
                 _userEntity.type_user  = _rows[0][6]
-                _userEntity.photo  = _rows[0][7]
+                _userEntity.photo  = self.url_server + _rows[0][7]
                 _userEntity.cellphone  = _rows[0][8]
                 _userEntity.about  = _rows[0][9]
 
@@ -109,7 +109,7 @@ class loginModel(dbModel):
                 _entity.mail  = _rows[0][1] 
                 _entity.full_name  = _rows[0][2]
                 _entity.cellphone  = _rows[0][3]
-                _entity.photo  = _rows[0][4]
+                _entity.photo  = self.url_server + _rows[0][4]
 
             _cur.close()
         except(Exception) as e:
@@ -151,7 +151,7 @@ class loginModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = row[2]
+                _serviceEntity.url_image  = self.url_server + row[2]
                 _serviceEntity.color  = row[3]
                 _sub_service = row[4]
                 _sub_services = []

@@ -18,3 +18,4 @@ class dbModel(object):
         self.text_uri_post = env_vars['TM_URI_POST']
         self.text_user = env_vars['TM_USER']
         self.text_password = env_vars['TM_PASSWORD']
+        self.url_server = env_vars['URL_SERVER']

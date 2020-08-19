@@ -18,9 +18,14 @@ class customerController(responseController):
             _entity = customerEntity()
             _model = customerModel()
             _entity.requestToClass(request)
-            _entity = _model.add_customer(_entity)
-            _status = responseController().OK
-            _message = responseController().messageOK
+            if _model.validate_mail(_entity.mail):
+                _status = responseController().interruption
+                _message = responseController().duplicatedMail
+            else:
+                _entity = _model.add_customer(_entity)
+                _status = responseController().OK
+                _message = responseController().messageOK
+                
         except(Exception) as e:
             _status = responseController().interruption
             _message = responseController().messageInterruption +str(e)

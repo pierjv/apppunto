@@ -8,3 +8,5 @@ class responseController(object):
         self.messageFailUser = 'El usuario no existe o la clave es incorrecta'
         self.userDontExist = 'El usuario no existe'
         self.dontExistValues = 'No existen valores para la solicitud'
+        self.duplicatedMail = "El mail se encuentra registrado"
+        self.smsSuccess = "Se envió un SMS a : "

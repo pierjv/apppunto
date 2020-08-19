@@ -71,6 +71,66 @@ class customerModel(dbModel):
                 print("Se cerro la conexion")
         return entity
 
+    def validate_mail(self, mail):
+        _db = None
+        _value = False
+        try:
+            _mail = mail
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """SELECT id
+                    FROM   main.customer c 
+                    WHERE c.mail = %s;"""   
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_mail,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _value = True
+            _cur.close()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _value
+
+    def get_password_by_id(self,email):
+        _db = None
+        _status = 1
+        _entity = None
+        _mail = email
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT c."password", c.cellphone
+                    FROM   main.customer c 
+                    WHERE  c.status = %s
+                        AND c.mail = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_status,_mail,))
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _entity  = customerEntity()
+                _entity.password = _rows[0][0]
+                _entity.cellphone = _rows[0][1]
+
+            _cur.close()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _entity
+
     def delete_customer(self,id):
         return None
     

@@ -24,19 +24,23 @@ class userController(responseController):
     def add_user(self,request):
         _message = None
         _status = responseController().interruption
-        _userEntity= None
+        _entity= None
         try:
-            _userEntity = userEntity()
-            _userModel = userModel()
-            _userEntity.requestToClass(request)
-            _userEntity = _userModel.add_user(_userEntity)
-            _status = responseController().OK
-            _message = responseController().messageOK
+            _entity = userEntity()
+            _model = userModel()
+            _entity.requestToClass(request)
+            if _model.validate_mail(_entity.mail):
+                _status = responseController().interruption
+                _message = responseController().duplicatedMail
+            else:
+                _entity = _model.add_user(_entity)
+                _status = responseController().OK
+                _message = responseController().messageOK
         except(Exception) as e:
             _status = responseController().interruption
             _message = responseController().messageInterruption +str(e)
             print('error: '+ str(e))
-        return responseEntity(_status,_message,_userEntity).toJSON()
+        return responseEntity(_status,_message,_entity).toJSON()
 
     def delete_user(self,index):
         _message = None

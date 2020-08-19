@@ -159,29 +159,30 @@ class userModel(dbModel):
                 print("Se cerro la conexion")
         return _entity
 
-    def get_password_by_id(self,id):
+    def get_password_by_id(self,email):
         _db = None
         _status = 1
         _entity = None
-        _id_user = id
-        _password = None
+        _mail = email
         try:
             _db = Database()
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
 
-            _sql = """SELECT up."password"
+            _sql = """SELECT up."password", up.cellphone
                     FROM   main.user_p up 
                     WHERE  up.status = %s
-                        AND id = %s; """   
+                        AND mail = %s; """   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_status,_id_user,))
+            _cur.execute(_sql,(_status,_mail,))
             _rows = _cur.fetchall()
         
             if len(_rows) >= 1:
-                _password = _rows[0][0]
+                _entity  = userEntity()
+                _entity.password = _rows[0][0]
+                _entity.cellphone = _rows[0][1]
 
             _cur.close()
         except(Exception) as e:
@@ -190,7 +191,7 @@ class userModel(dbModel):
             if _db is not None:
                 _db.disconnect()
                 print("Se cerro la conexion")
-        return _password
+        return _entity
 
     def get_user_by_id_service(self,idService):
         _db = None
@@ -272,4 +273,31 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _id_user
+
+    def validate_mail(self, mail):
+        _db = None
+        _value = False
+        try:
+            _mail = mail
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """SELECT id
+                    FROM   main.user_p p 
+                    WHERE p.mail = %s;"""   
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_mail,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _value = True
+            _cur.close()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _value
+
         

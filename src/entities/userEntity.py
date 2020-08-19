@@ -49,6 +49,12 @@ class userEntity:
             _userStoreEntity.main = us.main
             _user_store.append(_userStoreEntity)
         self.user_store = _user_store 
+    
+    def requestToEmail(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.mail = values.mail
 
 class typeDocumentEntity:
 

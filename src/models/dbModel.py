@@ -15,7 +15,7 @@ class dbModel(object):
         self.push_firebase_key = env_vars['PN_FIREBASE_KEY']
         self.culqi_public_key = env_vars['PP_PUBLIC_KEY']
         self.culqi_private_key = env_vars['PP_PRIVATE_KEY']
-        self.text_uri_post = env_vars['TM_URI_POST']
+        self.text_uri_get = env_vars['TM_URI_GET']
         self.text_user = env_vars['TM_USER']
         self.text_password = env_vars['TM_PASSWORD']
         self.url_server = env_vars['URL_SERVER']

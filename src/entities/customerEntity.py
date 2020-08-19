@@ -36,6 +36,12 @@ class customerEntity:
             _entity.main = us.main
             _customer_address.append(_entity)
         self.customer_address = _customer_address 
+        
+    def requestToEmail(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.mail = values.mail
 
 class customerAddressEntity:
 

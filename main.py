@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template,redirect
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
@@ -16,9 +16,13 @@ from src.entities.loginEntity import tokenEntity
 from src.controllers.customerController import customerController
 from src.controllers.notificationController import notificationController
 from src.controllers.chargeController import chargeController
+import os
+from src.controllers.uploadController import uploadController
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'cambiar_no_olvidar' 
+#app.config["IMAGE_UPLOADS"] = "./static/"
+app.config["IMAGE_UPLOADS"] = "/tmp"
 jwt = JWTManager(app)
 
 @jwt.expired_token_loader
@@ -52,10 +56,15 @@ def login_user():
 def login_customer():
     return loginController().login_customer(request)
 
-@app.route('/recover/<int:index>', methods=['GET'])
+@app.route('/recoveruser', methods=['POST'])
 @jwt_required
-def recover_password(index):
-    return loginController().recover_password(index)
+def recover_password_user():
+    return loginController().recover_password_user(request)
+
+@app.route('/recovercustomer', methods=['POST'])
+@jwt_required
+def recover_password_customer():
+    return loginController().recover_password_customer(request)
 
 @app.route('/load', methods=['GET'])
 def load():
@@ -158,6 +167,30 @@ def wa_sub_services():
 def wa_dashboard():
     print('1')
     return render_template('wa_dashboard.html')
+
+# Route to upload image
+@app.route("/upload-image", methods=["GET", "POST"])
+def upload_image():
+    if request.method == "POST":
+        if request.files:
+            image = request.files["image"]
+            print('1')
+            print(image)    
+            print(os.path.join(app.config["IMAGE_UPLOADS"]))
+            print(image.filename)
+            print(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+            path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
+            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))   
+            print('2')               
+            with open(path_image,"rb") as f:
+                z=f.read()
+                print(z)
+                serviceController().update_file_image(z)                        
+            return redirect(request.url)
+    return render_template("upload_image.html")
+    
+    #uploadController().get()
+    #uploadController().implicit()
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

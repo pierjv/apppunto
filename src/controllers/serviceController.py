@@ -50,3 +50,19 @@ class serviceController(responseController):
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+    
+    def update_file_image(self,file_image):
+        _message = None
+        _status = None
+        _data= None
+        id_service = 5
+        try:
+            _model = serviceModel()
+            _data = _model.update_file_image(id_service,file_image)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()

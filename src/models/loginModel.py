@@ -122,11 +122,13 @@ class loginModel(dbModel):
                 print("Se cerro la conexion")
         return _entity
     
-    def get_load(self):
+    def get_load(self,id_customer):
         _db = None
         _status = 1
         _data_row = []
         _data_documents = []
+        _data_users = []
+        _id_customer = id_customer
         _loadEntity = None
         try:
             _loadEntity = loadEntity()
@@ -185,6 +187,54 @@ class loginModel(dbModel):
 
             _loadEntity.type_documents = _data_documents
 
+            if(_id_customer != 0):
+                _sql_users = """SELECT a.id_user, 
+                        b.avg_rate, 
+                        up.mail, 
+                        up.social_name, 
+                        up.full_name, 
+                        up.document_number, 
+                        up.type_user, 
+                        up.photo, 
+                        up.cellphone, 
+                        up.about,
+                        up.id_type_document
+                    FROM   (SELECT cr.id_customer, 
+                                cr.id_user, 
+                                Count(*) AS count_customer 
+                            FROM   main.customer_rate cr 
+                            WHERE  cr.id_customer = %s
+                            GROUP  BY 1, 
+                                    2) a 
+                        INNER JOIN (SELECT cr.id_user, 
+                                            Avg(rate) avg_rate, 
+                                            Count(*)  count_rate 
+                                    FROM   main.customer_rate cr 
+                                    GROUP  BY 1) b 
+                                ON a.id_user = b.id_user 
+                        INNER JOIN main.user_p up 
+                                ON up.id = a.id_user 
+                    WHERE  up.status = %s"""
+                                        
+                _cur.execute(_sql_users,(_id_customer,_status,))
+                _rows = _cur.fetchall()
+                for row in _rows:
+                    _serviceEntity = serviceEntity()
+                    _userEntity = userEntity()
+                    _userEntity.id =  row[0]
+                    _userEntity.avg_rate  = str(row[1])
+                    _userEntity.mail =  row[2]
+                    _userEntity.social_name =  row[3]
+                    _userEntity.full_name =  row[4]
+                    _userEntity.document_number =  row[5]
+                    _userEntity.type_user =  row[6]
+                    _userEntity.photo =  row[7]
+                    _userEntity.cellphone = row[8]
+                    _userEntity.about =  row[9]
+                    _userEntity.id_type_document = row[10]
+                    _data_users.append(_userEntity)
+
+            _loadEntity.preferred_users = _data_users
             _cur.close()
         except(Exception) as e:
             print('error: '+ str(e))

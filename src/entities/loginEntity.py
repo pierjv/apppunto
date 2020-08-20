@@ -37,10 +37,10 @@ class tokenEntity:
 
 class loadEntity:
 
-    def __init__(self,services= None, type_documents = None,preferred_customer= None , delivery_prices = None):
+    def __init__(self,services= None, type_documents = None,preferred_users= None , delivery_prices = None):
         self.services = services
         self.type_documents = type_documents
-        self.preferred_customer = preferred_customer
+        self.preferred_users = preferred_users
         self.delivery_prices = delivery_prices
 
     def toJSON(self):

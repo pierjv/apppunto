@@ -9,6 +9,12 @@
 # General
 --------------------------------------------------------------*/
 
+.row_grilla {
+  display: flex;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
 body {
   background: #fff;
   color: #444;

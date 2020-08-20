@@ -38,7 +38,7 @@
       <div class="logo float-left">
         <!-- Uncomment below if you prefer to use an image logo -->
         <!-- <h1 class="text-light"><a href="#header"><span>NewBiz</span></a></h1> -->
-        <a href="#intro" class="scrollto"><img src="{{ url_for('static', filename='web/img/logo_appunto.png') }}" alt="" class="img-fluid"></a>
+        <a  class="scrollto"><img src="{{ url_for('static', filename='web/img/logo_appunto.png') }}" alt="" class="img-fluid"></a>
       </div>
 
       <nav class="main-nav float-right d-none d-lg-block">
@@ -46,7 +46,6 @@
           <li class="active"><a href="{{ url_for('wa_services') }}">Servicios</a></li>
           <li><a href="{{ url_for('wa_sub_services') }}" href="#about">Sub Servicios</a></li>
           <li><a href="{{ url_for('wa_dashboard') }}" >Dashboard 1</a></li>
-          <li><a href="{{ url_for('wa_dashboard') }}" >Dashboard 2</a></li>
         </ul>
       </nav><!-- .main-nav -->
       
@@ -60,7 +59,7 @@
     <div class="container">
 
       <div class="intro-info">
-        <h2>[ Módulo de Sub Servicios ]</h2>
+        <h2>[ Módulo de Servicios ]</h2>
       </div>
 
     </div>
@@ -73,6 +72,9 @@
     ============================-->
     <section id="contact">
       <div class="container-fluid">
+        <div class="section-header">
+          <h3>Agregar/Modificar Servicios</h3>
+        </div>
 
         <div class="row wow fadeInUp">
 
@@ -82,25 +84,32 @@
               <div id="sendmessage">Your message has been sent. Thank you!</div>
               <div id="errormessage"></div>
               <form action="" method="post" role="form" class="contactForm">
+
                 <div class="form-row">
                   <div class="form-group col-lg-6">
-                    <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
-                    <div class="validation"></div>
-                  </div>
-                  <div class="form-group col-lg-6">
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" />
+                    <input type="text" name="name" class="form-control" id="full_name" placeholder="Nombre" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
                     <div class="validation"></div>
                   </div>
                 </div>
+
                 <div class="form-group">
-                  <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" />
-                  <div class="validation"></div>
+                  <h4>Servicio:</h4>
                 </div>
+
                 <div class="form-group">
-                  <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
-                  <div class="validation"></div>
+                  <label for="cars">Seleccina:</label>
+                  <select id="cars" name="cars" width="200px" height="500px">
+                    <option value="Spa">Spa</option>
+                    <option value="Maquillaje">Maquillaje</option>
+                    <option value="Barberia">Barberia</option>
+                    <option value="Tatto">Tatto</option>
+                    <option value="Estética">Estética</option>
+                  </select>
                 </div>
-                <div class="text-left"><button type="submit" title="Send Message">Guardar</button></div>
+
+                
+                <div></div><button class="btn btn-primary" type="button" title="Send Message">Guardar</button></div>
+
               </form>
             </div>
           </div>
@@ -109,6 +118,50 @@
 
       </div>
     </section><!-- #contact -->
+    <section id="clients" class="section-bg">
+
+      <div class="container">
+
+        <div class="section-header">
+          <h3>Lista de sub Servicios</h3>
+        </div>
+
+
+        <div class="row_grilla">
+
+          <div class="col-lg-4 col-md-6 footer-info">
+            <h3>Servicio</h3>
+            <p>Estética</p>
+            <p>Estética</p>
+            <p>Estética</p>
+            <p>Spa</p>
+            <p>Spa</p>
+          </div>
+          <div class="col-lg-4 col-md-6 footer-info" height="40px">
+            <h3>Sub Servicio</h3>
+            <p>Pedicure</p>
+            <p>Laceado</p>
+            <p>Masajes</p>
+            <p>Tratamientos faciales</p>
+            <p>Tratamientos para el cuerpo</p>
+          </div>
+          <div class="col-lg-4 col-md-6 footer-info">
+            <h3>Editar </h3>
+            <p  class=""><img height="24x" src="{{ url_for('static', filename='web/img/edit.png') }}" alt="" class=""></p>
+            <p  class=""><img height="24px" src="{{ url_for('static', filename='web/img/edit.png') }}" alt="" class=""></p>
+            <p  class=""><img height="24px" src="{{ url_for('static', filename='web/img/edit.png') }}" alt="" class=""></p>
+            <p  class=""><img height="24px" src="{{ url_for('static', filename='web/img/edit.png') }}" alt="" class=""></p>
+            <p  class=""><img height="24px" src="{{ url_for('static', filename='web/img/edit.png') }}" alt="" class=""></p>
+          </div>
+          
+        </div>
+
+        <div></div><button class="btn btn-primary" type="button" title="Send Message">Agregar</button></div>
+
+      </div>
+
+    </section>
+
 
   </main>
 

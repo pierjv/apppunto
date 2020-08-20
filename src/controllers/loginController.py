@@ -104,13 +104,14 @@ class loginController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,_userEntity).toJSON()
     
-    def get_load(self):
+    def get_load(self,index):
         _message = None
         _status = None
         _data= None
         try:
             _model = loginModel()
-            _data = _model.get_load()
+            _id_customer = index
+            _data = _model.get_load(_id_customer)
             _status = self.OK
             _message = self.messageOK
         except(Exception) as e:

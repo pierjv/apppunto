@@ -66,9 +66,9 @@ def recover_password_user():
 def recover_password_customer():
     return loginController().recover_password_customer(request)
 
-@app.route('/load', methods=['GET'])
-def load():
-    return loginController().get_load()
+@app.route('/load/<int:index>', methods=['GET'])
+def load(index):
+    return loginController().get_load(index)
 
 @app.route('/services', methods=['GET'])
 @jwt_required

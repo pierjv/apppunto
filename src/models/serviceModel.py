@@ -19,7 +19,7 @@ class serviceModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """SELECT id, full_name, url_image, status FROM main.service
+            _sql = """SELECT id, full_name FROM main.service
                       WHERE status = %s;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_status,))
@@ -28,8 +28,6 @@ class serviceModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = self.url_server + row[2]
-                _serviceEntity.status  = row[3]
                 _data_row.append(_serviceEntity)
 
             _cur.close()
@@ -53,9 +51,7 @@ class serviceModel(dbModel):
             _con_client = _db.get_client()
             _sql = """SELECT s.id, 
                         s.full_name, 
-                        s.url_image, 
-                        b.enable, 
-                        s.status 
+                        b.enable
                     FROM   main.service s 
                         LEFT JOIN (SELECT s.id AS id_service, 
                                             us.enable 
@@ -72,8 +68,7 @@ class serviceModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = self.url_server + row[2]
-                _serviceEntity.enable  = row[3]
+                _serviceEntity.enable  = row[2]
                 _data_row.append(_serviceEntity)
 
             _cur.close()
@@ -95,9 +90,9 @@ class serviceModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
+            
             _sql = """SELECT uss.id_service, 
                     s.full_name  AS service_name, 
-                    s.url_image, 
                     us."enable"  AS service_enable, 
                     uss.id_sub_service, 
                     ss.full_name AS sub_service_name, 
@@ -112,10 +107,10 @@ class serviceModel(dbModel):
                             ON uss.id_user = up.id 
                     INNER JOIN main.user_service us 
                             ON us.id_service = s.id 
-                WHERE  up.status = 1 
+                WHERE  up.status = %s
                     AND uss."enable" = 1 
                     AND us."enable" = 1 
-                    AND uss.id_user = 26 
+                    AND uss.id_user = %s 
                 ORDER  BY 1; """
                                         
             _cur = _con_client.cursor()
@@ -126,17 +121,16 @@ class serviceModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = self.url_server + row[2]
-                _serviceEntity.enable  = row[3]
+                _serviceEntity.enable  = row[2]
                 _sub_services = []              
                 if _id_service_old  != _serviceEntity.id :
                     for se in _rows:
                         if row[0] == se[0]:
                             _subServiceEntity = subServiceEntity()
-                            _subServiceEntity.id = se[4]
-                            _subServiceEntity.full_name = se[5]
-                            _subServiceEntity.charge = se[6]
-                            _subServiceEntity.enable = se[7]
+                            _subServiceEntity.id = se[3]
+                            _subServiceEntity.full_name = se[4]
+                            _subServiceEntity.charge = se[5]
+                            _subServiceEntity.enable = se[6]
                             _sub_services.append(_subServiceEntity)
 
                     _serviceEntity.sub_services = _sub_services

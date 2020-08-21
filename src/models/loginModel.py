@@ -38,7 +38,6 @@ class loginModel(dbModel):
                         up.cellphone ,
                         up.about ,
                         s.full_name  AS service, 
-                        s.url_image, 
                         ss.full_name AS sub_service, 
                         uss.enable
                     FROM   main.user_p up 
@@ -66,9 +65,8 @@ class loginModel(dbModel):
                 _userEntity.id_type_document  = _rows[0][4]
                 _userEntity.document_number  = _rows[0][5]
                 _userEntity.type_user  = _rows[0][6]
-                _userEntity.photo  = self.url_server + _rows[0][7]
-                _userEntity.cellphone  = _rows[0][8]
-                _userEntity.about  = _rows[0][9]
+                _userEntity.cellphone  = _rows[0][7]
+                _userEntity.about  = _rows[0][8]
 
             _cur.close()
         except(Exception) as e:
@@ -138,11 +136,11 @@ class loginModel(dbModel):
             _con_client = _db.get_client()
             _sql_services = """SELECT s.id, 
                         s.full_name, 
-                        s.url_image,
                         s.color,
                         encode(s.file_image , 'base64')  AS file_image, 
                         ss.id        AS id_sub_service, 
-                        ss.full_name AS sub_service_name 
+                        ss.full_name AS sub_service_name,
+                        ss.in_filter
                     FROM   main.service s 
                         LEFT JOIN main.sub_service ss 
                                 ON s.id = ss.id_service 
@@ -156,17 +154,17 @@ class loginModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.url_image  = self.url_server + row[2]
-                _serviceEntity.color  = row[3]
-                _serviceEntity.file_image  = row[4].replace('\n','')
-                _sub_service = row[5]
+                _serviceEntity.color  = row[2]
+                _serviceEntity.file_image  = row[3].replace('\n','')
+                _sub_service = row[4]
                 _sub_services = []
                 if _id_service_old  != _serviceEntity.id :
                     for se in _rows:
                         if row[0] == se[0] and _sub_service is not None:
                             _subServiceEntity = subServiceEntity()
-                            _subServiceEntity.id = se[5]
-                            _subServiceEntity.full_name = se[6]
+                            _subServiceEntity.id = se[4]
+                            _subServiceEntity.full_name = se[5]
+                            _subServiceEntity.in_filter = se[6]
                             _sub_services.append(_subServiceEntity)
 
                     _serviceEntity.sub_services = _sub_services

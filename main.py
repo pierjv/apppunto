@@ -16,6 +16,7 @@ from src.entities.loginEntity import tokenEntity
 from src.controllers.customerController import customerController
 from src.controllers.notificationController import notificationController
 from src.controllers.chargeController import chargeController
+from src.controllers.saleController import saleController
 import os
 from src.controllers.uploadController import uploadController
 
@@ -145,6 +146,10 @@ def send_message():
 def charge():
     return chargeController().charge()
 
+@app.route('/sale', methods=['POST'])
+#@jwt_required
+def add_sale():
+    return saleController().add_sale(request)
 
 ################################### WEB ADMIN ###################################################
 #################################################################################################

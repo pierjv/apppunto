@@ -19,6 +19,8 @@ from src.controllers.chargeController import chargeController
 from src.controllers.saleController import saleController
 import os
 from src.controllers.uploadController import uploadController
+import hashlib
+from src.controllers.codeController import codeController
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'cambiar_no_olvidar' 
@@ -150,6 +152,16 @@ def charge():
 #@jwt_required
 def add_sale():
     return saleController().add_sale(request)
+
+@app.route('/sha', methods=['GET'])
+#@jwt_required
+def sha():
+    cipher = codeController('92923923923123412341234188888234')
+    encrypted = cipher.encrypt('hola')
+    #decrypted = cipher.decrypt(encrypted)
+    #print(encrypted)
+    #print(decrypted)
+    return 'OK'
 
 ################################### WEB ADMIN ###################################################
 #################################################################################################

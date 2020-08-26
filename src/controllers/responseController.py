@@ -10,3 +10,5 @@ class responseController(object):
         self.dontExistValues = 'No existen valores para la solicitud'
         self.duplicatedMail = "El mail se encuentra registrado"
         self.smsSuccess = "Se envió un SMS a : "
+        self.invalidCoupon = "Cupón inválido"
+        self.saleSuccess = "Venta exitosa."

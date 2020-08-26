@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
 from src.entities.customerEntity import customerEntity,customerRateEntity
+from datetime import datetime
 
 class customerModel(dbModel):
 
@@ -18,14 +19,20 @@ class customerModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.customer (mail,full_name,cellphone,photo,password,status) 
-                    VALUES(%s,%s,%s,%s,%s,%s) RETURNING id;"""
+            _sql = """INSERT INTO main.customer (mail,full_name,cellphone,photo,password,referred_coupon,status) 
+                    VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (entity.mail,entity.full_name,entity.cellphone,
-                                entity.photo,entity.password,_status))
+                                entity.photo,entity.password,entity.referred_coupon,_status))
             _id_customer = _cur.fetchone()[0]
             entity.id = _id_customer
-            
+
+            _date = datetime.now()
+            _coupon = "CPN-APP"+ str(_id_customer) +"-"+ str(_date.hour)+str(_date.year)+str(_date.month)
+            _sql_coupon = """UPDATE main.customer SET coupon = %s WHERE id = %s;"""
+            _cur.execute(_sql_coupon,(_coupon,_id_customer))
+            entity.coupon = _coupon
+
             _sql_store = """INSERT INTO main.customer_address(id_customer, address, longitude , latitude, main, status) 
                             VALUES(%s,%s,%s,%s,%s,%s) RETURNING id;"""
             for us in entity.customer_address:
@@ -38,7 +45,7 @@ class customerModel(dbModel):
             _con_client.commit()
             _cur.close()
         except(Exception) as e:
-            print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
         finally:
             if _db is not None:
                 _db.disconnect()
@@ -64,7 +71,7 @@ class customerModel(dbModel):
             _con_client.commit()
             _cur.close()
         except(Exception) as e:
-            print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
         finally:
             if _db is not None:
                 _db.disconnect()
@@ -90,7 +97,34 @@ class customerModel(dbModel):
                 _value = True
             _cur.close()
         except(Exception) as e:
-            print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _value
+
+    def validate_referred_coupon(self, referred_coupon):
+        _db = None
+        _value = False
+        _status = 1
+        try:
+            _referred_coupon = referred_coupon
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """SELECT id
+                    FROM   main.customer c 
+                    WHERE c.coupon = %s AND c.status = %s;"""   
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_referred_coupon,_status,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _value = True
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
         finally:
             if _db is not None:
                 _db.disconnect()
@@ -124,7 +158,7 @@ class customerModel(dbModel):
 
             _cur.close()
         except(Exception) as e:
-            print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
         finally:
             if _db is not None:
                 _db.disconnect()

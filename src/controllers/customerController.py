@@ -2,6 +2,7 @@ from src.models.customerModel import customerModel
 from src.entities.customerEntity import customerEntity, customerRateEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
+import operator
 
 class customerController(responseController):
 
@@ -12,23 +13,27 @@ class customerController(responseController):
 
     def add_customer(self,request):
         _message = None
-        _status = responseController().interruption
+        _status = self.interruption
         _entity= None
         try:
             _entity = customerEntity()
             _model = customerModel()
             _entity.requestToClass(request)
+            
             if _model.validate_mail(_entity.mail):
-                _status = responseController().interruption
-                _message = responseController().duplicatedMail
+                _status = self.interruption
+                _message = self.duplicatedMail
             else:
-                _entity = _model.add_customer(_entity)
-                _status = responseController().OK
-                _message = responseController().messageOK
-                
+                if _entity.referred_coupon != "" and _entity.referred_coupon is not None and operator.not_(_model.validate_referred_coupon(_entity.referred_coupon)):
+                    _status = self.interruption
+                    _message = self.invalidCoupon
+                else:
+                    _entity = _model.add_customer(_entity)
+                    _status = self.OK
+                    _message = self.messageOK
         except(Exception) as e:
-            _status = responseController().interruption
-            _message = responseController().messageInterruption +str(e)
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_entity).toJSON()
 

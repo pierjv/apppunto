@@ -27,7 +27,7 @@ class notificationModel(dbModel):
             _response = requests.post(url=self.push_uri_post, json=_post_data,headers=_headers)
             _value = _response.text
         except(Exception) as e:
-             print("error: "+ str(e))
+            self.add_log(str(e),type(self).__name__)
         return _value
     
     def sen_sms_message(self,password,cellphone):
@@ -45,6 +45,6 @@ class notificationModel(dbModel):
             r = requests.post(self.text_uri_get,params = params_data)
             print(r.text)
         except(Exception) as e:
-            print("error", str(e))
+            self.add_log(str(e),type(self).__name__)
         
 

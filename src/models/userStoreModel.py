@@ -40,7 +40,7 @@ class userStoreModel(dbModel):
             print(_data_row)
             _cur.close()
         except(Exception) as e:
-            print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
         finally:
             if _db is not None:
                 _db.disconnect()

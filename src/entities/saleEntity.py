@@ -6,7 +6,7 @@ class saleEntity:
     def __init__(self,id=0,id_type_availability=None,id_customer=None,id_user=None,coupon=None,
                 date_availability=None,hour_availability= None,total_amount= None,id_type_card = None,
                 document_number=None,expiration_year =None,expiration_month=None,mail=None,
-                full_name_card=None, type_sales = None):
+                full_name_card=None,cvv = None, type_sales = None):
         self.id = id
         self.id_type_availability = id_type_availability
         self.id_customer = id_customer
@@ -21,6 +21,7 @@ class saleEntity:
         self.expiration_month = expiration_month
         self.mail = mail
         self.full_name_card = full_name_card
+        self.cvv = cvv
         self.type_sales = type_sales
 
     def toJSON(self):
@@ -42,6 +43,7 @@ class saleEntity:
         self.expiration_year = values.expiration_year
         self.expiration_month = values.expiration_month
         self.mail = values.mail
+        self.cvv = values.cvv
         self.full_name_card = values.full_name_card
 
         _type_sales =[]
@@ -66,6 +68,16 @@ class typeSaleEntity:
         self.id_sale = id_sale
         self.id_sub_service = id_sub_service
         self.amount = amount
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class deliveryCost:
+    def __init__(self,from_km=0,to_km=None,fixed_cost=None,delivery=None):
+        self.from_km = from_km
+        self.to_km = to_km
+        self.fixed_cost = fixed_cost
+        self.delivery = delivery
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

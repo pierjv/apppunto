@@ -7,6 +7,7 @@ from src.entities.loginEntity import loginEntity , loadEntity
 from src.entities.customerEntity import customerEntity
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
+from src.entities.saleEntity import deliveryCost
 import json
 
 
@@ -113,7 +114,7 @@ class loginModel(dbModel):
 
             _cur.close()
         except(Exception) as e:
-            print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
         finally:
             if _db is not None:
                 _db.disconnect()
@@ -126,6 +127,7 @@ class loginModel(dbModel):
         _data_row = []
         _data_documents = []
         _data_users = []
+        _data_delivery_costs = []
         _id_customer = id_customer
         _loadEntity = None
         try:
@@ -185,6 +187,20 @@ class loginModel(dbModel):
 
             _loadEntity.type_documents = _data_documents
 
+            _sql_delivery = """SELECT from_km, to_km, fixed_cost, delivery FROM main.delivery_cost;"""
+            _cur.execute(_sql_delivery)
+            _rows = _cur.fetchall()
+
+            for row in _rows:
+                _delivery_cost = deliveryCost()
+                _delivery_cost.from_km  = row[0]
+                _delivery_cost.to_km  = row[1] 
+                _delivery_cost.fixed_cost  = row[2]
+                _delivery_cost.delivery  = row[3]
+                _data_delivery_costs.append(_delivery_cost)
+
+            _loadEntity.delivery_costs = _data_delivery_costs
+
             if(_id_customer != 0):
                 _sql_users = """SELECT a.id_user, 
                         b.avg_rate, 
@@ -235,7 +251,7 @@ class loginModel(dbModel):
             _loadEntity.preferred_users = _data_users
             _cur.close()
         except(Exception) as e:
-            print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
         finally:
             if _db is not None:
                 _db.disconnect()

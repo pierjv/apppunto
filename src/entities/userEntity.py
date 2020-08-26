@@ -63,4 +63,35 @@ class typeDocumentEntity:
     def __init__(self,id=None,full_name= None):
         self.id = id
         self.full_name = full_name
+
+class rateEntity:
+
+    def __init__(self,rate=None,total=None,quantity=None,percentage=None):
+        self.rate = rate
+        self.total = total
+        self.quantity = quantity
+        self.percentage = percentage
         
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class commentEntity:
+
+    def __init__(self,rate=None,description=None,date_transaction=None,full_name=None):
+        self.rate = rate
+        self.description = description
+        self.date_transaction = date_transaction
+        self.full_name = full_name
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class userDetailEntity:
+
+    def __init__(self,services=None,rates=None,comments=None):
+        self.services = services
+        self.rates = rates
+        self.comments = comments
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

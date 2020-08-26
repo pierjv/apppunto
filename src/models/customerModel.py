@@ -3,6 +3,8 @@ from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
 from src.entities.customerEntity import customerEntity,customerRateEntity
 from datetime import datetime
+from src.entities.serviceEntity import serviceEntity
+from src.entities.subServiceEntity import subServiceEntity
 
 class customerModel(dbModel):
 
@@ -19,19 +21,19 @@ class customerModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.customer (mail,full_name,cellphone,photo,password,referred_coupon,status) 
+            _sql = """INSERT INTO main.customer (mail,full_name,cellphone,photo,password,referred_code,status) 
                     VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (entity.mail,entity.full_name,entity.cellphone,
-                                entity.photo,entity.password,entity.referred_coupon,_status))
+                                entity.photo,entity.password,entity.referred_code,_status))
             _id_customer = _cur.fetchone()[0]
             entity.id = _id_customer
 
             _date = datetime.now()
-            _coupon = "CPN-APP"+ str(_id_customer) +"-"+ str(_date.hour)+str(_date.year)+str(_date.month)
-            _sql_coupon = """UPDATE main.customer SET coupon = %s WHERE id = %s;"""
-            _cur.execute(_sql_coupon,(_coupon,_id_customer))
-            entity.coupon = _coupon
+            _id_code = "CPN-APP"+ str(_id_customer) +"-"+ str(_date.hour)+str(_date.year)+str(_date.month)
+            _sql_coupon = """UPDATE main.customer SET id_code = %s WHERE id = %s;"""
+            _cur.execute(_sql_coupon,(_id_code,_id_customer))
+            entity.id_code = _id_code
 
             _sql_store = """INSERT INTO main.customer_address(id_customer, address, longitude , latitude, main, status) 
                             VALUES(%s,%s,%s,%s,%s,%s) RETURNING id;"""
@@ -62,8 +64,8 @@ class customerModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.customer_rate (id_user,id_service,id_customer,rate,description,status) 
-                    VALUES(%s,%s,%s,%s,%s,%s);"""
+            _sql = """INSERT INTO main.customer_rate (id_user,id_service,id_customer,rate,description,status,date_transaction) 
+                    VALUES(%s,%s,%s,%s,%s,%s,current_timestamp);"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (entity.id_user,entity.id_service,entity.id_customer,
                                 entity.rate,entity.description,_status))
@@ -104,7 +106,7 @@ class customerModel(dbModel):
                 print("Se cerro la conexion")
         return _value
 
-    def validate_referred_coupon(self, referred_coupon):
+    def validate_referred_code(self, referred_coupon):
         _db = None
         _value = False
         _status = 1
@@ -116,7 +118,7 @@ class customerModel(dbModel):
             _con_client = _db.get_client()
             _sql = """SELECT id
                     FROM   main.customer c 
-                    WHERE c.coupon = %s AND c.status = %s;"""   
+                    WHERE c.id_code = %s AND c.status = %s;"""   
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_referred_coupon,_status,))
             _rows = _cur.fetchall()
@@ -164,6 +166,7 @@ class customerModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _entity
+
 
     def delete_customer(self,id):
         return None

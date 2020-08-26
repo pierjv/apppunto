@@ -95,3 +95,18 @@ class userController(responseController):
             _message = self.messageInterruption +str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+    
+    def get_user_detail(self,index):
+        _message = None
+        _status = None
+        _data= None
+        try:
+            _model = userModel()
+            _data = _model.get_user_detail(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()

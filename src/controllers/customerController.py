@@ -24,7 +24,7 @@ class customerController(responseController):
                 _status = self.interruption
                 _message = self.duplicatedMail
             else:
-                if _entity.referred_coupon != "" and _entity.referred_coupon is not None and operator.not_(_model.validate_referred_coupon(_entity.referred_coupon)):
+                if _entity.referred_code != "" and _entity.referred_code is not None and operator.not_(_model.validate_referred_code(_entity.referred_code)):
                     _status = self.interruption
                     _message = self.invalidCoupon
                 else:

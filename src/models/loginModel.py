@@ -4,7 +4,7 @@ from src.models.dbModel import dbModel
 from src.entities.userEntity import userEntity, typeDocumentEntity
 from src.entities.userStoreEntity import userStoreEntity
 from src.entities.loginEntity import loginEntity , loadEntity
-from src.entities.customerEntity import customerEntity
+from src.entities.customerEntity import customerEntity 
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
 from src.entities.saleEntity import deliveryCost
@@ -203,7 +203,7 @@ class loginModel(dbModel):
 
             if(_id_customer != 0):
                 _sql_users = """SELECT a.id_user, 
-                        b.avg_rate, 
+                        b.avg_rate::float4, 
                         up.mail, 
                         up.social_name, 
                         up.full_name, 
@@ -236,7 +236,7 @@ class loginModel(dbModel):
                     _serviceEntity = serviceEntity()
                     _userEntity = userEntity()
                     _userEntity.id =  row[0]
-                    _userEntity.avg_rate  = str(row[1])
+                    _userEntity.avg_rate  = row[1]
                     _userEntity.mail =  row[2]
                     _userEntity.social_name =  row[3]
                     _userEntity.full_name =  row[4]

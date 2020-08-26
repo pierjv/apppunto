@@ -4,15 +4,15 @@ from collections import namedtuple
 class customerEntity:
 
     def __init__(self,id=0,mail=None,full_name=None,cellphone=None,photo=None,
-                password=None,coupon = None,referred_coupon = None,customer_address= None):
+                password=None,id_code = None,referred_code = None,customer_address= None):
         self.id = id
         self.mail = mail
         self.full_name = full_name
         self.cellphone = cellphone
         self.photo = photo
         self.password = password
-        self.coupon = coupon
-        self.referred_coupon = referred_coupon
+        self.id_code = id_code
+        self.referred_code = referred_code
         self.customer_address = customer_address
 
     def toJSON(self):
@@ -27,7 +27,7 @@ class customerEntity:
         self.full_name = values.full_name
         self.cellphone = values.cellphone
         self.photo = values.photo
-        self.referred_coupon = values.referred_coupon
+        self.referred_code = values.referred_code
         self.password = values.password
         _customer_address =[]
         for us in values.customer_address:
@@ -81,4 +81,3 @@ class customerRateEntity:
         self.id_customer = values.id_customer
         self.rate = values.rate
         self.description = values.description
-

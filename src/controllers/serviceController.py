@@ -36,21 +36,6 @@ class serviceController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
     
-    def get_sub_services_by_id_user(self,index):
-        _message = None
-        _status = None
-        _data= None
-        try:
-            _model = serviceModel()
-            _data = _model.get_sub_services_by_id_user(index)
-            _status = self.OK
-            _message = self.messageOK
-        except(Exception) as e:
-            _status = self.interruption
-            _message = self.messageInterruption + str(e)
-            print('error: '+ str(e))
-        return responseEntity(_status,_message,_data).toJSON()
-    
     def update_file_image(self,file_image):
         _message = None
         _status = None

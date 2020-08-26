@@ -93,10 +93,10 @@ def get_user_by_id_service(index):
 def add_customer():
     return customerController().add_customer(request)
 
-@app.route('/subservice/<int:index>', methods=['GET'])
+@app.route('/userdetail/<int:index>', methods=['GET'])
 @jwt_required
-def get_sub_services_by_id_user(index):
-    return serviceController().get_sub_services_by_id_user(index)
+def get_user_detail(index):
+    return userController().get_user_detail(index)
 
 @app.route('/rate', methods=['POST'])
 @jwt_required

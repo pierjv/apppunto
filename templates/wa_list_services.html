@@ -56,29 +56,54 @@
       <div class="container">
 
         <div class="section-header">
-          <h3>Agregar y/o Modificar Datos</h3>
+          <h3>Lista</h3>
         </div>
 
 
-        <div >
-          <form  action="/wa_services" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-              <label for="idTxtFullName">Nombre Completo:</label>
-              <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="servicio">
-            </div>
-            <div class="form-group">
-              <label for="idtxtColor">Color:</label>
-              <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF">
-            </div>
-            <div class="form-group">
-              <label for="idFileImage">Imágen:</label>
-              <input type="file" class="form-control-file" id="idFileImage" name="idFileImage">
-            </div>
-            <div><input  class="btn btn-primary"  type="submit" value="Guardar Datos"></div>
-          </form>
+        <div class="row_grilla">
+
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre Completo</th>
+                <th scope="col">Color</th>
+                <th scope="col">Imágen</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Editar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data_service in data_services %}
+              <tr>
+                <th scope="row">{{ data_service.id }}</th>
+                <td>{{ data_service.full_name }}</td>
+                <td>{{ data_service.color }}</td>
+                <td>
+                  <img height="20px" src="data:image/png;base64, {{ data_service.file_image }}" />
+                </td>
+                <td>
+                {% if data_service.status == 1 %}
+                  <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
+                  {{ 'Habilitado' }}
+                {% else %}
+                  <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
+                  {{ 'Deshabilitado' }}
+                {% endif %}
+                </td>
+                <td>
+                  <a href="{{ url_for('wa_services',index = data_service.id ) }}">
+                    <img height="20px" src="{{ url_for('static', filename='web/img/edit.png') }}">
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
 
         </div>
 
+        <div><a class="btn btn-primary"  href="{{ url_for('wa_services') }}">Agregar Servicio</a></div>
 
       </div>
 
@@ -93,6 +118,7 @@
     <div class="footer-top">
       <div class="container">
         <div class="row">
+
           <div class="col-lg-3 col-md-6 footer-contact">
             <h4>Soporte</h4>
             <p>
@@ -100,7 +126,9 @@
               <strong>Email:</strong> pierjv1@gmail.com<br>
               <strong>Appunto-JPV-Google Cloud Platform</strong> 
             </p>
+
           </div>
+
         </div>
       </div>
     </div>

@@ -81,3 +81,14 @@ class customerRateEntity:
         self.id_customer = values.id_customer
         self.rate = values.rate
         self.description = values.description
+
+class customerCouponEntity:
+
+    def __init__(self,id=0,coupon=None,id_customer=None,effective_date=None):
+        self.id = id
+        self.coupon = coupon
+        self.id_customer = id_customer
+        self.effective_date = effective_date
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

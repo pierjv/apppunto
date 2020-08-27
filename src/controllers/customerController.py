@@ -1,5 +1,5 @@
 from src.models.customerModel import customerModel
-from src.entities.customerEntity import customerEntity, customerRateEntity
+from src.entities.customerEntity import customerEntity, customerRateEntity,customerCouponEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
 import operator
@@ -24,13 +24,21 @@ class customerController(responseController):
                 _status = self.interruption
                 _message = self.duplicatedMail
             else:
-                if _entity.referred_code != "" and _entity.referred_code is not None and operator.not_(_model.validate_referred_code(_entity.referred_code)):
-                    _status = self.interruption
-                    _message = self.invalidCoupon
-                else:
+                if _entity.referred_code == "" or _entity.referred_code is None:
                     _entity = _model.add_customer(_entity)
                     _status = self.OK
-                    _message = self.messageOK
+                    _message = self.addCustomer  
+                else:
+                    _id_customer_main = _model.validate_referred_code(_entity.referred_code)
+                    if _id_customer_main is not None:
+                        _entity = _model.add_customer(_entity)
+                        _model.add_customer_coupon(_entity.id,_id_customer_main)
+                        _status = self.OK
+                        _message = self.addCustomerAndCode
+                    else: 
+                        _status = self.interruption
+                        _message = self.invalidCoupon
+                    
         except(Exception) as e:
             _status = self.interruption
             _message = self.messageInterruption +str(e)
@@ -53,6 +61,21 @@ class customerController(responseController):
             _message = responseController().messageInterruption +str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_entity).toJSON()
+
+    def get_customer_coupon_by_id(self,index):
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _model = customerModel()
+            _data = _model.get_customer_coupon_by_id(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
 
     def delete_customer(self,index):
         _message = None

@@ -149,9 +149,14 @@ def charge():
     return chargeController().charge()
 
 @app.route('/sale', methods=['POST'])
-#@jwt_required
+@jwt_required
 def add_sale():
     return saleController().add_sale(request)
+
+@app.route('/coupon/<int:index>', methods=['GET'])
+#@jwt_required
+def get_customer_coupon_by_id(index):
+    return customerController().get_customer_coupon_by_id(index)
 
 @app.route('/sha', methods=['GET'])
 #@jwt_required
@@ -172,8 +177,27 @@ def web_admin():
 
 @app.route('/wa_services', methods=['GET'])
 def wa_services():
-    print('1')
+    print(request.args.get('index'))
+    _entity = serviceController().get_service_by_id_wa(request.args.get('index'))
+    print(_entity)
+    #request.form["idTxtFullName"] = _entity.full_name
     return render_template('wa_services.html')
+
+@app.route('/wa_services', methods=['POST'])
+def wa_services_post():
+    print(request.files)
+    print(request.values.get('idTxtFullName'))
+    print(request.args.get('idTxtFullName'))
+    print(request.args)
+    print(request.data)
+    print(request.form["idTxtFullName"])
+    return render_template('wa_services.html')
+
+
+@app.route('/wa_list_services', methods=['GET'])
+def wa_list_services():
+    _data_services = serviceController().get_services_wa()
+    return render_template('wa_list_services.html',data_services = _data_services)
 
 @app.route('/wa_sub_services', methods=['GET'])
 def wa_sub_services():
@@ -182,7 +206,7 @@ def wa_sub_services():
 
 @app.route('/wa_dashboard', methods=['GET'])
 def wa_dashboard():
-    print('1')
+    print(request.args.get('index'))
     return render_template('wa_dashboard.html')
 
 # Route to upload image

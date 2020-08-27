@@ -21,6 +21,7 @@ class dbModel(object):
         self.text_user = env_vars['TM_USER']
         self.text_password = env_vars['TM_PASSWORD']
         self.url_server = env_vars['URL_SERVER']
+        self.amount_coupon = env_vars['AMOUNT_COUPON']
 
     def add_log(self,p_e, p_class):
         _db = None

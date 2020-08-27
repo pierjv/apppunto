@@ -12,3 +12,5 @@ class responseController(object):
         self.smsSuccess = "Se envió un SMS a : "
         self.invalidCoupon = "Cupón inválido"
         self.saleSuccess = "Venta exitosa."
+        self.addCustomer = "Se registraron los datos exitosamente."
+        self.addCustomerAndCode = "Se registraron los datos exitosamente y tiene un cupón de descuento." 

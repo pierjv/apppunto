@@ -19,7 +19,7 @@ class serviceModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """SELECT id, full_name, color, status,encode(file_image,'base64') AS file_image FROM main.service;"""
+            _sql = """SELECT id, full_name, color, status,encode(file_image,'base64') AS file_image FROM main.service ORDER BY 1;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql)
             _rows = _cur.fetchall()
@@ -29,7 +29,11 @@ class serviceModel(dbModel):
                 _serviceEntity.full_name  = row[1] 
                 _serviceEntity.color  = row[2] 
                 _serviceEntity.status  = row[3]
-                _serviceEntity.file_image  = row[4].replace('\n','') 
+                _file_image = row[4]
+                if _file_image is None:
+                    _serviceEntity.file_image  = _file_image
+                else:
+                    _serviceEntity.file_image  = _file_image.replace('\n','')
                 _data_row.append(_serviceEntity)
 
             _cur.close()
@@ -143,3 +147,29 @@ class serviceModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _entity
+    
+    def add_service(self,entity):
+        _db = None
+        _status = 1
+        _i = 0
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+
+            _con_client = _db.get_client()
+            _sql = """INSERT INTO main.service (full_name, status, color, file_image)
+                    VALUES(%s,%s,%s,%s) RETURNING id;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(entity.full_name,_status,entity.color,entity.file_image))
+            _id_service = _cur.fetchone()[0]  
+            entity.id = _id_service      
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return entity

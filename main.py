@@ -13,6 +13,7 @@ from src.controllers.serviceController import serviceController
 from src.controllers.loginController import loginController
 from src.controllers.userDateAvailabilityController import userDateAvailabilityController
 from src.entities.loginEntity import tokenEntity
+from src.entities.serviceEntity import serviceEntity
 from src.controllers.customerController import customerController
 from src.controllers.notificationController import notificationController
 from src.controllers.chargeController import chargeController
@@ -177,22 +178,27 @@ def web_admin():
 
 @app.route('/wa_services', methods=['GET'])
 def wa_services():
-    print(request.args.get('index'))
-    _entity = serviceController().get_service_by_id_wa(request.args.get('index'))
-    print(_entity)
-    #request.form["idTxtFullName"] = _entity.full_name
-    return render_template('wa_services.html')
+    _id_customer = request.args.get('index')
+    _entity = None
+    if _id_customer is not None:
+        _entity = serviceController().get_service_by_id_wa(_id_customer)
+
+    return render_template('wa_services.html', service = _entity)
 
 @app.route('/wa_services', methods=['POST'])
 def wa_services_post():
-    print(request.files)
-    print(request.values.get('idTxtFullName'))
-    print(request.args.get('idTxtFullName'))
-    print(request.args)
-    print(request.data)
-    print(request.form["idTxtFullName"])
-    return render_template('wa_services.html')
-
+    _entity = serviceEntity()
+    _entity.full_name = request.form["idTxtFullName"]
+    _entity.color = request.form["idtxtColor"]
+    if request.files:
+        image = request.files["idFileImage"]
+        path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
+        image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename)) 
+        with open(path_image,"rb") as f:
+            z=f.read()
+            _entity.file_image = z
+    serviceController().add_service(_entity)
+    return redirect('/wa_list_services')
 
 @app.route('/wa_list_services', methods=['GET'])
 def wa_list_services():

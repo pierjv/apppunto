@@ -62,18 +62,37 @@
 
         <div >
           <form  action="/wa_services" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-              <label for="idTxtFullName">Nombre Completo:</label>
-              <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="servicio">
-            </div>
-            <div class="form-group">
-              <label for="idtxtColor">Color:</label>
-              <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF">
-            </div>
-            <div class="form-group">
-              <label for="idFileImage">Imágen:</label>
-              <input type="file" class="form-control-file" id="idFileImage" name="idFileImage">
-            </div>
+
+            {% if service %}
+              <div class="form-group">
+                <label for="idTxtFullName">Nombre Completo:</label>
+                <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="servicio" value="{{ service.full_name }}" required >
+              </div>
+              <div class="form-group">
+                <label for="idtxtColor">Color:</label>
+                <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF" value="{{ service.color }}" required >
+              </div>
+              <div class="form-group">
+                <label for="idFileImage">Imagen:</label>
+                <input type="file" class="form-control-file" id="idFileImage" name="idFileImage" required>
+                <br>
+                <img src="data:image/png;base64, {{ service.file_image }}" />
+              </div>
+            {% else %}
+              <div class="form-group">
+                <label for="idTxtFullName">Nombre Completo:</label>
+                <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="servicio" required  >
+              </div>
+              <div class="form-group">
+                <label for="idtxtColor">Color:</label>
+                <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF" required >
+              </div>
+              <div class="form-group">
+                <label for="idFileImage">Imagen:</label>
+                <input type="file" class="form-control-file" id="idFileImage" name="idFileImage" required>
+              </div>
+            {% endif %}
+
             <div><input  class="btn btn-primary"  type="submit" value="Guardar Datos"></div>
           </form>
 

@@ -34,8 +34,16 @@ class serviceController(responseController):
     def get_service_by_id_wa(self,index):
         _entity= None
         try:
-            _serviceModel = serviceModel()
-            _entity = _serviceModel.get_services_by_id(index)
+            _model = serviceModel()
+            _entity = _model.get_services_by_id(index)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _entity
+    
+    def add_service(self,entity):
+        try:
+            _model = serviceModel()
+            _entity = _model.add_service(entity)
         except(Exception) as e:
             print('error: '+ str(e))
         return _entity

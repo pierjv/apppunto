@@ -28,8 +28,9 @@
       <nav class="main-nav float-right d-none d-lg-block">
         <ul>
           <li class="active"><a href="{{ url_for('wa_list_services') }}">Servicios</a></li>
-          <li><a href="{{ url_for('wa_sub_services') }}" href="#about">Sub Servicios</a></li>
-          <li><a href="{{ url_for('wa_dashboard') }}" >Dashboard 1</a></li>
+          <li><a href="{{ url_for('wa_list_sub_services') }}">Sub Servicios</a></li>
+          <li><a href="{{ url_for('wa_dashboard') }}" >Dashboard</a></li>
+          <li><a href="{{ url_for('wa_dashboard') }}" >Salir</a></li>
         </ul>
       </nav><!-- .main-nav -->
       
@@ -43,7 +44,7 @@
     <div class="container">
 
       <div class="intro-info">
-        <h2>[ Módulo de Servicios ]</h2>
+        <h2>[ Datos de Servicio ]</h2>
       </div>
 
     </div>
@@ -55,15 +56,14 @@
 
       <div class="container">
 
-        <div class="section-header">
-          <h3>Agregar y/o Modificar Datos</h3>
-        </div>
-
-
         <div >
           <form  action="/wa_services" method="POST" enctype="multipart/form-data">
 
             {% if service %}
+              <div class="form-group">
+                <label for="idService">ID:</label>
+                <input type="text" class="form-control" id="idtxtService" name="idtxtService" value="{{ service.id }}" readonly="readonly" >
+              </div>
               <div class="form-group">
                 <label for="idTxtFullName">Nombre Completo:</label>
                 <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="servicio" value="{{ service.full_name }}" required >
@@ -73,8 +73,20 @@
                 <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF" value="{{ service.color }}" required >
               </div>
               <div class="form-group">
+                <label for="idSlEstado">Estado:</label>
+                <select class="custom-select" id="idSlEstado" name="idSlEstado" required>
+                  {% if service.status == 1 %}
+                    <option value="1" selected>Habilitado</option>
+                    <option value="0">Deshabilitado</option>
+                  {% else %}
+                    <option value="1" >Habilitado</option>
+                    <option value="0" selected>Deshabilitado</option>
+                  {% endif %}
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="idFileImage">Imagen:</label>
-                <input type="file" class="form-control-file" id="idFileImage" name="idFileImage" required>
+                <input type="file" class="form-control-file" id="idFileImage" name="idFileImage">
                 <br>
                 <img src="data:image/png;base64, {{ service.file_image }}" />
               </div>
@@ -88,12 +100,22 @@
                 <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF" required >
               </div>
               <div class="form-group">
+                <label for="idSlEstado">Estado:</label>
+                <select class="custom-select" id="idSlEstado" name="idSlEstado" required>
+                  <option value="1" selected>Habilitado</option>
+                  <option value="0">Deshabilitado</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="idFileImage">Imagen:</label>
                 <input type="file" class="form-control-file" id="idFileImage" name="idFileImage" required>
               </div>
             {% endif %}
 
-            <div><input  class="btn btn-primary"  type="submit" value="Guardar Datos"></div>
+            <div>
+              <input  class="btn btn-primary"  type="submit" value="Guardar Datos">
+              <a class="btn btn-dark" href="{{ url_for('wa_list_services') }}">Cancelar</a>              
+            </div>
           </form>
 
         </div>

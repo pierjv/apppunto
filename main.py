@@ -14,6 +14,7 @@ from src.controllers.loginController import loginController
 from src.controllers.userDateAvailabilityController import userDateAvailabilityController
 from src.entities.loginEntity import tokenEntity
 from src.entities.serviceEntity import serviceEntity
+from src.entities.subServiceEntity import subServiceEntity
 from src.controllers.customerController import customerController
 from src.controllers.notificationController import notificationController
 from src.controllers.chargeController import chargeController
@@ -178,10 +179,10 @@ def web_admin():
 
 @app.route('/wa_services', methods=['GET'])
 def wa_services():
-    _id_customer = request.args.get('index')
+    _id_service = request.args.get('index')
     _entity = None
-    if _id_customer is not None:
-        _entity = serviceController().get_service_by_id_wa(_id_customer)
+    if _id_service is not None:
+        _entity = serviceController().get_service_by_id_wa(_id_service)
 
     return render_template('wa_services.html', service = _entity)
 
@@ -190,14 +191,27 @@ def wa_services_post():
     _entity = serviceEntity()
     _entity.full_name = request.form["idTxtFullName"]
     _entity.color = request.form["idtxtColor"]
-    if request.files:
-        image = request.files["idFileImage"]
-        path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
-        image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename)) 
-        with open(path_image,"rb") as f:
-            z=f.read()
-            _entity.file_image = z
-    serviceController().add_service(_entity)
+    _entity.id = request.form.get("idtxtService")
+    _status = request.form.get("idSlEstado")
+    if _entity.id is None:
+        if request.files:
+            image = request.files["idFileImage"]
+            path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
+            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename)) 
+            with open(path_image,"rb") as f:
+                _file_image=f.read()
+                _entity.file_image = _file_image
+        serviceController().add_service(_entity)
+    else:
+        serviceController().update_service(_entity,_status)
+        if request.files and request.files.get("idFileImage") is not None :
+            image = request.files["idFileImage"]
+            if image.filename:
+                path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
+                image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename)) 
+                with open(path_image,"rb") as f:
+                    _file_image=f.read()
+                serviceController().update_file_image(_entity.id,_file_image)
     return redirect('/wa_list_services')
 
 @app.route('/wa_list_services', methods=['GET'])
@@ -205,10 +219,40 @@ def wa_list_services():
     _data_services = serviceController().get_services_wa()
     return render_template('wa_list_services.html',data_services = _data_services)
 
+@app.route('/wa_list_sub_services', methods=['GET'])
+def wa_list_sub_services():
+    _id_service = request.args.get("iSlServicio")
+    if _id_service is None:
+        _id_service = 0
+    print(_id_service)
+    _data_sub_services = serviceController().get_sub_services_wa(_id_service)
+    _data_services = serviceController().get_services_wa()
+    return render_template('wa_list_sub_services.html',data_sub_services = _data_sub_services, data_services= _data_services)
+
 @app.route('/wa_sub_services', methods=['GET'])
 def wa_sub_services():
-    print('1')
-    return render_template('wa_sub_services.html')
+    _id_sub_customer = request.args.get('index')
+    _entity = None
+    _data_services = serviceController().get_services_wa()
+    if _id_sub_customer is not None:
+        print(_id_sub_customer)
+        _entity = serviceController().get_sub_service_by_id_wa(_id_sub_customer)
+    return render_template('wa_sub_services.html', sub_service = _entity, data_services= _data_services)
+
+@app.route('/wa_sub_services', methods=['POST'])
+def wa_sub_services_post():
+    _entity = subServiceEntity()
+    _entity.id = request.form.get("idtxtSubService")
+    _id_service = request.form.get("iSlServicio")
+    _entity.full_name = request.form.get("idTxtFullName")
+    _entity.in_filter = request.form.get("idSlEnFiltro")
+    _status = request.form.get("idSlEstado")
+    if _entity.id is None:
+        serviceController().add_sub_service(_entity,_id_service,_status)
+    else:
+        serviceController().update_sub_service(_entity,_id_service,_status)
+    return redirect('/wa_list_sub_services')
+
 
 @app.route('/wa_dashboard', methods=['GET'])
 def wa_dashboard():
@@ -232,7 +276,7 @@ def upload_image():
             with open(path_image,"rb") as f:
                 z=f.read()
                 print(z)
-                serviceController().update_file_image(z)                        
+                serviceController().update_file_image(1,z)                        
             return redirect(request.url)
     return render_template("upload_image.html")
     

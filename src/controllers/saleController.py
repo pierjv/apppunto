@@ -16,7 +16,7 @@ class saleController(responseController):
             _chargeModel = chargeModel()
             _entity.requestToClass(request)
             _data = _chargeModel.charge_culqi(_entity.cvv,_entity.document_number,_entity.expiration_year,_entity.expiration_month,
-                    _entity.mail,_entity.total_amount, "Venta de prueba")
+                    _entity.mail,_entity.total_amount, "Venta Appunto")
             if _data["object"] == "error":
                 _status = self.interruption
                 _message = _data["user_message"]

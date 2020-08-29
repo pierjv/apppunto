@@ -63,14 +63,13 @@ class serviceController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
     
-    def update_file_image(self,file_image):
+    def update_file_image(self,id_Service,file_image):
         _message = None
         _status = None
         _data= None
-        id_service = 5
         try:
             _model = serviceModel()
-            _data = _model.update_file_image(id_service,file_image)
+            _data = _model.update_file_image(id_Service,file_image)
             _status = self.OK
             _message = self.messageOK
         except(Exception) as e:
@@ -78,3 +77,45 @@ class serviceController(responseController):
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+    
+    def update_service(self,entity,status):
+        try:
+            _model = serviceModel()
+            entity = _model.update_service(entity,status)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return entity
+    
+    def get_sub_services_wa(self,id_service):
+        _data= None
+        try:
+            _serviceModel = serviceModel()
+            _data = _serviceModel.get_sub_services(id_service)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data
+    
+    def get_sub_service_by_id_wa(self,index):
+        _entity= None
+        try:
+            _model = serviceModel()
+            _entity = _model.get_sub_services_by_id(index)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _entity
+    
+    def add_sub_service(self,entity,id_service,status):
+        try:
+            _model = serviceModel()
+            _entity = _model.add_sub_service(entity,id_service,status)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _entity
+
+    def update_sub_service(self,entity,id_service,status):
+        try:
+            _model = serviceModel()
+            _entity = _model.update_sub_service(entity,id_service,status)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _entity

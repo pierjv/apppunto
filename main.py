@@ -197,7 +197,7 @@ def wa_services_post():
         if request.files:
             image = request.files["idFileImage"]
             path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
-            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename)) 
+            image.save(path_image) 
             with open(path_image,"rb") as f:
                 _file_image=f.read()
                 _entity.file_image = _file_image
@@ -208,7 +208,7 @@ def wa_services_post():
             image = request.files["idFileImage"]
             if image.filename:
                 path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
-                image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename)) 
+                image.save(path_image) 
                 with open(path_image,"rb") as f:
                     _file_image=f.read()
                 serviceController().update_file_image(_entity.id,_file_image)

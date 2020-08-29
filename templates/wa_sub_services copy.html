@@ -34,23 +34,29 @@
   ============================-->
   <header id="header" class="fixed-top">
     <div class="container">
-
-      <div class="logo float-left">
-        <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <h1 class="text-light"><a href="#header"><span>NewBiz</span></a></h1> -->
-        <a href="#intro" class="scrollto"><img src="{{ url_for('static', filename='web/img/logo_appunto.png') }}" alt="" class="img-fluid"></a>
-      </div>
-
-      <nav class="main-nav float-right d-none d-lg-block">
-        <ul>
-          <li class="active"><a href="{{ url_for('wa_services') }}">Servicios</a></li>
-          <li><a href="{{ url_for('wa_sub_services') }}" href="#about">Sub Servicios</a></li>
-          <li><a href="{{ url_for('wa_dashboard') }}" >Dashboard 1</a></li>
-          <li><a href="{{ url_for('wa_dashboard') }}" >Dashboard 2</a></li>
-        </ul>
-      </nav><!-- .main-nav -->
-      
-    </div>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('wa_list_services') }}">Appunto</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('wa_list_sub_services') }}">Sub Servicios</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Salir</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+  </div>
   </header><!-- #header -->
 
   <!--==========================

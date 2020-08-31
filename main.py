@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template,redirect
+from flask import Flask, jsonify, request, render_template,redirect,session
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
@@ -24,7 +24,9 @@ from src.controllers.uploadController import uploadController
 import hashlib
 from src.controllers.codeController import codeController
 
+
 app = Flask(__name__)
+app.secret_key = "any random string"
 app.config['JWT_SECRET_KEY'] = 'cambiar_no_olvidar' 
 #app.config["IMAGE_UPLOADS"] = "./static/"
 app.config["IMAGE_UPLOADS"] = "/tmp"
@@ -173,90 +175,159 @@ def sha():
 ################################### WEB ADMIN ###################################################
 #################################################################################################
 
+@app.route('/wa_login', methods=['GET'])
+def wa_login():
+    _error = request.args.get('error')
+    if _error is None:
+        _error = 0
+    print(_error)
+    return render_template('wa_login.html',error = _error)
+
+@app.route('/wa_login', methods=['POST'])
+def wa_login_post():
+    _full_name = request.form.get("idTxtUsusario")
+    _password = request.form.get("idTxtPassword")
+    _entity = userEntity()
+    _entity = loginController().login_user_web(_full_name,_password)
+    if _entity is None:
+        return redirect('/wa_login?error=1')
+    else:
+        session['full_name'] = _full_name
+        return redirect('/wa_list_services')
+
+@app.route('/wa_change_password', methods=['GET'])
+def wa_change_password():
+    _status = request.args.get('status')
+    if _status is None:
+        _status = 0
+    return render_template('wa_change_password.html',status = _status)
+
+@app.route('/wa_change_password', methods=['POST'])
+def wa_change_password_post():
+    _full_name = request.form.get("idTxtUsusario")
+    _password = request.form.get("idTxtPassword")
+    _new_password  = request.form.get("idTxtNewPassword")
+    _confirm_password = request.form.get("idTxtConfirmNewPassword")
+    _status = 0
+    _entity = userEntity()
+    _entity = loginController().login_user_web(_full_name,_password)
+    if _entity is None:
+        _status = 1
+    else:
+        if _new_password != _confirm_password:
+            _status = 2
+        else:
+            _entity = loginController().change_password_user_web(_full_name,_new_password)
+    return redirect('/wa_change_password?status='+str(_status))
+
+@app.route('/wa_logout')
+def wa_logout():
+   session.pop('full_name', None)
+   return redirect('/wa_login')
+
 @app.route('/webadmin', methods=['GET'])
 def web_admin():
     return render_template('index.html')
 
 @app.route('/wa_services', methods=['GET'])
 def wa_services():
-    _id_service = request.args.get('index')
-    _entity = None
-    if _id_service is not None:
-        _entity = serviceController().get_service_by_id_wa(_id_service)
-
-    return render_template('wa_services.html', service = _entity)
+    if  'full_name' in session:
+        _id_service = request.args.get('index')
+        _entity = None
+        if _id_service is not None:
+            _entity = serviceController().get_service_by_id_wa(_id_service)
+        return render_template('wa_services.html', service = _entity)
+    else:
+        return redirect('/wa_login')
 
 @app.route('/wa_services', methods=['POST'])
 def wa_services_post():
-    _entity = serviceEntity()
-    _entity.full_name = request.form["idTxtFullName"]
-    _entity.color = request.form["idtxtColor"]
-    _entity.id = request.form.get("idtxtService")
-    _status = request.form.get("idSlEstado")
-    if _entity.id is None:
-        if request.files:
-            image = request.files["idFileImage"]
-            path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
-            image.save(path_image) 
-            with open(path_image,"rb") as f:
-                _file_image=f.read()
-                _entity.file_image = _file_image
-        serviceController().add_service(_entity)
-    else:
-        serviceController().update_service(_entity,_status)
-        if request.files and request.files.get("idFileImage") is not None :
-            image = request.files["idFileImage"]
-            if image.filename:
+    if  'full_name' in session:
+        _entity = serviceEntity()
+        _entity.full_name = request.form["idTxtFullName"]
+        _entity.color = request.form["idtxtColor"]
+        _entity.id = request.form.get("idtxtService")
+        _status = request.form.get("idSlEstado")
+        if _entity.id is None:
+            if request.files:
+                image = request.files["idFileImage"]
                 path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
                 image.save(path_image) 
                 with open(path_image,"rb") as f:
                     _file_image=f.read()
-                serviceController().update_file_image(_entity.id,_file_image)
-    return redirect('/wa_list_services')
+                    _entity.file_image = _file_image
+            serviceController().add_service(_entity)
+        else:
+            serviceController().update_service(_entity,_status)
+            if request.files and request.files.get("idFileImage") is not None :
+                image = request.files["idFileImage"]
+                if image.filename:
+                    path_image = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
+                    image.save(path_image) 
+                    with open(path_image,"rb") as f:
+                        _file_image=f.read()
+                    serviceController().update_file_image(_entity.id,_file_image)
+        return redirect('/wa_list_services')
+    else:
+        return redirect('/wa_login')
 
 @app.route('/wa_list_services', methods=['GET'])
 def wa_list_services():
-    _data_services = serviceController().get_services_wa()
-    return render_template('wa_list_services.html',data_services = _data_services)
+    if  'full_name' in session:
+        _data_services = serviceController().get_services_wa()
+        return render_template('wa_list_services.html',data_services = _data_services)
+    else:
+        return redirect('/wa_login')
 
 @app.route('/wa_list_sub_services', methods=['GET'])
 def wa_list_sub_services():
-    _id_service = request.args.get("iSlServicio")
-    if _id_service is None:
-        _id_service = 0
-    print(_id_service)
-    _data_sub_services = serviceController().get_sub_services_wa(_id_service)
-    _data_services = serviceController().get_services_wa()
-    return render_template('wa_list_sub_services.html',data_sub_services = _data_sub_services, data_services= _data_services)
+    if  'full_name' in session:
+        _id_service = request.args.get("iSlServicio")
+        if _id_service is None:
+            _id_service = 0
+        print(_id_service)
+        _data_sub_services = serviceController().get_sub_services_wa(_id_service)
+        _data_services = serviceController().get_services_wa()
+        return render_template('wa_list_sub_services.html',data_sub_services = _data_sub_services, data_services= _data_services)
+    else:
+        return redirect('/wa_login')
 
 @app.route('/wa_sub_services', methods=['GET'])
 def wa_sub_services():
-    _id_sub_customer = request.args.get('index')
-    _entity = None
-    _data_services = serviceController().get_services_wa()
-    if _id_sub_customer is not None:
-        print(_id_sub_customer)
-        _entity = serviceController().get_sub_service_by_id_wa(_id_sub_customer)
-    return render_template('wa_sub_services.html', sub_service = _entity, data_services= _data_services)
+    if  'full_name' in session:
+        _id_sub_customer = request.args.get('index')
+        _entity = None
+        _data_services = serviceController().get_services_wa()
+        if _id_sub_customer is not None:
+            print(_id_sub_customer)
+            _entity = serviceController().get_sub_service_by_id_wa(_id_sub_customer)
+        return render_template('wa_sub_services.html', sub_service = _entity, data_services= _data_services)
+    else:
+        return redirect('/wa_login')
 
 @app.route('/wa_sub_services', methods=['POST'])
 def wa_sub_services_post():
-    _entity = subServiceEntity()
-    _entity.id = request.form.get("idtxtSubService")
-    _id_service = request.form.get("iSlServicio")
-    _entity.full_name = request.form.get("idTxtFullName")
-    _entity.in_filter = request.form.get("idSlEnFiltro")
-    _status = request.form.get("idSlEstado")
-    if _entity.id is None:
-        serviceController().add_sub_service(_entity,_id_service,_status)
+    if  'full_name' in session:
+        _entity = subServiceEntity()
+        _entity.id = request.form.get("idtxtSubService")
+        _id_service = request.form.get("iSlServicio")
+        _entity.full_name = request.form.get("idTxtFullName")
+        _entity.in_filter = request.form.get("idSlEnFiltro")
+        _status = request.form.get("idSlEstado")
+        if _entity.id is None:
+            serviceController().add_sub_service(_entity,_id_service,_status)
+        else:
+            serviceController().update_sub_service(_entity,_id_service,_status)
+        return redirect('/wa_list_sub_services')
     else:
-        serviceController().update_sub_service(_entity,_id_service,_status)
-    return redirect('/wa_list_sub_services')
-
+        return redirect('/wa_login')
 
 @app.route('/wa_dashboard', methods=['GET'])
 def wa_dashboard():
-    print(request.args.get('index'))
+    """if  'full_name' in session:
+        return render_template('wa_dashboard.html')
+    else:
+        return redirect('/wa_login')"""
     return render_template('wa_dashboard.html')
 
 # Route to upload image

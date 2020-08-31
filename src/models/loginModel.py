@@ -110,7 +110,7 @@ class loginModel(dbModel):
                 _entity.mail  = _rows[0][1] 
                 _entity.full_name  = _rows[0][2]
                 _entity.cellphone  = _rows[0][3]
-                _entity.photo  = self.url_server + _rows[0][4]
+                _entity.photo  =  _rows[0][4]
 
             _cur.close()
         except(Exception) as e:
@@ -258,3 +258,60 @@ class loginModel(dbModel):
                 print("Se cerro la conexion")
         return _loadEntity
     
+    def login_user_web(self,full_name,password):
+        _db = None
+        _status = 1
+        _entity = None
+        try:
+            _full_name = full_name
+            _password = password
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT u.id, 
+                        u.full_name
+                    FROM   main.user_web u 
+                    WHERE  u.status = %s
+                        AND u.full_name = %s 
+                        AND u."password" = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_status,_full_name,_password,))
+            _rows = _cur.fetchall()
+
+            if len(_rows) >= 1:
+                _entity = userEntity()
+                _entity.id  = _rows[0][0]
+                _entity.full_name  = _rows[0][1] 
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _entity
+    
+    def change_password_user_web(self,full_name,password):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.user_web SET "password" = %s WHERE full_name = %s AND status = %s;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (password,full_name,_status,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return full_name

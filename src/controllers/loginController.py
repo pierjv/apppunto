@@ -119,3 +119,21 @@ class loginController(responseController):
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+    
+    def login_user_web(self,full_name,password):
+        _entity = None
+        try:
+            _model = loginModel()
+            _entity = _model.login_user_web(full_name,password)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _entity
+    
+    def change_password_user_web(self,full_name,password):
+        _full_name = None
+        try:
+            _model = loginModel()
+            _full_name = _model.change_password_user_web(full_name,password)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _full_name

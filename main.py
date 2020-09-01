@@ -5,7 +5,7 @@ from flask_jwt_extended import (
 )
 import timedelta
 from src.models.userModel import userModel
-from src.entities.userEntity import userEntity
+from src.entities.userEntity import userEntity,dashboardEntity
 from src.controllers.userController import userController
 from src.cn.data_base_connection import Database
 from src.controllers.userStoreController import userStoreController
@@ -328,7 +328,10 @@ def wa_dashboard():
         return render_template('wa_dashboard.html')
     else:
         return redirect('/wa_login')"""
-    return render_template('wa_dashboard.html')
+    _dashboardEntity = dashboardEntity()
+    _dashboardEntity = userController().get_dashboard_general()
+    _dashboardEntity.classToFormat()
+    return render_template('wa_dashboard.html',dashboardEntity = _dashboardEntity )
 
 # Route to upload image
 @app.route("/upload-image", methods=["GET", "POST"])

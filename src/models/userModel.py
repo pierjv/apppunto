@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity
+from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
 
@@ -422,3 +422,69 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _userDetailEntity
+    
+    def get_dashboard_general(self):
+        _db = None
+        _entity = None
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT (SELECT Count(*) AS users 
+                        FROM   main.user_p up 
+                        WHERE  up.status = 1) AS users, 
+                    (SELECT Count(*) AS customers 
+                        FROM   main.customer c 
+                        WHERE  c.status = 1)  AS customers, 
+                    s.total_amount, 
+                    s.sales, 
+                    s.average_amount :: FLOAT4, 
+                    h.max_hour_availability, 
+                    a.sales_per_day, 
+                    a.amount_per_day 
+                FROM   (SELECT Sum(s.total_amount) AS total_amount, 
+                            Count(s.id)         AS sales, 
+                            Avg(s.total_amount) AS average_amount 
+                        FROM   main.sale s 
+                        WHERE  s.status = 1) s, 
+                    (SELECT s.hour_availability AS max_hour_availability, 
+                            Count(s.id)         AS sales 
+                        FROM   main.sale s 
+                        WHERE  s.status  = 1
+                        GROUP  BY 1 
+                        ORDER  BY 2 DESC 
+                        LIMIT  1) h, 
+                    (SELECT Avg(a.sales)                  AS sales_per_day, 
+                            Avg(a.total_amount) :: FLOAT4 AS amount_per_day 
+                        FROM   (SELECT s.date_availability, 
+                                    Count(s.id)         AS sales, 
+                                    Sum(s.total_amount) AS total_amount 
+                                FROM   main.sale s 
+                                WHERE  s.status = 1 
+                                GROUP  BY 1) AS a) AS a;"""   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql)
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _entity= dashboardEntity()
+                _entity.users  = _rows[0][0]
+                _entity.customers  = _rows[0][1] 
+                _entity.total_amount  = _rows[0][2]
+                _entity.sales  = _rows[0][3]
+                _entity.average_amount  = _rows[0][4]
+                _entity.max_hour_availability  = _rows[0][5]
+                _entity.sales_per_day  = _rows[0][6]
+                _entity.amount_per_day  = _rows[0][7]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _entity

@@ -95,3 +95,26 @@ class userDetailEntity:
         
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+    
+class dashboardEntity:
+
+    def __init__(self,users=None,customers=None,total_amount=None,sales=None,average_amount=None,
+                max_hour_availability=None,sales_per_day=None,amount_per_day= None):
+        self.users = users
+        self.customers = customers
+        self.total_amount = total_amount
+        self.sales = sales
+        self.average_amount = average_amount
+        self.max_hour_availability = max_hour_availability
+        self.sales_per_day = sales_per_day
+        self.amount_per_day = amount_per_day
+    
+    def classToFormat(self):
+        self.users = "{:d}".format(self.users)
+        self.customers = "{:d}".format(self.customers)
+        self.total_amount = "S/. "+"{:8.1f}".format(self.total_amount)
+        self.sales = "{:d}".format(self.sales)
+        self.max_hour_availability = str(self.max_hour_availability) + ":00 h"
+        self.average_amount = "S/. "+"{:8.1f}".format(self.average_amount)
+        self.sales_per_day = "{:8.1f}".format(self.sales_per_day)
+        self.amount_per_day = "S/. "+"{:8.1f}".format(self.amount_per_day)

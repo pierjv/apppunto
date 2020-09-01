@@ -110,3 +110,12 @@ class userController(responseController):
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+
+    def get_dashboard_general(self):
+        _entity= None
+        try:
+            _userModel = userModel()
+            _entity = _userModel.get_dashboard_general()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _entity

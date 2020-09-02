@@ -119,3 +119,12 @@ class userController(responseController):
         except(Exception) as e:
             print('error: '+ str(e))
         return _entity
+    
+    def get_dashboard_service(self):
+        _data= None
+        try:
+            _userModel = userModel()
+            _data = _userModel.get_dashboard_service()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data

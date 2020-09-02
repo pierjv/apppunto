@@ -324,15 +324,16 @@ def wa_sub_services_post():
 
 @app.route('/wa_dashboard', methods=['GET'])
 def wa_dashboard():
-    """if  'full_name' in session:
-        return render_template('wa_dashboard.html')
+    if  'full_name' in session:
+        _dashboardEntity = dashboardEntity()
+        _data_dashboard_services = []
+        _dashboardEntity = userController().get_dashboard_general()
+        _dashboardEntity.classToFormat()
+        _data_dashboard_services = userController().get_dashboard_service()
+        return render_template('wa_dashboard.html',dashboardEntity = _dashboardEntity,data_dashboard_services = _data_dashboard_services )
     else:
-        return redirect('/wa_login')"""
-    _dashboardEntity = dashboardEntity()
-    _dashboardEntity = userController().get_dashboard_general()
-    _dashboardEntity.classToFormat()
-    return render_template('wa_dashboard.html',dashboardEntity = _dashboardEntity )
-
+        return redirect('/wa_login')
+        
 # Route to upload image
 @app.route("/upload-image", methods=["GET", "POST"])
 def upload_image():

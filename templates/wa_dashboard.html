@@ -109,163 +109,87 @@
         </div>
         <h4>Servicios</h4>
         <br>
-        <!-- INICIO -->
-        <h4>Spa</h4>
-        <div class="row_grilla">
-        <table class="table">
-            <thead class="thead-dark">
+        {% for dashboard_service in data_dashboard_services %}
+          <!-- INICIO -->
+          <h4>{{dashboard_service.service}}</h4>
+          <div class="row_grilla">
+          <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Usuarios</th>
+                  <th scope="col">Monto</th>
+                  <th scope="col">Pedidos</th>
+                  <th scope="col">Ticket promedio</th>
+                  <th scope="col">Hora con más reservas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{dashboard_service.users}}</td>
+                  <td>{{dashboard_service.amount}}</td>
+                  <td>{{dashboard_service.sales}}</td>
+                  <td>{{dashboard_service.average_sale}}</td>
+                  <td>{{dashboard_service.max_hour_availability}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <strong>Promedio de reservas por día</strong>
+          <div class="row_grilla">
+          <table class="table">
+            <thead class="thead-light">
               <tr>
-                <th scope="col">Usuarios</th>
-                <th scope="col">Monto</th>
-                <th scope="col">Pedidos</th>
-                <th scope="col">Ticket Prom.</th>
-                <th scope="col">Hora más reservas</th>
+                <th scope="col">Lunes</th>
+                <th scope="col">Martes</th>
+                <th scope="col">Miércoles</th>
+                <th scope="col">Jueves</th>
+                <th scope="col">Viernes</th>
+                <th scope="col">Sábado</th>
+                <th scope="col">Domingo</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>1,000</td>
-                <td>2,000</td>
-                <td>1,000</td>
-                <td>2,000</td>
-                <td>1,000</td>
+                <td>{{dashboard_service.sales_q_1}}</td>
+                <td>{{dashboard_service.sales_q_2}}</td>
+                <td>{{dashboard_service.sales_q_3}}</td>
+                <td>{{dashboard_service.sales_q_4}}</td>
+                <td>{{dashboard_service.sales_q_5}}</td>
+                <td>{{dashboard_service.sales_q_6}}</td>
+                <td>{{dashboard_service.sales_q_7}}</td>
               </tr>
             </tbody>
           </table>
-        </div>
-        <strong>Promedio de reservas por día</strong>
-        <div class="row_grilla">
-        <table class="table">
-          <thead class="thead-light">
-            <tr>
-              <th scope="col">Lunes</th>
-              <th scope="col">Martes</th>
-              <th scope="col">Miércoles</th>
-              <th scope="col">Jueves</th>
-              <th scope="col">Viernes</th>
-              <th scope="col">Sábado</th>
-              <th scope="col">Domingo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>12</td>
-              <td>12</td>
-              <td>13</td>
-              <td>14</td>
-              <td>14</td>
-              <td>13</td>
-              <td>20</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <strong>Promedio de ingreso por día</strong>
-        <div class="row_grilla">
-        <table class="table">
-          <thead class="thead-light">
-            <tr>
-              <th scope="col">Lunes</th>
-              <th scope="col">Martes</th>
-              <th scope="col">Miércoles</th>
-              <th scope="col">Jueves</th>
-              <th scope="col">Viernes</th>
-              <th scope="col">Sábado</th>
-              <th scope="col">Domingo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1,200</td>
-              <td>1,100</td>
-              <td>1,300</td>
-              <td>1,400</td>
-              <td>1,500</td>
-              <td>1,100</td>
-              <td>21,000</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
+          </div>
+          <strong>Promedio de ingreso por día</strong>
+          <div class="row_grilla">
+          <table class="table">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Lunes</th>
+                <th scope="col">Martes</th>
+                <th scope="col">Miércoles</th>
+                <th scope="col">Jueves</th>
+                <th scope="col">Viernes</th>
+                <th scope="col">Sábado</th>
+                <th scope="col">Domingo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{dashboard_service.sales_a_1}}</td>
+                <td>{{dashboard_service.sales_a_2}}</td>
+                <td>{{dashboard_service.sales_a_3}}</td>
+                <td>{{dashboard_service.sales_a_4}}</td>
+                <td>{{dashboard_service.sales_a_5}}</td>
+                <td>{{dashboard_service.sales_a_6}}</td>
+                <td>{{dashboard_service.sales_a_7}}</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        {% endfor %}
         <!-- FIN -->
-        <h4>Tattoo</h4>
-        <div class="row_grilla">
-        <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Usuarios</th>
-                <th scope="col">Monto</th>
-                <th scope="col">Pedidos</th>
-                <th scope="col">Ticket Prom.</th>
-                <th scope="col">Hora más reservas</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1,000</td>
-                <td>2,000</td>
-                <td>1,000</td>
-                <td>2,000</td>
-                <td>1,000</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <strong>Promedio de reservas por día</strong>
-        <div class="row_grilla">
-        <table class="table">
-          <thead class="thead-light">
-            <tr>
-              <th scope="col">Lunes</th>
-              <th scope="col">Martes</th>
-              <th scope="col">Miércoles</th>
-              <th scope="col">Jueves</th>
-              <th scope="col">Viernes</th>
-              <th scope="col">Sábado</th>
-              <th scope="col">Domingo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>12</td>
-              <td>12</td>
-              <td>13</td>
-              <td>14</td>
-              <td>14</td>
-              <td>13</td>
-              <td>20</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <strong>Promedio de ingreso por día</strong>
-        <div class="row_grilla">
-        <table class="table">
-          <thead class="thead-light">
-            <tr>
-              <th scope="col">Lunes</th>
-              <th scope="col">Martes</th>
-              <th scope="col">Miércoles</th>
-              <th scope="col">Jueves</th>
-              <th scope="col">Viernes</th>
-              <th scope="col">Sábado</th>
-              <th scope="col">Domingo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1,200</td>
-              <td>1,100</td>
-              <td>1,300</td>
-              <td>1,400</td>
-              <td>1,500</td>
-              <td>1,100</td>
-              <td>21,000</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <!-- OTRO FIN -->
       </div>
 
     </section>

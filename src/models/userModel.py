@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity
+from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity ,dashboardServiceEntity
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
 
@@ -488,3 +488,187 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _entity
+    
+    def get_dashboard_service(self):
+        _db = None
+        _entity = None
+        _data_dashboard_services = []
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """DELETE FROM main.service_dashboard; 
+
+                    INSERT INTO main.service_dashboard 
+                                (id_service, 
+                                service) 
+                    SELECT id, 
+                        full_name 
+                    FROM   main.service s 
+                    ORDER  BY 1; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    users = b.users, 
+                        sales = b.sales, 
+                        amount = b.amount, 
+                        average_sale = b.average_sale 
+                    FROM   (SELECT ss.id_service, 
+                                Count(ts.id)              AS sales, 
+                                Sum(ts.amount)            AS amount, 
+                                Count(DISTINCT s.id_user) AS users, 
+                                Avg(ts.amount)            AS average_sale 
+                            FROM   main.type_sale ts 
+                                INNER JOIN main.sub_service ss 
+                                        ON ts.id_sub_service = ss.id 
+                                INNER JOIN main.sale s 
+                                        ON ts.id_sale = s.id 
+                            GROUP  BY 1) b 
+                    WHERE  a.id_service = b.id_service; 
+
+
+                    UPDATE main.service_dashboard a 
+                    SET    max_hour_availability = d.hour_availability 
+                    FROM   (SELECT b.hour_availability, 
+                                b.id_service, 
+                                b.quantity 
+                            FROM   (SELECT s.hour_availability, 
+                                        ss.id_service, 
+                                        Count(s.id) AS quantity 
+                                    FROM   main.sale s 
+                                        INNER JOIN main.type_sale ts 
+                                                ON s.id = ts.id_sale 
+                                        INNER JOIN main.sub_service ss 
+                                                ON ss.id = ts.id_sub_service 
+                                    WHERE  s.status = 1 
+                                    GROUP  BY 1, 
+                                            2) b 
+                                INNER JOIN (SELECT a.id_service, 
+                                                    Max(a.quantity) AS quantity 
+                                            FROM   (SELECT s.hour_availability, 
+                                                            ss.id_service, 
+                                                            Count(s.id) AS quantity 
+                                                    FROM   main.sale s 
+                                                            INNER JOIN main.type_sale ts 
+                                                                    ON s.id = ts.id_sale 
+                                                            INNER JOIN main.sub_service ss 
+                                                                    ON ss.id = ts.id_sub_service 
+                                                    WHERE  s.status = 1 
+                                                    GROUP  BY 1, 
+                                                                2) a 
+                                            GROUP  BY 1) c 
+                                        ON b.id_service = c.id_service 
+                                            AND b.quantity = c.quantity) d 
+                    WHERE  a.id_service = d.id_service; 
+                   
+                    DELETE FROM main.service_dashboard_aux; 
+
+                    INSERT INTO main.service_dashboard_aux 
+                                (number_day, 
+                                id_service, 
+                                average_sales, 
+                                average_amount) 
+                    SELECT Extract(dow FROM date_availability)                AS number_day, 
+                        ss.id_service, 
+                        Count(ts.id) / Count(DISTINCT s.date_availability) AS average_sales, 
+                        Avg(ts.amount)                                     AS average_amount 
+                    FROM   main.sale s 
+                        INNER JOIN main.type_sale ts 
+                                ON s.id = ts.id_sale 
+                        INNER JOIN main.sub_service ss 
+                                ON ss.id = ts.id_sub_service 
+                    GROUP  BY 1, 
+                            2; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    sales_q_1 = b.average_sales, 
+                        sales_a_1 = b.average_amount 
+                    FROM   main.service_dashboard_aux b 
+                    WHERE  a.id_service = b.id_service 
+                        AND b.number_day = 1; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    sales_q_2 = b.average_sales, 
+                        sales_a_2 = b.average_amount 
+                    FROM   main.service_dashboard_aux b 
+                    WHERE  a.id_service = b.id_service 
+                        AND b.number_day = 2; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    sales_q_3 = b.average_sales, 
+                        sales_a_3 = b.average_amount 
+                    FROM   main.service_dashboard_aux b 
+                    WHERE  a.id_service = b.id_service 
+                        AND b.number_day = 3; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    sales_q_4 = b.average_sales, 
+                        sales_a_4 = b.average_amount 
+                    FROM   main.service_dashboard_aux b 
+                    WHERE  a.id_service = b.id_service 
+                        AND b.number_day = 4; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    sales_q_5 = b.average_sales, 
+                        sales_a_5 = b.average_amount 
+                    FROM   main.service_dashboard_aux b 
+                    WHERE  a.id_service = b.id_service 
+                        AND b.number_day = 5; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    sales_q_6 = b.average_sales, 
+                        sales_a_6 = b.average_amount 
+                    FROM   main.service_dashboard_aux b 
+                    WHERE  a.id_service = b.id_service 
+                        AND b.number_day = 6; 
+
+                    UPDATE main.service_dashboard a 
+                    SET    sales_q_7 = b.average_sales, 
+                        sales_a_7 = b.average_amount 
+                    FROM   main.service_dashboard_aux b 
+                    WHERE  a.id_service = b.id_service 
+                        AND b.number_day = 0; 
+
+                    commit;
+                    select * from main.service_dashboard sd order by 1;"""   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql)
+            _rows = _cur.fetchall()
+
+            for row in _rows:
+                _entity= dashboardServiceEntity()
+                _entity.id_service  = row[0]
+                _entity.service  = row[1] 
+                _entity.users  = row[2]
+                _entity.amount  = row[3]
+                _entity.sales  = row[4]
+                _entity.average_sale  = row[5]
+                _entity.max_hour_availability  = row[6]
+                _entity.sales_q_1  = row[7]
+                _entity.sales_q_2  = row[8]
+                _entity.sales_q_3  = row[9]
+                _entity.sales_q_4  = row[10] 
+                _entity.sales_q_5  = row[11]
+                _entity.sales_q_6  = row[12]
+                _entity.sales_q_7  = row[13]
+                _entity.sales_a_1  = row[14]
+                _entity.sales_a_2  = row[15]
+                _entity.sales_a_3  = row[16]
+                _entity.sales_a_4  = row[17]
+                _entity.sales_a_5  = row[18]
+                _entity.sales_a_6  = row[19]
+                _entity.sales_a_7  = row[20]
+                _entity.valuesToFormat()
+                _entity.classToFormat()
+                _data_dashboard_services.append(_entity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data_dashboard_services

@@ -118,3 +118,82 @@ class dashboardEntity:
         self.average_amount = "S/. "+"{:8.1f}".format(self.average_amount)
         self.sales_per_day = "{:8.1f}".format(self.sales_per_day)
         self.amount_per_day = "S/. "+"{:8.1f}".format(self.amount_per_day)
+
+class dashboardServiceEntity:
+
+    def __init__(self,id_service=None,service=None,users=None,amount=None,sales=None,
+                average_sale=None,max_hour_availability=None,sales_q_1= None,sales_q_2 = None,
+                sales_q_3=None,sales_q_4=None,sales_q_5= None,sales_q_6 = None,sales_q_7 = None,
+                sales_a_1=None,sales_a_2=None,sales_a_3= None,sales_a_4 = None,sales_a_5 = None,
+                sales_a_6=None,sales_a_7=None):
+        self.id_service = id_service
+        self.service = service
+        self.users = users
+        self.amount = amount
+        self.sales = sales
+        self.average_sale = average_sale
+        self.max_hour_availability = max_hour_availability
+        self.sales_q_1 = sales_q_1
+        self.sales_q_2 = sales_q_2
+        self.sales_q_3 = sales_q_3
+        self.sales_q_4 = sales_q_4
+        self.sales_q_5 = sales_q_5
+        self.sales_q_6 = sales_q_6
+        self.sales_q_7 = sales_q_7
+        self.sales_a_1 = sales_a_1
+        self.sales_a_2 = sales_a_2
+        self.sales_a_3 = sales_a_3
+        self.sales_a_4 = sales_a_4
+        self.sales_a_5 = sales_a_5
+        self.sales_a_6 = sales_a_6
+        self.sales_a_7 = sales_a_7
+
+    def valueToCero(self,value):
+        if(value is None):
+            value = 0
+        return value
+    
+    def valuesToFormat(self):
+        self.id_service = self.valueToCero(self.id_service)
+        self.service = self.valueToCero(self.service)
+        self.users = self.valueToCero(self.users)
+        self.amount = self.valueToCero(self.amount)
+        self.sales = self.valueToCero(self.sales)
+        self.average_sale = self.valueToCero(self.average_sale)
+        self.max_hour_availability = self.valueToCero(self.max_hour_availability)
+        self.sales_q_1 = self.valueToCero(self.sales_q_1)
+        self.sales_q_2 = self.valueToCero(self.sales_q_2)
+        self.sales_q_3 = self.valueToCero(self.sales_q_3)
+        self.sales_q_4 = self.valueToCero(self.sales_q_4)
+        self.sales_q_5 = self.valueToCero(self.sales_q_5)
+        self.sales_q_6 = self.valueToCero(self.sales_q_6)
+        self.sales_q_7 = self.valueToCero(self.sales_q_7)
+        self.sales_a_1 = self.valueToCero(self.sales_a_1)
+        self.sales_a_2 = self.valueToCero(self.sales_a_2)
+        self.sales_a_3 = self.valueToCero(self.sales_a_3)
+        self.sales_a_4 = self.valueToCero(self.sales_a_4)
+        self.sales_a_5 = self.valueToCero(self.sales_a_5)
+        self.sales_a_6 = self.valueToCero(self.sales_a_6)
+        self.sales_a_7 = self.valueToCero(self.sales_a_7)
+
+    def classToFormat(self):
+        self.users = "{:d}".format(self.users)
+        self.amount = "S/. "+"{:8.1f}".format(self.amount)
+        self.sales = "{:d}".format(self.sales)
+        self.average_sale = "S/. "+"{:8.1f}".format(self.average_sale)
+        self.max_hour_availability = str(self.max_hour_availability) + ":00 h"
+        self.sales_q_1 = "{:8.1f}".format(self.sales_q_1)
+        self.sales_q_2 = "{:8.1f}".format(self.sales_q_2)
+        self.sales_q_3 = "{:8.1f}".format(self.sales_q_3)
+        self.sales_q_4 = "{:8.1f}".format(self.sales_q_4)
+        self.sales_q_5 = "{:8.1f}".format(self.sales_q_5)
+        self.sales_q_6 = "{:8.1f}".format(self.sales_q_6)
+        self.sales_q_7 = "{:8.1f}".format(self.sales_q_7)
+        self.sales_a_1 = "S/. "+"{:8.1f}".format(self.sales_a_1)
+        self.sales_a_2 = "S/. "+"{:8.1f}".format(self.sales_a_2)
+        self.sales_a_3 = "S/. "+"{:8.1f}".format(self.sales_a_3)
+        self.sales_a_4 = "S/. "+"{:8.1f}".format(self.sales_a_4)
+        self.sales_a_5 = "S/. "+"{:8.1f}".format(self.sales_a_5)
+        self.sales_a_6 = "S/. "+"{:8.1f}".format(self.sales_a_6)
+        self.sales_a_7 = "S/. "+"{:8.1f}".format(self.sales_a_7)
+    

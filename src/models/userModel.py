@@ -4,6 +4,7 @@ from src.models.dbModel import dbModel
 from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity ,dashboardServiceEntity
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
+from src.entities.userStoreEntity import userStoreEntity
 
 
 class userModel(dbModel):
@@ -82,12 +83,39 @@ class userModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """SELECT id, mail, social_name, full_name, id_type_document, document_number, type_user, photo, 
-                      cellphone, about FROM main.user_p WHERE status = 1;"""
+            _sql = """SELECT u.id, 
+                u.mail, 
+                u.social_name, 
+                u.full_name, 
+                u.id_type_document, 
+                u.document_number, 
+                u.type_user, 
+                u.photo, 
+                u.cellphone, 
+                u.about, 
+                us.id        AS id_user_store, 
+                us.full_name AS name_user_store, 
+                us.address, 
+                us.longitude, 
+                us.latitude, 
+                us.main, 
+                a.avg_rate
+            FROM   main.user_p u 
+                INNER JOIN main.user_store us 
+                        ON u.id = us.id_user
+                left JOIN (SELECT id_user, 
+                                    Avg(rate) :: float4 AS avg_rate 
+                            FROM   main.customer_rate 
+                            GROUP  BY 1) a 
+                        ON a.id_user = u.id  
+            WHERE  u.status = 1 
+                AND us.status = 1 
+            ORDER  BY 1; """
             _cur = _con_client.cursor()
             _cur.execute(_sql)
             _rows = _cur.fetchall()
-
+            
+            _id_user_old = None
             for row in _rows:
                 _userEntity= userEntity()
                 _userEntity.id  = row[0]
@@ -100,7 +128,27 @@ class userModel(dbModel):
                 _userEntity.photo  = row[7]
                 _userEntity.cellphone  = row[8]
                 _userEntity.about  = row[9]
-                _data_row.append(_userEntity)
+                _avg_rate =  row[16]
+                if _avg_rate is None:
+                    _avg_rate = 0
+                _userEntity.avg_rate = _avg_rate
+                _user_stores = []
+                if _id_user_old  != _userEntity.id :
+                    for se in _rows:
+                        if row[0] == se[0] and _userEntity is not None:
+                            _userStoreEntity = userStoreEntity()
+                            _userStoreEntity.id = se[10]
+                            _userStoreEntity.full_name = se[11]
+                            _userStoreEntity.address = se[12]
+                            _userStoreEntity.longitude = se[13]
+                            _userStoreEntity.latitude = se[14]
+                            _userStoreEntity.main = se[15]
+                            _userStoreEntity.id_user = _userEntity.id 
+                            _user_stores.append(_userStoreEntity)
+
+                    _userEntity.user_store = _user_stores
+                    _data_row.append(_userEntity)
+                    _id_user_old = _userEntity.id 
 
             _cur.close()
         except(Exception) as e:
@@ -207,40 +255,74 @@ class userModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
 
-            _sql = """SELECT up.id, 
-                        up.mail, 
-                        up.social_name, 
-                        up.full_name, 
-                        up.id_type_document, 
-                        up.document_number, 
-                        up.type_user, 
-                        up.photo, 
-                        up.status, 
-                        up.cellphone, 
-                        up.about
-                    FROM   main.user_p up 
-                        INNER JOIN main.user_service us 
-                                ON up.id = us.id_user 
-                    WHERE  up.status = %s 
-                        AND us.id_service = %s;"""   
+            _sql = """SELECT u.id, 
+                    u.mail, 
+                    u.social_name, 
+                    u.full_name, 
+                    u.id_type_document, 
+                    u.document_number, 
+                    u.type_user, 
+                    u.photo, 
+                    u.cellphone, 
+                    u.about, 
+                    us.id        AS id_user_store, 
+                    us.full_name AS name_user_store, 
+                    us.address, 
+                    us.longitude, 
+                    us.latitude, 
+                    us.main, 
+                    a.avg_rate 
+                FROM   main.user_p u 
+                    inner join main.user_store us 
+                            ON u.id = us.id_user 
+                    inner join main.user_service USE 
+                            ON u.id = USE.id_user 
+                    left join (SELECT id_user, 
+                                        Avg(rate) :: float4 AS avg_rate 
+                                FROM   main.customer_rate 
+                                GROUP  BY 1) a 
+                            ON a.id_user =  u.id 
+                    WHERE  u.status = %s and us.status = %s
+                        AND use.id_service = %s;"""   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_status,_id_service,))
+            _cur.execute(_sql,(_status,_status,_id_service,))
             _rows = _cur.fetchall()
 
+            _id_user_old = None
             for row in _rows:
-                _entity= userEntity()
-                _entity.id  = row[0]
-                _entity.mail  = row[1] 
-                _entity.social_name  = row[2]
-                _entity.full_name  = row[3]
-                _entity.id_type_document  = row[4]
-                _entity.document_number  = row[5]
-                _entity.type_user  = row[6]
-                _entity.photo  = row[7]
-                _entity.cellphone  = row[8]
-                _entity.about  = row[9]
-                _data_row.append(_entity)
+                _userEntity= userEntity()
+                _userEntity.id  = row[0]
+                _userEntity.mail  = row[1] 
+                _userEntity.social_name  = row[2]
+                _userEntity.full_name  = row[3]
+                _userEntity.id_type_document  = row[4]
+                _userEntity.document_number  = row[5]
+                _userEntity.type_user  = row[6]
+                _userEntity.photo  = row[7]
+                _userEntity.cellphone  = row[8]
+                _userEntity.about  = row[9]
+                _avg_rate =  row[16]
+                if _avg_rate is None:
+                    _avg_rate = 0
+                _userEntity.avg_rate = _avg_rate
+                _user_stores = []
+                if _id_user_old  != _userEntity.id :
+                    for se in _rows:
+                        if row[0] == se[0] and _userEntity is not None:
+                            _userStoreEntity = userStoreEntity()
+                            _userStoreEntity.id = se[10]
+                            _userStoreEntity.full_name = se[11]
+                            _userStoreEntity.address = se[12]
+                            _userStoreEntity.longitude = se[13]
+                            _userStoreEntity.latitude = se[14]
+                            _userStoreEntity.main = se[15]
+                            _userStoreEntity.id_user = _userEntity.id 
+                            _user_stores.append(_userStoreEntity)
+
+                    _userEntity.user_store = _user_stores
+                    _data_row.append(_userEntity)
+                    _id_user_old = _userEntity.id 
 
             _cur.close()
         except(Exception) as e:

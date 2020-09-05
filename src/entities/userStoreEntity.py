@@ -4,7 +4,7 @@ from collections import namedtuple
 class userStoreEntity:
 
     def __init__(self,id=0,mail=None,id_user=None,full_name=None,address=None,
-                longitude=None,latitude=None,main=None,status=None):
+                longitude=None,latitude=None,main=None):
         self.id = id
         self.id_user = id_user 
         self.full_name = full_name
@@ -12,7 +12,6 @@ class userStoreEntity:
         self.longitude = longitude
         self.latitude = latitude
         self.main = main
-        self.status	= status
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
@@ -28,6 +27,5 @@ class userStoreEntity:
         self.longitude = values.longitude
         self.latitude = values.latitude
         self.main = values.main
-        self.status	= None
 
         

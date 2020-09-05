@@ -88,7 +88,7 @@ def get_services_by_user(index):
     return serviceController().get_services_by_user(index)
 
 @app.route('/userservice/<int:index>', methods=['GET'])
-@jwt_required
+#@jwt_required
 def get_user_by_id_service(index):
     return userController().get_user_by_id_service(index)
 
@@ -118,7 +118,7 @@ def update_user_date_availability():
     return userDateAvailabilityController().update_user_date_availability(request)
 
 @app.route('/users', methods=['GET'])
-@jwt_required
+#@jwt_required
 def get_users():
     return userController().get_users()
 

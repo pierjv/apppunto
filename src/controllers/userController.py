@@ -7,61 +7,61 @@ class userController(responseController):
 
     def get_users(self):
         _message = None
-        _status = responseController().interruption
+        _status = self.interruption
         _data= None
         try:
             _userEntity = userEntity()
             _userModel = userModel()
             _data = _userModel.get_users()
-            _status = responseController().OK
-            _message = responseController().messageOK
+            _status = self.OK
+            _message = self.messageOK
         except(Exception) as e:
-            _status = responseController().interruption
-            _message = responseController().messageInterruption + str(e)
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
 
     def add_user(self,request):
         _message = None
-        _status = responseController().interruption
+        _status = self.interruption
         _entity= None
         try:
             _entity = userEntity()
             _model = userModel()
             _entity.requestToClass(request)
             if _model.validate_mail(_entity.mail):
-                _status = responseController().interruption
-                _message = responseController().duplicatedMail
+                _status = self.interruption
+                _message = self.duplicatedMail
             else:
                 _entity = _model.add_user(_entity)
-                _status = responseController().OK
-                _message = responseController().messageOK
+                _status = self.OK
+                _message = self.messageOK
         except(Exception) as e:
-            _status = responseController().interruption
-            _message = responseController().messageInterruption +str(e)
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_entity).toJSON()
 
     def delete_user(self,index):
         _message = None
-        _status = responseController().interruption
+        _status = self.interruption
         _userEntity= None
         try:
             _userModel = userModel()
             _userEntity = userEntity()
             _id = _userModel.delete_user(index)
             _userEntity.id = _id
-            _status = responseController().OK
-            _message = responseController().messageOK 
+            _status = self.OK
+            _message = self.messageOK 
         except(Exception) as e:
-            _status = responseController().interruption
-            _message = responseController().messageInterruption +str(e)
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
             print('error: '+ str(e))    
         return responseEntity(_status,_message,_userEntity).toJSON()
     
     def update_user(self,request,index):
         _message = ''
-        _status = responseController().interruption
+        _status = self.interruption
         _userEntity= None
         try:
             _userEntity = userEntity()
@@ -69,11 +69,11 @@ class userController(responseController):
             _userEntity.requestToClass(request)
             _userEntity.id = index
             _id = _userModel.update_user(_userEntity)
-            _status = responseController().OK
-            _message = responseController().messageOK
+            _status = self.OK
+            _message = self.messageOK
         except(Exception) as e:
-            _status = responseController().interruption
-            _message = responseController().messageInterruption +str(e)
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_userEntity).toJSON()
 

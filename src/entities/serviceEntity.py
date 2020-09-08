@@ -14,4 +14,18 @@ class serviceEntity:
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+
+class serviceUserEntity:
+    def __init__(self,id_user= None, id_service = None):
+        self.id_user = id_user
+        self.id_service = id_service
+    
+    def requestToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id_user = values.id_user
+        self.id_service = values.id_service
+
         

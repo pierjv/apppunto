@@ -87,6 +87,10 @@ def get_services():
 def get_services_by_user(index):
     return serviceController().get_services_by_user(index)
 
+@app.route('/subservices', methods=['POST'])
+def get_sub_services_by_id_service_and_id_user():
+    return serviceController().get_sub_services_by_id_service_and_id_user(request)
+
 @app.route('/userservice/<int:index>', methods=['GET'])
 #@jwt_required
 def get_user_by_id_service(index):
@@ -96,6 +100,14 @@ def get_user_by_id_service(index):
 @jwt_required
 def add_customer():
     return customerController().add_customer(request)
+
+@app.route('/customeraddress/<int:index>', methods=['GET'])
+def get_customer_address_by_id_customer(index):
+    return customerController().get_customer_address_by_id_customer(index)
+
+@app.route('/customercard/<int:index>', methods=['GET'])
+def get_customer_card_by_id_customer(index):
+    return customerController().get_customer_card_by_id_customer(index)
 
 @app.route('/userdetail/<int:index>', methods=['GET'])
 @jwt_required

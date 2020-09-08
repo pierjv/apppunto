@@ -1,6 +1,6 @@
 from src.models.userModel import userModel
 from src.models.serviceModel import serviceModel
-from src.entities.serviceEntity import serviceEntity
+from src.entities.serviceEntity import serviceEntity, serviceUserEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
 
@@ -119,3 +119,20 @@ class serviceController(responseController):
         except(Exception) as e:
             print('error: '+ str(e))
         return _entity
+
+    def get_sub_services_by_id_service_and_id_user(self,request):
+        _message = None
+        _status = None
+        _data= None
+        try:
+            _serviceModel = serviceModel()
+            _entity = serviceUserEntity()
+            _entity.requestToClass(request)
+            _data = _serviceModel.get_sub_services_by_id_service_and_id_user(_entity.id_service,_entity.id_user)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()

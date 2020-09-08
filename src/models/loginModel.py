@@ -94,7 +94,9 @@ class loginModel(dbModel):
                         mail, 
                         full_name, 
                         cellphone, 
-                        photo
+                        photo,
+                        id_code,
+                        referred_code
                     FROM   main.customer c 
                     WHERE  c.status = %s
                         AND c.mail = %s 
@@ -111,6 +113,8 @@ class loginModel(dbModel):
                 _entity.full_name  = _rows[0][2]
                 _entity.cellphone  = _rows[0][3]
                 _entity.photo  =  _rows[0][4]
+                _entity.id_code  =  _rows[0][5]
+                _entity.referred_code  =  _rows[0][6]
 
             _cur.close()
         except(Exception) as e:
@@ -167,6 +171,7 @@ class loginModel(dbModel):
                             _subServiceEntity.id = se[4]
                             _subServiceEntity.full_name = se[5]
                             _subServiceEntity.in_filter = se[6]
+                            _subServiceEntity.id_service = se[0]
                             _sub_services.append(_subServiceEntity)
 
                     _serviceEntity.sub_services = _sub_services

@@ -335,3 +335,43 @@ class serviceModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return entity
+   
+    def get_sub_services_by_id_service_and_id_user(self,id_service,id_user):
+        _db = None
+        _data = []
+        try:
+            _id_service = id_service
+            _id_user = id_user
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """SELECT ss.id, 
+                    ss.full_name, 
+                    uss.charge, 
+                    ss.id_service, 
+                    uss.id_user 
+                FROM   main.user_sub_service uss 
+                    INNER JOIN main.sub_service ss 
+                            ON uss.id_sub_service = ss.id 
+                WHERE  uss.id_service = %s 
+                    AND id_user = %s;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_service,_id_user,))
+            _rows = _cur.fetchall()
+            
+            for row in _rows:
+                _entity = subServiceEntity()
+                _entity.id  = row[0]
+                _entity.full_name  = row[1] 
+                _entity.charge  = row[2] 
+                _data.append(_entity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data

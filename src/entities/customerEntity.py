@@ -92,3 +92,21 @@ class customerCouponEntity:
         
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class customerCardEntity:
+
+    def __init__(self,id=0,id_customer=None,id_type_card=None,document_number = None,expiration_year= None,
+                 expiration_month = None,email=None,full_name_card = None,brand = None,url_image = None):
+        self.id = id
+        self.id_customer = id_customer
+        self.id_type_card = id_type_card
+        self.document_number = document_number
+        self.expiration_year = expiration_year
+        self.expiration_month = expiration_month
+        self.email = email
+        self.full_name_card = full_name_card 
+        self.brand = brand
+        self.url_image = url_image
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

@@ -415,7 +415,8 @@ class userModel(dbModel):
                     INNER JOIN main.user_p up 
                             ON uss.id_user = up.id 
                     INNER JOIN main.user_service us 
-                            ON us.id_service = s.id 
+                            ON us.id_service = uss.id_service 
+                            AND us.id_user  = uss.id_user
                 WHERE  up.status = %s
                     AND uss."enable" = 1 
                     AND us."enable" = 1 

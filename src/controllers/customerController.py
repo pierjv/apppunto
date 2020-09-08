@@ -91,3 +91,33 @@ class customerController(responseController):
         _message = None
         _status = responseController().interruption
         return responseEntity(_status,_message,None).toJSON()
+    
+    def get_customer_address_by_id_customer(self,index):
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _model = customerModel()
+            _data = _model.get_customer_address_by_id_customer(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+    
+    def get_customer_card_by_id_customer(self,index):
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _model = customerModel()
+            _data = _model.get_customer_card_by_id_customer(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()

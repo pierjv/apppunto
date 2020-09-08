@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.customerEntity import customerEntity,customerRateEntity, customerCouponEntity
+from src.entities.customerEntity import customerEntity,customerRateEntity, customerCouponEntity,customerAddressEntity, customerCardEntity
 from datetime import datetime
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
@@ -253,3 +253,100 @@ class customerModel(dbModel):
     def update_customer(self,entity):
         return None
         
+    def get_customer_address_by_id_customer(self,id_customer):
+        _db = None
+        _status = 1
+        _data = []
+        _id_customer = id_customer
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT id, 
+                    id_customer, 
+                    address, 
+                    longitude, 
+                    latitude, 
+                    main 
+                FROM   main.customer_address ca 
+                WHERE  id_customer = %s 
+                    AND status = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_customer,_status,))
+            _rows = _cur.fetchall()
+        
+            for row in _rows:
+                _entity  = customerAddressEntity()
+                _entity.id = row[0]
+                _entity.id_customer = row[1]
+                _entity.address =row[2]
+                _entity.longitude =row[3]
+                _entity.latitude =row[4]
+                _entity.main =row[5]
+                _data.append(_entity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data
+
+    def get_customer_card_by_id_customer(self,id_customer):
+        _db = None
+        _status = 1
+        _data = []
+        _id_customer = id_customer
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT cc.id, 
+                    cc.id_customer,
+                    id_type_card, 
+                    document_number, 
+                    expiration_year, 
+                    expiration_month, 
+                    email, 
+                    full_name_card, 
+                    tc.brand, 
+                    tc.url_image 
+                FROM   main.customer_card cc 
+                    INNER JOIN main.type_card tc 
+                            ON cc.id_type_card = tc.id 
+                WHERE  cc.status = 1 
+                    AND cc.id_customer = 3; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_customer,_status,))
+            _rows = _cur.fetchall()
+        
+            for row in _rows:
+                _entity  = customerCardEntity()
+                _entity.id = row[0]
+                _entity.id_customer = row[1]
+                _entity.id_type_card = row[2]
+                _entity.document_number =row[3]
+                _entity.expiration_year =row[4]
+                _entity.expiration_month =row[5]
+                _entity.email =row[6]
+                _entity.full_name_card =row[7]
+                _entity.brand =row[8]
+                _entity.url_image =row[9]
+                _data.append(_entity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data

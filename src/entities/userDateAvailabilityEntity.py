@@ -14,6 +14,19 @@ class userDateAvailabilityEntity:
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class userDateAndHourAvailabilityEntity:
+    def __init__(self,id_user= None, id_type_availability = None, full_name = None,date_availability = None,
+                hours_availability = None, enable = None):
+        self.id_user = id_user
+        self.id_type_availability = id_type_availability
+        self.full_name = full_name
+        self.date_availability = date_availability
+        self.enable = enable
+        self.hours_availability  = hours_availability
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
     
 class lstDateAvailabilityEntity:
     def __init__(self,user_date_availabilities= None):

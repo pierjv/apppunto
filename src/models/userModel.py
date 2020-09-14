@@ -406,7 +406,8 @@ class userModel(dbModel):
                     uss.id_sub_service, 
                     ss.full_name AS sub_service_name, 
                     uss.charge, 
-                    uss."enable" AS sub_service_enable 
+                    uss."enable" AS sub_service_enable,
+                    ss.in_filter 
                 FROM   main.user_sub_service uss 
                     INNER JOIN main.sub_service ss 
                             ON ss.id = uss.id_sub_service 
@@ -441,6 +442,9 @@ class userModel(dbModel):
                             _subServiceEntity.full_name = se[4]
                             _subServiceEntity.charge = se[5]
                             _subServiceEntity.enable = se[6]
+                            _subServiceEntity.id_service = se[0]
+                            _subServiceEntity.in_filter = se[7]
+                            _subServiceEntity.id_service = _serviceEntity.id 
                             _sub_services.append(_subServiceEntity)
 
                     _serviceEntity.sub_services = _sub_services

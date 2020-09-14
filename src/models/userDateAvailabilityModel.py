@@ -2,7 +2,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.userDateAvailabilityEntity import userDateAvailabilityEntity
+from src.entities.userDateAvailabilityEntity import userDateAvailabilityEntity,userDateAndHourAvailabilityEntity
 
 class userDateAvailabilityModel(dbModel):
 
@@ -24,26 +24,33 @@ class userDateAvailabilityModel(dbModel):
                         ta.full_name, 
                         to_char(ud.date_availability,'DD-MM-YYYY') as date_availability, 
                         ud.hour_availability, 
-                        ud.enable, 
-                        ud.status 
+                        ud."enable"
                     FROM   main.user_date_availability ud 
                         INNER JOIN main.type_availability ta 
                                 ON ud.id_type_availability = ta.id 
-                    WHERE  ud.status = %s and ud.id_user = %s;  """
+                    WHERE  ud.status = %s and ud.id_user = %s and ud."enable" = 1
+                    order by 4,5; """
                                         
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_status,_id_user,))
             _rows = _cur.fetchall()
+            _id_date_old = None
             for row in _rows:
-                _userDateAvailabilityEntity = userDateAvailabilityEntity()
-                _userDateAvailabilityEntity.id_user  = row[0]
-                _userDateAvailabilityEntity.id_type_availability  = row[1] 
-                _userDateAvailabilityEntity.full_name  = row[2] 
-                _userDateAvailabilityEntity.date_availability  = row[3] 
-                _userDateAvailabilityEntity.hour_availability  = row[4]
-                _userDateAvailabilityEntity.enable  = row[5]
-                _userDateAvailabilityEntity.status  = row[6]
-                _data_row.append(_userDateAvailabilityEntity)
+                _entity = userDateAndHourAvailabilityEntity()
+                _entity.id_user  = row[0]
+                _entity.id_type_availability  = row[1] 
+                _entity.full_name  = row[2] 
+                _entity.date_availability  = row[3] 
+                _entity.enable  = row[5]
+                _hours = []
+                if _id_date_old  != _entity.date_availability :
+                    for se in _rows:
+                        if row[3] == se[3]:
+                            _hours.append(se[4])
+
+                    _entity.hours_availability = _hours
+                    _data_row.append(_entity)
+                    _id_date_old = _entity.date_availability 
 
             _cur.close()
         except(Exception) as e:

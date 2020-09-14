@@ -59,6 +59,27 @@ class customerAddressEntity:
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+    
+    def requestToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id_customer = values.id_customer
+        self.address = values.address 
+        self.longitude = values.longitude
+        self.latitude = values.latitude
+        self.main = values.main
+
+    def requestToClassUpdate(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id = values.id
+        self.id_customer = values.id_customer
+        self.address = values.address 
+        self.longitude = values.longitude
+        self.latitude = values.latitude
+        self.main = values.main
         
 class customerRateEntity:
 
@@ -110,3 +131,18 @@ class customerCardEntity:
         
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+    def requestToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id_customer = values.id_customer
+        self.id_type_card = values.id_type_card
+        self.document_number = values.document_number
+        self.expiration_year = values.expiration_year
+        self.expiration_month = values.expiration_month
+        self.email = values.email
+        self.full_name_card = values.full_name_card 
+        self.cvv = values.cvv
+    
+    

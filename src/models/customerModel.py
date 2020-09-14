@@ -350,3 +350,129 @@ class customerModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _data
+
+    def add_customer_address(self,entity):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """INSERT INTO main.customer_address(id_customer, address, longitude , latitude, main, status) 
+                            VALUES(%s,%s,%s,%s,%s,%s) RETURNING id;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (entity.id_customer,entity.address,entity.longitude,entity.latitude,entity.main,_status))
+            _id_customer = _cur.fetchone()[0]
+            entity.id = _id_customer
+
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return entity
+    
+    def update_customer_address(self,entity):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.customer_address 
+                    SET id_customer = %s,
+                    address = %s,
+                    longitude = %s,
+                    latitude = %s,
+                    main = %s
+                    WHERE id = %s;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (entity.id_customer,entity.address,entity.longitude,entity.latitude,entity.main,entity.id,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return entity
+
+    def delete_customer_address(self,id_customer_address):
+        _db = None
+        _status = 0
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.customer_address 
+                    SET status = %s
+                    WHERE id = %s;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (_status,id_customer_address,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return id_customer_address
+
+    def add_customer_card(self,entity):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """INSERT INTO main.customer_card (id_customer, id_type_card, document_number, expiration_year, expiration_month, email,full_name_card, status)
+                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (entity.id_customer,entity.id_type_card,entity.document_number,entity.expiration_year,entity.expiration_month,entity.email,entity.full_name_card, _status))
+            _id_customer_card = _cur.fetchone()[0]
+            entity.id = _id_customer_card
+
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return entity
+
+    def delete_customer_card(self,id_customer_card):
+        _db = None
+        _status = 0
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.customer_card 
+                    SET status = %s
+                    WHERE id = %s;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (_status,id_customer_card,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return id_customer_card

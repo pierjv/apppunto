@@ -1,7 +1,8 @@
 from src.models.customerModel import customerModel
-from src.entities.customerEntity import customerEntity, customerRateEntity,customerCouponEntity
+from src.entities.customerEntity import customerEntity, customerRateEntity,customerCouponEntity, customerAddressEntity , customerCardEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
+from src.models.chargeModel import chargeModel
 import operator
 
 class customerController(responseController):
@@ -121,3 +122,92 @@ class customerController(responseController):
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+    
+    def add_customer_address(self,request):
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _entity = customerAddressEntity()
+            _entity.requestToClass(request)
+            _model = customerModel()
+            _data = _model.add_customer_address(_entity)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+
+    def update_customer_address(self,request):
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _entity = customerAddressEntity()
+            _entity.requestToClassUpdate(request)
+            _model = customerModel()
+            _data = _model.update_customer_address(_entity)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+    
+    def delete_customer_address(self,index):
+        _message = None
+        _status = self.interruption
+        id_customer_address= None
+        try:
+            _model = customerModel()
+            id_customer_address = _model.delete_customer_address(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,id_customer_address).toJSON()
+
+    def add_customer_card(self,request):
+        _message = None
+        _status = self.interruption
+        _data_card= None
+        _data = None
+        try:
+            _entity = customerCardEntity()
+            _entity.requestToClass(request)
+            _model = customerModel()
+            _chargeModel = chargeModel()
+            _data = _chargeModel.add_card_culqi(_entity.cvv,_entity.document_number,_entity.expiration_year,_entity.expiration_month,_entity.email)
+            
+            if _data["object"] == "error":
+                _status = self.interruption
+                _message = _data["user_message"]
+            else:
+                _data_card = _model.add_customer_card(_entity)
+                _status = self.OK
+                _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data_card).toJSON()
+    
+    def delete_customer_card(self,index):
+        _message = None
+        _status = self.interruption
+        id_customer_address= None
+        try:
+            _model = customerModel()
+            id_customer_address = _model.delete_customer_card(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,id_customer_address).toJSON()

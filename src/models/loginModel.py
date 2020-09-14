@@ -66,8 +66,13 @@ class loginModel(dbModel):
                 _userEntity.id_type_document  = _rows[0][4]
                 _userEntity.document_number  = _rows[0][5]
                 _userEntity.type_user  = _rows[0][6]
-                _userEntity.cellphone  = _rows[0][7]
-                _userEntity.about  = _rows[0][8]
+                _userEntity.photo = _rows[0][7]
+                _userEntity.cellphone  = _rows[0][8]
+                _userEntity.about  = _rows[0][9]
+
+                _sql_fire_base = """UPDATE main.user_p SET id_fire_base_token = %s WHERE id = %s;"""
+                _cur.execute(_sql_fire_base, (loginEntity.id_fire_base_token,_userEntity.id,))
+                _con_client.commit()
 
             _cur.close()
         except(Exception) as e:
@@ -115,6 +120,10 @@ class loginModel(dbModel):
                 _entity.photo  =  _rows[0][4]
                 _entity.id_code  =  _rows[0][5]
                 _entity.referred_code  =  _rows[0][6]
+
+                _sql_fire_base = """UPDATE main.customer SET id_fire_base_token = %s WHERE id = %s;"""
+                _cur.execute(_sql_fire_base, (loginEntity.id_fire_base_token,_entity.id,))
+                _con_client.commit()
 
             _cur.close()
         except(Exception) as e:

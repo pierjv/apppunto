@@ -102,15 +102,41 @@ def add_customer():
     return customerController().add_customer(request)
 
 @app.route('/customeraddress/<int:index>', methods=['GET'])
+@jwt_required
 def get_customer_address_by_id_customer(index):
     return customerController().get_customer_address_by_id_customer(index)
 
+@app.route('/customeraddress', methods=['POST'])
+@jwt_required
+def add_customer_address():
+    return customerController().add_customer_address(request)
+
+@app.route('/customeraddress', methods=['PUT'])
+@jwt_required
+def update_customer_address():
+    return customerController().update_customer_address(request)
+
+@app.route('/customeraddress/<int:index>', methods=['DELETE'])
+@jwt_required
+def delete_customer_address(index):
+    return customerController().delete_customer_address(index)
+
 @app.route('/customercard/<int:index>', methods=['GET'])
+@jwt_required
 def get_customer_card_by_id_customer(index):
     return customerController().get_customer_card_by_id_customer(index)
 
-@app.route('/userdetail/<int:index>', methods=['GET'])
+@app.route('/customercard', methods=['POST'])
 @jwt_required
+def add_customer_card():
+    return customerController().add_customer_card(request)
+
+@app.route('/customercard/<int:index>', methods=['DELETE'])
+@jwt_required
+def delete_customer_card(index):
+    return customerController().delete_customer_card(index)
+
+@app.route('/userdetail/<int:index>', methods=['GET'])
 def get_user_detail(index):
     return userController().get_user_detail(index)
 
@@ -164,10 +190,30 @@ def send_message():
 def charge():
     return chargeController().charge()
 
-@app.route('/sale', methods=['POST'])
+@app.route('/salereserve', methods=['POST'])
 @jwt_required
-def add_sale():
-    return saleController().add_sale(request)
+def add_sale_reserve():
+    return saleController().add_sale_reserve(request)
+
+@app.route('/saleconfirm', methods=['POST'])
+@jwt_required
+def add_sale_confirm():
+    return saleController().add_sale_confirm(request)
+
+@app.route('/sale/<int:index>', methods=['GET'])
+@jwt_required
+def get_sale_by_id_sale(index):
+    return saleController().get_sale_by_id_sale(index)
+
+@app.route('/salecustomer/<int:index>', methods=['GET'])
+#@jwt_required
+def get_sale_by_id_customer(index):
+    return saleController().get_sale_by_id_customer(index)
+
+@app.route('/saleuser/<int:index>', methods=['GET'])
+#@jwt_required
+def get_sale_by_id_user(index):
+    return saleController().get_sale_by_id_user(index)
 
 @app.route('/coupon/<int:index>', methods=['GET'])
 #@jwt_required

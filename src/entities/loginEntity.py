@@ -5,9 +5,10 @@ import yaml as yml
 
 class loginEntity:
 
-    def __init__(self,mail= None, password = None):
+    def __init__(self,mail= None, password = None, id_fire_base_token = None):
         self.mail = mail
         self.password = password
+        self.id_fire_base_token = id_fire_base_token
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
@@ -18,6 +19,7 @@ class loginEntity:
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
         self.mail = values.mail
         self.password = values.password
+        self.id_fire_base_token = values.id_fire_base_token
 
 class tokenEntity:
     def __init__(self):

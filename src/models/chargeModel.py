@@ -73,3 +73,24 @@ class chargeModel(dbModel):
         except(Exception) as e:
             self.add_log(str(e),type(self).__name__)
 
+    def add_card_culqi(self,cvv,card_number,expiration_year,expiration_month,email):
+        try:
+            public_key = self.culqi_public_key
+            private_key = self.culqi_private_key
+            client = pp(public_key=public_key, private_key=private_key)
+            print('Inicio de verificar tarjeta en  pasarela de pago')
+            
+            token_data = {
+                "cvv": cvv,
+                "card_number": card_number,
+                "expiration_year": expiration_year,
+                "expiration_month": expiration_month,
+                "email": email,
+            }
+            token = client.token.create(data=token_data)
+            print('Fin de verificar tarjeta en  pasarela de pago')
+            return token["data"]
+            
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+

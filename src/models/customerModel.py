@@ -476,3 +476,34 @@ class customerModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return id_customer_card
+    
+    def get_id_fire_base_token_by_id_customer(self,id_customer):
+        _db = None
+        _status = 1
+        _id_fire_base_token = None
+        try:
+            _id_customer = id_customer
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT c.id_fire_base_token
+                    FROM   main.customer c 
+                    WHERE c.id = %s;"""   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_customer,))
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _id_fire_base_token = _rows[0][0]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _id_fire_base_token

@@ -7,14 +7,14 @@ class notificationModel(dbModel):
     def __init__(self):
         dbModel.__init__(self)
     
-    def send_push_message(self, id_push_user):
+    def send_push_message(self, id_push_user,push_message):
         _response = None
         _value = None
         try:
             _post_data = {
                 "to": id_push_user,
                 "notification": {
-                    "body":"Appunto: Tienes una nueva solicitud pendiente.",
+                    "body": push_message,
                     "title":"Solicitud",
                     "content_available" : True,
                     "priority" : "high"

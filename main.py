@@ -200,6 +200,16 @@ def add_sale_reserve():
 def add_sale_confirm():
     return saleController().add_sale_confirm(request)
 
+@app.route('/saleaccept/<int:index>', methods=['GET'])
+@jwt_required
+def accept_sale(index):
+    return saleController().accept_sale(index)
+
+@app.route('/salerefuse/<int:index>', methods=['GET'])
+@jwt_required
+def refuse_sale(index):
+    return saleController().refuse_sale(index)
+
 @app.route('/sale/<int:index>', methods=['GET'])
 @jwt_required
 def get_sale_by_id_sale(index):

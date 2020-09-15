@@ -56,7 +56,7 @@ class saleModel(dbModel):
 
     def add_sale_confirm(self,id_sale):
         _db = None
-        _status_sale = 1
+        _status_sale = 3
         try:
             _db = Database()
             _db.connect(self.host,self.port,self.user,self.password,self.database)
@@ -195,7 +195,7 @@ class saleModel(dbModel):
                         document_number, 
                         expiration_year, 
                         expiration_month, 
-                        mail, 
+                        s.mail, 
                         full_name_card, 
                         status_sale, 
                         ts.id        AS id_type_sale, 
@@ -203,7 +203,10 @@ class saleModel(dbModel):
                         ts.id_sub_service, 
                         ss.full_name AS full_name_sub_service,
                         s.id_customer_address ,
-                        ca.address 
+                        ca.address ,
+                        cus.full_name  as full_name_customer,
+                        cus.photo  as url_image_customer,
+                        ser.full_name as full_name_service
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
@@ -213,6 +216,10 @@ class saleModel(dbModel):
        			                ON ta.id  = s.id_type_availability
                         INNER JOIN main.customer_address ca 
        			                ON ca.id  = s.id_customer_address  
+                        INNER JOIN main.customer cus
+       			                ON cus.id  = s.id_customer
+                        INNER JOIN main.service ser
+       			                ON ser.id  = ss.id_service 
                     WHERE  s.id_customer = %s 
                         AND s.status = %s; """
                                         
@@ -240,7 +247,10 @@ class saleModel(dbModel):
                 _entity.status_sale = row[15]
                 _entity.id_customer_address = row[20]
                 _entity.address = row[21]
-                
+                _entity.full_name_customer = row[22]
+                _entity.url_image_customer  = row[23]
+                _entity.full_name_service = row[24]
+
                 _type_sales = []
                 if _id_old  != _entity.id :
                     for se in _rows:
@@ -289,7 +299,7 @@ class saleModel(dbModel):
                         document_number, 
                         expiration_year, 
                         expiration_month, 
-                        mail, 
+                        s.mail, 
                         full_name_card, 
                         status_sale, 
                         ts.id        AS id_type_sale, 
@@ -297,7 +307,10 @@ class saleModel(dbModel):
                         ts.id_sub_service, 
                         ss.full_name AS full_name_sub_service,
                         s.id_customer_address ,
-                        ca.address 
+                        ca.address ,
+                        cus.full_name  as full_name_customer,
+                        cus.photo  as url_image_customer,
+                        ser.full_name as full_name_service
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
@@ -307,6 +320,10 @@ class saleModel(dbModel):
        			                ON ta.id  = s.id_type_availability
                         INNER JOIN main.customer_address ca 
        			                ON ca.id  = s.id_customer_address  
+                        INNER JOIN main.customer cus
+       			                ON cus.id  = s.id_customer
+                        INNER JOIN main.service ser
+       			                ON ser.id  = ss.id_service 
                     WHERE  s.id_user = %s 
                         AND s.status = %s; """
                                         
@@ -334,7 +351,9 @@ class saleModel(dbModel):
                 _entity.status_sale = row[15]
                 _entity.id_customer_address = row[20]
                 _entity.address = row[21]
-                
+                _entity.full_name_customer = row[22]
+                _entity.url_image_customer  = row[23]
+                _entity.full_name_service = row[24]
                 _type_sales = []
                 if _id_old  != _entity.id :
                     for se in _rows:
@@ -360,4 +379,59 @@ class saleModel(dbModel):
                 print("Se cerro la conexion")
         return _data
 
+    def update_status_sale(self,id_sale,status_sale):
+        _db = None
 
+        try:
+            _status_sale = status_sale
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.sale 
+                    SET status_sale = %s
+                    WHERE id = %s;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (_status_sale,id_sale,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return id_sale
+
+    def get_id_customer_by_id_sale(self,id_sale):
+        _db = None
+        _status = 1
+        _id_customer = None
+   
+        try:
+            _id_sale= id_sale
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT s.id_customer
+                    FROM   main.sale s 
+                    WHERE s.id = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_sale,))
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _id_customer = _rows[0][0]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _id_customer

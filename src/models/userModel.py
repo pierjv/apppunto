@@ -759,3 +759,34 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _data_dashboard_services
+
+    def get_id_fire_base_token_by_id_user(self,id_user):
+        _db = None
+        _status = 1
+        _id_fire_base_token = None
+        _id_user = id_user
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT up.id_fire_base_token
+                    FROM   main.user_p up 
+                    WHERE up.id = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_user,))
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _id_fire_base_token = _rows[0][0]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _id_fire_base_token

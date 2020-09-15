@@ -66,7 +66,7 @@ class saleResponseEntity:
     def __init__(self,id=0,id_type_availability=None,full_name_type_availability=None,id_customer=None,id_user=None,coupon=None,
                 date_availability=None,hour_availability= None,total_amount= None,id_type_card = None,
                 document_number=None,expiration_year =None,expiration_month=None,mail=None,full_name_card=None, status_sale= None,
-                id_customer_address = None,address = None, type_sales = None):
+                id_customer_address = None,address = None, type_sales = None, full_name_customer = None, url_image_customer = None):
         self.id = id
         self.id_type_availability = id_type_availability
         self.full_name_type_availability = full_name_type_availability
@@ -86,6 +86,8 @@ class saleResponseEntity:
         self.id_customer_address = id_customer_address
         self.address = address
         self.type_sales = type_sales
+        self.full_name_customer = full_name_customer
+        self.url_image_customer = url_image_customer
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

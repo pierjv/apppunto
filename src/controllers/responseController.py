@@ -16,3 +16,11 @@ class responseController(object):
         self.saleSuccessConfirm = "La transacción fue exitosa"
         self.addCustomer = "Se registraron los datos exitosamente."
         self.addCustomerAndCode = "Se registraron los datos exitosamente y tiene un cupón de descuento." 
+        self.status_sale_accept = 1
+        self.status_sale_refuse = 2
+        self.status_sale_confirm = 3
+        self.push_message_user =  "Appunto: Tienes una nueva solicitud pendiente."
+        self.push_message_accept_sale = "Appunto: Tu solicitud fue aceptada."
+        self.push_message_refuse_sale = "Appunto: Tu solicitud fue rechazada."
+        self.pushSuccess = "Se registró y envió con éxito su mensaje."
+        self.pushNotSuccess = "Se registró con éxito el cambio."

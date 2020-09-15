@@ -1,6 +1,6 @@
 runtime: python37
-service: developer
-#service: production
+#service: developer
+service: production
 handlers:
   # This configures Google App Engine to serve the files in the app's static
   # directory.

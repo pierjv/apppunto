@@ -19,7 +19,7 @@ class serviceModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """SELECT id, full_name, color, status,encode(file_image,'base64') AS file_image FROM main.service ORDER BY 1;"""
+            _sql = """SELECT id, full_name, color,encode(file_image,'base64') AS file_image FROM main.service ORDER BY 1;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql)
             _rows = _cur.fetchall()
@@ -28,8 +28,7 @@ class serviceModel(dbModel):
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
                 _serviceEntity.color  = row[2] 
-                _serviceEntity.status  = row[3]
-                _file_image = row[4]
+                _file_image = row[3]
                 if _file_image is None:
                     _serviceEntity.file_image  = _file_image
                 else:
@@ -57,6 +56,8 @@ class serviceModel(dbModel):
             _con_client = _db.get_client()
             _sql = """SELECT s.id, 
                         s.full_name, 
+                        s.color,
+                        encode(s.file_image,'base64') AS file_image,
                         b.enable
                     FROM   main.service s 
                         LEFT JOIN (SELECT s.id AS id_service, 
@@ -65,7 +66,8 @@ class serviceModel(dbModel):
                                             LEFT JOIN main.user_service us 
                                                     ON s.id = us.id_service 
                                     WHERE  us.id_user = %s) b 
-                                ON s.id = b.id_service; """
+                                ON s.id = b.id_service
+                    ORDER BY s.id; """
                                         
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_id_user,))
@@ -74,7 +76,19 @@ class serviceModel(dbModel):
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
-                _serviceEntity.enable  = row[2]
+                _serviceEntity.color  = row[2] 
+
+                _file_image = row[3]
+                if _file_image is None:
+                    _serviceEntity.file_image  = _file_image
+                else:
+                    _serviceEntity.file_image  = _file_image.replace('\n','')
+
+                _enable = row[4]
+                if _enable is None:
+                    _enable  = 0
+
+                _serviceEntity.enable  = _enable
                 _data_row.append(_serviceEntity)
 
             _cur.close()

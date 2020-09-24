@@ -44,17 +44,28 @@ class lstDateAvailabilityEntity:
         _full_name = values.full_name
         _id_type_availability = values.id_type_availability
         _id_user = values.id_user
+        _enable = 1
 
         _user_date_availabilities =[]
-        for us in values.hours_availability:
-            _entity = userDateAvailabilityEntity()
-            _entity.id_user = _id_user
-            _entity.id_type_availability = _id_type_availability
-            _entity.full_name = _full_name
-            _entity.date_availability = _date_availability
+        if (len(values.hours_availability)>=1):
+            for us in values.hours_availability:
+                _entity = userDateAvailabilityEntity()
+                _entity.id_user = _id_user
+                _entity.id_type_availability = _id_type_availability
+                _entity.full_name = _full_name
+                _entity.date_availability = _date_availability
+                _entity.hour_availability = us
+                _entity.enable = _enable
+                _user_date_availabilities.append(_entity)
+        else:
+                _entity = userDateAvailabilityEntity()
+                _entity.id_user = _id_user
+                _entity.id_type_availability = _id_type_availability
+                _entity.full_name = _full_name
+                _entity.date_availability = _date_availability
+                _entity.hour_availability = 0
+                _entity.enable = _enable
+                _user_date_availabilities.append(_entity)
 
-            _entity.hour_availability = us.hour_availability
-            _entity.enable = us.enable
-            _user_date_availabilities.append(_entity)
 
         self.user_date_availabilities = _user_date_availabilities

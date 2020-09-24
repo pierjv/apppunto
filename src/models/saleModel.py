@@ -222,7 +222,7 @@ class saleModel(dbModel):
        			                ON ser.id  = ss.id_service 
                     WHERE  s.id_customer = %s 
                         AND s.status = %s
-                    ORDER BY date_availability desc;"""
+                    ORDER BY s.id desc;"""
                                         
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_id_customer,_status))
@@ -327,7 +327,7 @@ class saleModel(dbModel):
        			                ON ser.id  = ss.id_service 
                     WHERE  s.id_user = %s 
                         AND s.status = %s
-                    ORDER BY date_availability desc;"""
+                    ORDER BY s.id desc;"""
                                         
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_id_user,_status))

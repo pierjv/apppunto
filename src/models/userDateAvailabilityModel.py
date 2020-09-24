@@ -74,23 +74,25 @@ class userDateAvailabilityModel(dbModel):
             _con_client = _db.get_client()
             _cur = _con_client.cursor()
 
-            _sql_delete = """DELETE FROM main.user_date_availability 
-                            WHERE  id_user = %s 
-                                AND id_type_availability = %s
-                                AND date_availability = To_date(%s, 'DD-MM-YYYY') 
-                                AND hour_availability = %s; """
-            
+            if(len(_entities) >= 1):
+                _en = _entities[0]
+                _sql_delete = """DELETE FROM main.user_date_availability 
+                                WHERE  id_user = %s 
+                                    AND id_type_availability = %s
+                                    AND date_availability = To_date(%s, 'DD-MM-YYYY'); """
+                _cur.execute(_sql_delete, (_en.id_user,_en.id_type_availability,_en.date_availability,))
+                    
             _sql_insert = """INSERT INTO main.user_date_availability
                                 (id_user, id_type_availability, date_availability, hour_availability, enable, status) 
                                 VALUES(%s, %s,to_date(%s,'DD-MM-YYYY') , %s, %s, %s) RETURNING status;"""
 
             for us in _entities:
-                _cur.execute(_sql_delete, (us.id_user,us.id_type_availability,us.date_availability,us.hour_availability,))
-                _cur.execute(_sql_insert, (us.id_user,us.id_type_availability,us.date_availability,us.hour_availability,us.enable,_status,))
-                _status_insert = _cur.fetchone()[0]
-                _entities[_i].status = _status_insert
-                _data_row.append(_entities[_i])
-                _i += 1
+                if(us.hour_availability>=1):
+                    _cur.execute(_sql_insert, (us.id_user,us.id_type_availability,us.date_availability,us.hour_availability,us.enable,_status,))
+                    _status_insert = _cur.fetchone()[0]
+                    _entities[_i].status = _status_insert
+                    _data_row.append(_entities[_i])
+                    _i += 1
   
 
             _con_client.commit()

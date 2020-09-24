@@ -236,12 +236,12 @@ def get_sale_by_id_sale(index):
     return saleController().get_sale_by_id_sale(index)
 
 @app.route('/salecustomer/<int:index>', methods=['GET'])
-#@jwt_required
+@jwt_required
 def get_sale_by_id_customer(index):
     return saleController().get_sale_by_id_customer(index)
 
 @app.route('/saleuser/<int:index>', methods=['GET'])
-#@jwt_required
+@jwt_required
 def get_sale_by_id_user(index):
     return saleController().get_sale_by_id_user(index)
 

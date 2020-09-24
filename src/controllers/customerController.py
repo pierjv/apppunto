@@ -1,5 +1,5 @@
 from src.models.customerModel import customerModel
-from src.entities.customerEntity import customerEntity, customerRateEntity,customerCouponEntity, customerAddressEntity , customerCardEntity
+from src.entities.customerEntity import customerEntity, customerRateEntity,customerCouponEntity, customerAddressEntity , customerCardEntity, customerUserFavoriteEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
 from src.models.chargeModel import chargeModel
@@ -211,3 +211,19 @@ class customerController(responseController):
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,id_customer_address).toJSON()
+    
+    def update_customer_user_favorite(self,request):
+        _message = None
+        _status = self.interruption
+        try:
+            _entity = customerUserFavoriteEntity()
+            _entity.requestToClass(request)
+            _model = customerModel()
+            _entity = _model.update_customer_user_favorite(_entity)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_entity).toJSON()

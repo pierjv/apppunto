@@ -19,8 +19,15 @@ class responseController(object):
         self.status_sale_accept = 1
         self.status_sale_refuse = 2
         self.status_sale_confirm = 3
+        self.status_sale_cancel = 4
         self.push_message_user =  "Appunto: Tienes una nueva solicitud pendiente."
         self.push_message_accept_sale = "Appunto: Tu solicitud fue aceptada."
         self.push_message_refuse_sale = "Appunto: Tu solicitud fue rechazada."
         self.pushSuccess = "Se registró y envió con éxito su mensaje."
         self.pushNotSuccess = "Se registró con éxito el cambio."
+        self.saleCanceled = "La solicitud fue cancelada"
+        self.typeUserFreelancer = "FREELANCER"
+        self.typeUserMarca = "MARCA"
+        self.idTypeUserFreelancer = 1
+        self.idTypeUserMarca =2
+        

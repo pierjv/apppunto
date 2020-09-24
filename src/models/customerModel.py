@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.customerEntity import customerEntity,customerRateEntity, customerCouponEntity,customerAddressEntity, customerCardEntity
+from src.entities.customerEntity import customerEntity,customerRateEntity, customerCouponEntity,customerAddressEntity, customerCardEntity, customerUserFavoriteEntity
 from datetime import datetime
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
@@ -507,3 +507,40 @@ class customerModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _id_fire_base_token
+    
+    def update_customer_user_favorite(self,customerUserFavorite):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT c.id_user, c.id_customer, c."enable"
+                    FROM   main.customer_user_favorite c 
+                    WHERE c.id_user = %s and c.id_customer = %s;"""   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(customerUserFavorite.id_user,customerUserFavorite.id_customer,))
+            _rows = _cur.fetchall()
+        
+            if len(_rows) == 0 or _rows is None:
+                _sql_add = """INSERT INTO main.customer_user_favorite (id_user, id_customer, "enable", status) 
+                             VALUES(%s, %s, %s, %s);"""
+                _cur.execute(_sql_add,(customerUserFavorite.id_user,customerUserFavorite.id_customer,customerUserFavorite.enable,_status,))
+            else:
+                _sql_update = """UPDATE main.customer_user_favorite SET "enable" = %s WHERE id_user = %s and id_customer = %s;"""
+                _cur.execute(_sql_update,(customerUserFavorite.enable,customerUserFavorite.id_user,customerUserFavorite.id_customer,))
+
+
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return customerUserFavorite
+    

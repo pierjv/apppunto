@@ -96,6 +96,11 @@ def get_sub_services_by_id_service_and_id_user():
 def get_user_by_id_service(index):
     return userController().get_user_by_id_service(index)
 
+@app.route('/userserviceadd', methods=['POST'])
+@jwt_required
+def update_user_service():
+    return userController().update_user_service(request)
+
 @app.route('/customer', methods=['POST'])
 @jwt_required
 def add_customer():
@@ -136,9 +141,14 @@ def add_customer_card():
 def delete_customer_card(index):
     return customerController().delete_customer_card(index)
 
-@app.route('/userdetail/<int:index>', methods=['GET'])
-def get_user_detail(index):
-    return userController().get_user_detail(index)
+@app.route('/customerfavorite', methods=['POST'])
+@jwt_required
+def update_customer_user_favorite():
+    return customerController().update_customer_user_favorite(request)
+
+@app.route('/userdetail/<int:index>/<int:id_customer>', methods=['GET'])
+def get_user_detail(index,id_customer):
+    return userController().get_user_detail(index,id_customer)
 
 @app.route('/rate', methods=['POST'])
 @jwt_required
@@ -159,6 +169,11 @@ def update_user_date_availability():
 #@jwt_required
 def get_users():
     return userController().get_users()
+
+@app.route('/userstype/<int:index>', methods=['GET'])
+#@jwt_required
+def get_users_by_type(index):
+    return userController().get_users_by_type(index)
 
 @app.route('/users', methods=['POST'])
 @jwt_required
@@ -210,6 +225,11 @@ def accept_sale(index):
 def refuse_sale(index):
     return saleController().refuse_sale(index)
 
+@app.route('/salecancel/<int:index>', methods=['GET'])
+@jwt_required
+def cancel_sale(index):
+    return saleController().cancel_sale(index)
+
 @app.route('/sale/<int:index>', methods=['GET'])
 @jwt_required
 def get_sale_by_id_sale(index):
@@ -229,6 +249,11 @@ def get_sale_by_id_user(index):
 #@jwt_required
 def get_customer_coupon_by_id(index):
     return customerController().get_customer_coupon_by_id(index)
+
+@app.route('/dashboardmobile/<int:index>', methods=['GET'])
+@jwt_required
+def get_dashboard_mobile(index):
+    return userController().get_dashboard_mobile(index)
 
 @app.route('/sha', methods=['GET'])
 #@jwt_required

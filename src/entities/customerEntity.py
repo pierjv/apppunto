@@ -144,5 +144,24 @@ class customerCardEntity:
         self.email = values.email
         self.full_name_card = values.full_name_card 
         self.cvv = values.cvv
+
+class customerUserFavoriteEntity:
+
+    def __init__(self,id_user=0,id_customer=None,enable=None):
+        self.id_user = id_user
+        self.id_customer = id_customer
+        self.enable = enable
+    
+    def requestToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id_user = values.id_user
+        self.id_customer = values.id_customer
+        self.enable = values.enable
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
     
     

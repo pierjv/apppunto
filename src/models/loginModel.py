@@ -216,33 +216,27 @@ class loginModel(dbModel):
             _loadEntity.delivery_costs = _data_delivery_costs
 
             if(_id_customer != 0):
-                _sql_users = """SELECT a.id_user, 
-                        b.avg_rate::float4, 
-                        up.mail, 
-                        up.social_name, 
-                        up.full_name, 
-                        up.document_number, 
-                        up.type_user, 
-                        up.photo, 
-                        up.cellphone, 
-                        up.about,
-                        up.id_type_document
-                    FROM   (SELECT cr.id_customer, 
-                                cr.id_user, 
-                                Count(*) AS count_customer 
-                            FROM   main.customer_rate cr 
-                            WHERE  cr.id_customer = %s
-                            GROUP  BY 1, 
-                                    2) a 
-                        INNER JOIN (SELECT cr.id_user, 
-                                            Avg(rate) avg_rate, 
-                                            Count(*)  count_rate 
-                                    FROM   main.customer_rate cr 
-                                    GROUP  BY 1) b 
-                                ON a.id_user = b.id_user 
-                        INNER JOIN main.user_p up 
-                                ON up.id = a.id_user 
-                    WHERE  up.status = %s"""
+                _sql_users = """SELECT up.id as id_user, 
+                            b.avg_rate::float4, 
+                            up.mail, 
+                            up.social_name, 
+                            up.full_name, 
+                            up.document_number, 
+                            up.type_user, 
+                            up.photo, 
+                            up.cellphone, 
+                            up.about,
+                            up.id_type_document
+                        FROM  main.user_p up 
+                            INNER JOIN (SELECT cr.id_user, 
+                                                Avg(rate) avg_rate, 
+                                                Count(*)  count_rate 
+                                        FROM   main.customer_rate cr 
+                                        GROUP  BY 1) b 
+                                    ON up.id = b.id_user 
+                            INNER JOIN main.customer_user_favorite  cf
+                                    ON up.id = cf.id_user 
+                        WHERE  cf.id_customer = %s and up.status = %s and cf."enable" = 1"""
                                         
                 _cur.execute(_sql_users,(_id_customer,_status,))
                 _rows = _cur.fetchall()

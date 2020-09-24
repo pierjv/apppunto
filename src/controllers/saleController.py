@@ -195,4 +195,19 @@ class saleController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,_id_sale).toJSON()
 
+    def cancel_sale(self,index):
+        _message = None
+        _status = self.interruption
+        _id_sale= None
+        try:
+            _model = saleModel()
+            _id_sale = _model.update_status_sale(index,self.status_sale_cancel)
+            _status = self.OK
+            _message = self.saleCanceled
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_id_sale).toJSON()
+
 

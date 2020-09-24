@@ -37,7 +37,6 @@ class userStoreModel(dbModel):
                 _userStoreEntity.main  = row[6]
                 _userStoreEntity.status  = row[7]
                 _data_row.append(_userStoreEntity)
-            print(_data_row)
             _cur.close()
         except(Exception) as e:
             self.add_log(str(e),type(self).__name__)

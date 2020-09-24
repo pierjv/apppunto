@@ -221,7 +221,8 @@ class saleModel(dbModel):
                         INNER JOIN main.service ser
        			                ON ser.id  = ss.id_service 
                     WHERE  s.id_customer = %s 
-                        AND s.status = %s; """
+                        AND s.status = %s
+                    ORDER BY date_availability desc;"""
                                         
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_id_customer,_status))
@@ -325,7 +326,8 @@ class saleModel(dbModel):
                         INNER JOIN main.service ser
        			                ON ser.id  = ss.id_service 
                     WHERE  s.id_user = %s 
-                        AND s.status = %s; """
+                        AND s.status = %s
+                    ORDER BY date_availability desc;"""
                                         
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_id_user,_status))

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity ,dashboardServiceEntity
+from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity ,dashboardServiceEntity, userServiceEntity,userMobileDashboardEntity
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
 from src.entities.userStoreEntity import userStoreEntity
@@ -149,6 +149,114 @@ class userModel(dbModel):
                     _userEntity.user_store = _user_stores
                     _data_row.append(_userEntity)
                     _id_user_old = _userEntity.id 
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data_row
+    
+    def get_users_by_type(self,type_user):
+        _db = None
+        _status = 0
+        _id = id
+        _data_row = []
+        try:
+            _type_user = type_user
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """SELECT u.id, 
+                u.mail, 
+                u.social_name, 
+                u.full_name, 
+                u.id_type_document, 
+                u.document_number, 
+                u.type_user, 
+                u.photo, 
+                u.cellphone, 
+                u.about, 
+                us.id        AS id_user_store, 
+                us.full_name AS name_user_store, 
+                us.address, 
+                us.longitude, 
+                us.latitude, 
+                us.main, 
+                a.avg_rate,
+                use.id_service,
+                s.full_name   as service_full_name
+            FROM   main.user_p u 
+                INNER JOIN main.user_store us 
+                        ON u.id = us.id_user
+                INNER JOIN main.user_service use
+                		on use.id_user  = u.id
+               	INNER JOIN main.service s 
+               			on use.id_service  = s.id 
+                left JOIN (SELECT id_user, 
+                                    Avg(rate) :: float4 AS avg_rate 
+                            FROM   main.customer_rate 
+                            GROUP  BY 1) a 
+                        ON a.id_user = u.id  
+            WHERE  u.status = 1 
+                AND us.status = 1 
+                AND u.type_user = %s
+            ORDER  BY s.full_name ,  u.id; """
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_type_user,))
+            _rows = _cur.fetchall()
+            
+            _id_user_old = None
+            _id_service_old = None
+            for rowSer in _rows:
+                _userServiceEnity = userServiceEntity()
+                _userServiceEnity.id_service = rowSer[17]
+                _userServiceEnity.service_full_name = rowSer[18]
+
+                if _id_service_old  != _userServiceEnity.id_service :
+                    _data_row_user = []
+                    for row in _rows:
+                        if row[17] == rowSer[17]:
+                            _userEntity= userEntity()
+                            _userEntity.id  = row[0]
+                            _userEntity.mail  = row[1] 
+                            _userEntity.social_name  = row[2]
+                            _userEntity.full_name  = row[3]
+                            _userEntity.id_type_document  = row[4]
+                            _userEntity.document_number  = row[5]
+                            _userEntity.type_user  = row[6]
+                            _userEntity.photo  = row[7]
+                            _userEntity.cellphone  = row[8]
+                            _userEntity.about  = row[9]
+                            _avg_rate =  row[16]
+                            if _avg_rate is None:
+                                _avg_rate = 0
+                            _userEntity.avg_rate = _avg_rate
+                            _userEntity.id_service = _userServiceEnity.id_service
+                            _user_stores = []
+                            if _id_user_old  != _userEntity.id :
+                                for se in _rows:
+                                    if row[0] == se[0] and _userEntity is not None and rowSer[17] == se[17]:
+                                        _userStoreEntity = userStoreEntity()
+                                        _userStoreEntity.id = se[10]
+                                        _userStoreEntity.full_name = se[11]
+                                        _userStoreEntity.address = se[12]
+                                        _userStoreEntity.longitude = se[13]
+                                        _userStoreEntity.latitude = se[14]
+                                        _userStoreEntity.main = se[15]
+                                        _userStoreEntity.id_user = _userEntity.id 
+                                        _user_stores.append(_userStoreEntity)
+
+                                _userEntity.user_store = _user_stores
+                                _data_row_user.append(_userEntity)
+                                _id_user_old = _userEntity.id 
+
+                    _userServiceEnity.users = _data_row_user
+                    _data_row.append(_userServiceEnity)
+                    _id_service_old = _userServiceEnity.id_service 
 
             _cur.close()
         except(Exception) as e:
@@ -385,13 +493,15 @@ class userModel(dbModel):
                 print("Se cerro la conexion")
         return _value
 
-    def get_user_detail(self,id):
+    def get_user_detail(self,id_user,id_customer):
         _db = None
         _status = 1
         _data_services = []
         _data_rates = []
         _data_comments = []
-        _id_user = id
+        _flag_favorite = 0
+        _id_user = id_user
+        _id_customer = id_customer
         _userDetailEntity= None
         try:
             _userDetailEntity = userDetailEntity()
@@ -480,7 +590,7 @@ class userModel(dbModel):
 
             _sql_comment = """ SELECT cr.rate, 
                     cr.description, 
-                    To_char(cr.date_transaction, 'DD-MM-YYYY') AS date_transaction, 
+                    date_part( 'day',current_date - cr.date_transaction) AS date_transaction,  
                     c.full_name 
                 FROM   main.customer_rate cr 
                     INNER JOIN main.customer c 
@@ -495,11 +605,25 @@ class userModel(dbModel):
                 _commentEntity = commentEntity()
                 _commentEntity.rate = row[0]
                 _commentEntity.description = row[1]
-                _commentEntity.date_transaction = row[2]
+                _commentEntity.date_transaction = str(int(row[2])) + " días antes" 
                 _commentEntity.full_name = row[3]
                 _data_comments.append(_commentEntity)
             
             _userDetailEntity.comments = _data_comments
+
+            _sql_favorite = """SELECT id 
+                FROM   main.customer_user_favorite 
+                WHERE  id_customer = %s 
+                    AND id_user = %s 
+                    AND status = %s
+                    AND "enable" = 1; """
+
+            _cur.execute(_sql_favorite,(_id_customer,id_user,_status,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _flag_favorite = 1
+            
+            _userDetailEntity.flag_favorite = _flag_favorite
 
             _cur.close()
         except(Exception) as e:
@@ -790,3 +914,112 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _id_fire_base_token
+
+    def update_user_service(self,userServices):
+        _db = None
+        _id_user = 0
+        _status = 1
+        _i = 0
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            
+            for us in userServices:
+                _sql = """SELECT c.id_user, c.id_service, c."enable"
+                        FROM   main.user_service c 
+                        WHERE c.id_user = %s and c.id_service = %s;"""   
+
+                _cur = _con_client.cursor()
+                _cur.execute(_sql,(us.id_user,us.id_service,))
+                _rows = _cur.fetchall()
+            
+                if len(_rows) == 0 or _rows is None:
+                    _sql_add = """INSERT INTO main.user_service (id_user, id_service, "enable", status) 
+                                VALUES(%s, %s, %s, %s);"""
+                    _cur.execute(_sql_add,(us.id_user,us.id_service,us.enable,_status,))
+                else:
+                    _sql_update = """UPDATE main.user_service SET "enable" = %s WHERE id_user = %s and id_service = %s;"""
+                    _cur.execute(_sql_update,(us.enable,us.id_user,us.id_service,))
+
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return userServices
+
+    def get_dashboard_mobile(self,id_user):
+        _db = None
+        _status = 1
+        _id_user = id_user
+        _data_row =[]
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT a.id_user, 
+                a.total_amount, 
+                a.quantity_confirm, 
+                b.quantity_refused 
+            FROM   (SELECT s.id_user, 
+                        Sum(total_amount) AS total_amount, 
+                        Count(id)         AS quantity_confirm 
+                    FROM   main.sale s 
+                    WHERE  s.id_user = %s
+                        AND s.status_sale = 4 
+                    GROUP  BY 1) a 
+                LEFT JOIN (SELECT id_user, 
+                                    Count(id) AS quantity_refused 
+                            FROM   main.sale s 
+                            WHERE  id_user = %s 
+                                    AND status_sale = 3 
+                            GROUP  BY 1) b 
+                        ON a.id_user = b.id_user;"""   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_user,_id_user,))
+            _rows = _cur.fetchall()
+
+            if(len(_rows) >= 1):
+                _entity= userMobileDashboardEntity()
+                _entity.id  = 1
+                _entity.full_name  = 'Ingresos' 
+                if _rows[0][1] is None:
+                    _entity.value  = 0
+                else:
+                    _entity.value  = _rows[0][1]
+                _data_row.append(_entity)
+
+                _entity= userMobileDashboardEntity()
+                _entity.id  = 2
+                _entity.full_name  = 'Servicios Completados' 
+                if _rows[0][2] is None:
+                    _entity.value  = 0
+                else:
+                    _entity.value  = _rows[0][2]
+                _data_row.append(_entity)
+
+                _entity= userMobileDashboardEntity()
+                _entity.id  = 3
+                _entity.full_name  = 'Servicios Rechazados' 
+                if _rows[0][3] is None:
+                    _entity.value  = 0
+                else:
+                    _entity.value  = _rows[0][3]
+                _data_row.append(_entity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data_row

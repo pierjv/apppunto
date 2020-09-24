@@ -58,6 +58,46 @@ class userEntity:
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
         self.mail = values.mail
 
+class userServiceEntity:
+
+    def __init__(self,id_service=None,service_full_name = None, users= None):
+        self.id_service = id_service
+        self.service_full_name = service_full_name
+        self.users = users
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class userServiceAddEntity:
+    def __init__(self,id_service=None,id_user = None, enable= None):
+        self.id_service = id_service
+        self.id_user = id_user
+        self.enable = enable
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class lstuserServiceAddEntity:
+    def __init__(self,user_services=None):
+        self.user_services = user_services
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+    def requestToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        _user_services =[]
+        for us in values:
+            _entity = userServiceAddEntity()
+            _entity.id_service = us.id_service
+            _entity.id_user = us.id_user
+            _entity.enable = us.enable
+            _user_services.append(_entity)
+        self.user_services = _user_services 
+
+
 class typeDocumentEntity:
 
     def __init__(self,id=None,full_name= None):
@@ -88,10 +128,11 @@ class commentEntity:
 
 class userDetailEntity:
 
-    def __init__(self,services=None,rates=None,comments=None):
+    def __init__(self,services=None,rates=None,comments=None, flag_favorite=None):
         self.services = services
         self.rates = rates
         self.comments = comments
+        self.flag_favorite = flag_favorite
         
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
@@ -196,4 +237,15 @@ class dashboardServiceEntity:
         self.sales_a_5 = "S/. "+"{:8.1f}".format(self.sales_a_5)
         self.sales_a_6 = "S/. "+"{:8.1f}".format(self.sales_a_6)
         self.sales_a_7 = "S/. "+"{:8.1f}".format(self.sales_a_7)
+
+
+class userMobileDashboardEntity:
+
+    def __init__(self,id=None,full_name=None,value=None):
+        self.id = id
+        self.full_name = full_name
+        self.value = value
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
     

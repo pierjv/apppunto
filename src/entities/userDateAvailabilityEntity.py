@@ -39,16 +39,22 @@ class lstDateAvailabilityEntity:
         data = resquest.get_json() 
         data = json.dumps(data)
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        
+        _date_availability = values.date_availability
+        _full_name = values.full_name
+        _id_type_availability = values.id_type_availability
+        _id_user = values.id_user
+
         _user_date_availabilities =[]
-        for us in values:
-            print(us)
+        for us in values.hours_availability:
             _entity = userDateAvailabilityEntity()
-            _entity.id_user = us.id_user
-            _entity.id_type_availability = us.id_type_availability
-            _entity.full_name = us.full_name
-            _entity.date_availability = us.date_availability
+            _entity.id_user = _id_user
+            _entity.id_type_availability = _id_type_availability
+            _entity.full_name = _full_name
+            _entity.date_availability = _date_availability
+
             _entity.hour_availability = us.hour_availability
             _entity.enable = us.enable
             _user_date_availabilities.append(_entity)
 
-        self.user_date_availabilities = _user_date_availabilities 
+        self.user_date_availabilities = _user_date_availabilities

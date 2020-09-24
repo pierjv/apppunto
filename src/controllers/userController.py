@@ -1,5 +1,5 @@
 from src.models.userModel import userModel
-from src.entities.userEntity import userEntity
+from src.entities.userEntity import userEntity,lstuserServiceAddEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
 
@@ -10,9 +10,30 @@ class userController(responseController):
         _status = self.interruption
         _data= None
         try:
-            _userEntity = userEntity()
             _userModel = userModel()
             _data = _userModel.get_users()
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+    
+    def get_users_by_type(self,index):
+        _message = None
+        _status = self.interruption
+        _data= None
+        _type_user = None
+        try:
+            _userModel = userModel()
+
+            if index == self.idTypeUserMarca:
+                _type_user = self.typeUserMarca
+            if index == self.idTypeUserFreelancer:
+                _type_user = self.typeUserFreelancer
+                
+            _data = _userModel.get_users_by_type(_type_user)
             _status = self.OK
             _message = self.messageOK
         except(Exception) as e:
@@ -96,13 +117,13 @@ class userController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
     
-    def get_user_detail(self,index):
+    def get_user_detail(self,index,id_customer):
         _message = None
         _status = None
         _data= None
         try:
             _model = userModel()
-            _data = _model.get_user_detail(index)
+            _data = _model.get_user_detail(index,id_customer)
             _status = self.OK
             _message = self.messageOK
         except(Exception) as e:
@@ -128,3 +149,37 @@ class userController(responseController):
         except(Exception) as e:
             print('error: '+ str(e))
         return _data
+
+    def update_user_service(self,request):
+        _message = ''
+        _status = self.interruption
+        _entity= None
+        _data = []
+        try:
+            _entity = lstuserServiceAddEntity()
+            _userModel = userModel()
+            _entity.requestToClass(request)
+            _data = _userModel.update_user_service(_entity.user_services)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+
+    
+    def get_dashboard_mobile(self,index):
+        _message = None
+        _status = self.interruption
+        _data = None
+        try:
+            _model = userModel()
+            _data = _model.get_dashboard_mobile(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()

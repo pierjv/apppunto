@@ -46,6 +46,23 @@ class customerController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,_entity).toJSON()
 
+    def update_customer(self,request):
+        _message = ''
+        _status = self.interruption
+        _userEntity= None
+        try:
+            _customerEntity = customerEntity()
+            _customerModel = customerModel()
+            _customerEntity.requestUpdateToClass(request)
+            _id = _customerModel.update_customer(_customerEntity)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_id).toJSON()
+
     def add_customer_rate(self,request):
         _message = None
         _status = responseController().interruption
@@ -83,10 +100,6 @@ class customerController(responseController):
         _status = responseController().interruption
         return responseEntity(_status,_message,None).toJSON()
     
-    def update_customer(self,request,index):
-        _message = None
-        _status = responseController().interruption
-        return responseEntity(_status,_message,None).toJSON()
 
     def get_customer_by_id_(self,index):
         _message = None

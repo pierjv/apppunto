@@ -46,6 +46,16 @@ class customerEntity:
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
         self.mail = values.mail
 
+    def requestUpdateToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id = values.id
+        self.full_name = values.full_name
+        self.cellphone = values.cellphone
+        self.photo = values.photo
+       
+
 class customerAddressEntity:
 
     def __init__(self,id=0,id_customer=None,address=None,longitude=None,latitude=None,

@@ -52,6 +52,20 @@ class userEntity:
             _user_store.append(_userStoreEntity)
         self.user_store = _user_store 
     
+
+    def requestUpdateToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id = values.id
+        self.social_name = values.social_name
+        self.full_name = values.full_name
+        self.id_type_document = values.id_type_document
+        self.document_number = values.document_number
+        self.photo = values.photo
+        self.cellphone = values.cellphone
+        self.about = values.about
+
     def requestToEmail(self,resquest):
         data = resquest.get_json() 
         data = json.dumps(data)
@@ -248,4 +262,37 @@ class userMobileDashboardEntity:
         
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
-    
+
+class userSubServiceAddEntity:
+
+    def __init__(self,id_user=None,id_service=None,id_sub_service=None,charge = None,enable = None):
+        self.id_user = id_user
+        self.id_service = id_service
+        self.id_sub_service = id_sub_service
+        self.charge = charge
+        self.enable = enable
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+class lstUserSubServiceAddEntity:
+    def __init__(self,user_sub_services=None):
+        self.user_sub_services = user_sub_services
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+    def requestToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        _user_sub_services =[]
+        for us in values:
+            _entity = userSubServiceAddEntity()
+            _entity.id_user = us.id_user
+            _entity.id_service = us.id_service
+            _entity.id_sub_service = us.id_sub_service
+            _entity.charge = us.charge
+            _entity.enable = us.enable
+            _user_sub_services.append(_entity)
+        self.user_sub_services = _user_sub_services 

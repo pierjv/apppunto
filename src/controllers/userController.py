@@ -1,5 +1,5 @@
 from src.models.userModel import userModel
-from src.entities.userEntity import userEntity,lstuserServiceAddEntity
+from src.entities.userEntity import userEntity,lstuserServiceAddEntity, lstUserSubServiceAddEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
 
@@ -80,15 +80,14 @@ class userController(responseController):
             print('error: '+ str(e))    
         return responseEntity(_status,_message,_userEntity).toJSON()
     
-    def update_user(self,request,index):
+    def update_user(self,request):
         _message = ''
         _status = self.interruption
         _userEntity= None
         try:
             _userEntity = userEntity()
             _userModel = userModel()
-            _userEntity.requestToClass(request)
-            _userEntity.id = index
+            _userEntity.requestUpdateToClass(request)
             _id = _userModel.update_user(_userEntity)
             _status = self.OK
             _message = self.messageOK
@@ -96,7 +95,7 @@ class userController(responseController):
             _status = self.interruption
             _message = self.messageInterruption +str(e)
             print('error: '+ str(e))
-        return responseEntity(_status,_message,_userEntity).toJSON()
+        return responseEntity(_status,_message,_id).toJSON()
 
     def get_user_by_id_service(self,index):
         _message = None
@@ -176,6 +175,24 @@ class userController(responseController):
         try:
             _model = userModel()
             _data = _model.get_dashboard_mobile(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+
+    def update_user_sub_service(self,request):
+        _message = ''
+        _status = self.interruption
+        _entity= None
+        _data = []
+        try:
+            _entity = lstUserSubServiceAddEntity()
+            _userModel = userModel()
+            _entity.requestToClass(request)
+            _data = _userModel.update_user_sub_service(_entity.user_sub_services)
             _status = self.OK
             _message = self.messageOK
         except(Exception) as e:

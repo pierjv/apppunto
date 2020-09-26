@@ -54,6 +54,32 @@ class customerModel(dbModel):
                 print("Se cerro la conexion")
         return entity
 
+    def update_customer(self,customerEntity):
+        _db = None
+        _id_customer = 0
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.customer SET full_name= %s, cellphone= %s, photo= %s
+                    WHERE id = %s and status = %s;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (customerEntity.full_name,customerEntity.cellphone,
+                                customerEntity.photo,customerEntity.id,
+                                _status))
+            _id_customer = customerEntity.id
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _id_customer
+
     def add_customer_rate(self,entity):
         _db = None
         _id_customer = 0
@@ -248,9 +274,6 @@ class customerModel(dbModel):
         return None
 
     def get_customer_by_id(self,id):
-        return None
-
-    def update_customer(self,entity):
         return None
         
     def get_customer_address_by_id_customer(self,id_customer):

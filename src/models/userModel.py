@@ -450,11 +450,11 @@ class userModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """UPDATE main.user_p SET  mail= %s, social_name= %s, full_name= %s, id_type_document= %s, document_number= %s, 
-                      type_user= %s, photo= %s cellphone=%s, about=%s WHERE id = %s and status = %s;"""
+            _sql = """UPDATE main.user_p SET social_name= %s, full_name= %s, id_type_document= %s, document_number= %s, 
+                      photo= %s ,cellphone=%s, about=%s WHERE id = %s and status = %s;"""
             _cur = _con_client.cursor()
-            _cur.execute(_sql, (userEntity.mail,userEntity.social_name,userEntity.full_name,
-                                userEntity.id_type_document,userEntity.document_number,userEntity.type_user,
+            _cur.execute(_sql, (userEntity.social_name,userEntity.full_name,
+                                userEntity.id_type_document,userEntity.document_number,
                                 userEntity.photo,userEntity.cellphone,userEntity.about,userEntity.id,_status))
             _id_user = userEntity.id
             _con_client.commit()
@@ -1023,3 +1023,42 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _data_row
+
+    def update_user_sub_service(self,userSubServices):
+        _db = None
+        _id_user = 0
+        _status = 1
+        _i = 0
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            
+            for us in userSubServices:
+                _sql = """SELECT c.id_user, c.id_service, c.id_sub_service, c."enable"
+                        FROM   main.user_sub_service c 
+                        WHERE c.id_user = %s and c.id_service = %s and c.id_sub_service = %s;"""   
+
+                _cur = _con_client.cursor()
+                _cur.execute(_sql,(us.id_user,us.id_service,us.id_sub_service,))
+                _rows = _cur.fetchall()
+            
+                if len(_rows) == 0 or _rows is None:
+                    _sql_add = """INSERT INTO main.user_sub_service (id_user, id_service, id_sub_service, charge, "enable", status) 
+                                VALUES(%s, %s, %s, %s,%s,%s);"""
+                    _cur.execute(_sql_add,(us.id_user,us.id_service,us.id_sub_service, us.charge, us.enable,_status,))
+                else:
+                    _sql_update = """UPDATE main.user_sub_service SET "enable" = %s , charge = %s
+                                WHERE id_user = %s and id_service = %s and id_sub_service = %s;;"""
+                    _cur.execute(_sql_update,(us.enable,us.charge,us.id_user,us.id_service,us.id_sub_service,))
+
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return userSubServices

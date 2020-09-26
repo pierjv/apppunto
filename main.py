@@ -101,10 +101,20 @@ def get_user_by_id_service(index):
 def update_user_service():
     return userController().update_user_service(request)
 
+@app.route('/usersubserviceadd', methods=['POST'])
+@jwt_required
+def update_user_sub_service():
+    return userController().update_user_sub_service(request)
+
 @app.route('/customer', methods=['POST'])
 @jwt_required
 def add_customer():
     return customerController().add_customer(request)
+
+@app.route('/customer', methods=['PUT'])
+@jwt_required
+def update_customer():
+    return customerController().update_customer(request)
 
 @app.route('/customeraddress/<int:index>', methods=['GET'])
 @jwt_required
@@ -180,10 +190,10 @@ def get_users_by_type(index):
 def add_user():
     return userController().add_user(request)
 
-@app.route('/users/<int:index>', methods=['PUT'])
+@app.route('/users', methods=['PUT'])
 @jwt_required
-def update_user(index):
-    return userController().update_user(request,index)
+def update_user():
+    return userController().update_user(request)
 
 @app.route('/users/<int:index>', methods=['DELETE'])
 @jwt_required

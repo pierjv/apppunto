@@ -12,7 +12,7 @@ class userStoreController(responseController):
         _data= None
         try:
             _userStoreModel = userStoreModel()
-            _data = _userStoreModel.get_user_stores(index)
+            _data = _userStoreModel.get_user_stores_by_id_user(index)
             _status = responseController().OK
             _message = responseController().messageOK
         except(Exception) as e:

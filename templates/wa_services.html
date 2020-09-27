@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Appunto Web Admin</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='web/img/logo_appunto.png') }}" rel="icon">
+  <!-- Libraries & Bootstrap CSS File -->
+  <link href="{{ url_for('static', filename='web/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='web/css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+  <!--==========================
+  Header
+  ============================-->
+  <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a class="navbar-brand" href="{{ url_for('wa_list_services') }}">Appunto</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                      <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('wa_list_sub_services') }}">Sub Servicios</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('wa_logout') }}">Salir</a>
+                  </li>
+              </ul>
+          </div>
+      </nav>
+  </header>
+  
+  <!-- #header -->
+
+  <!--==========================
+    Section Body
+  ============================-->
+  <section id="intro" class="clearfix">
+    <div class="container">
+
+      <div class="intro-info">
+        <h2>[ Datos de Servicio ]</h2>
+      </div>
+
+    </div>
+  </section><!-- #intro -->
+
+  <main id="main">
+
+    <section id="clients" class="">
+
+      <div class="container">
+
+        <div >
+          <form  action="/wa_services" method="POST" enctype="multipart/form-data">
+
+            {% if service %}
+              <div class="form-group">
+                <label for="idService">ID:</label>
+                <input type="text" class="form-control" id="idtxtService" name="idtxtService" value="{{ service.id }}" readonly="readonly" >
+              </div>
+              <div class="form-group">
+                <label for="idTxtFullName">Nombre Completo:</label>
+                <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="servicio" value="{{ service.full_name }}" required >
+              </div>
+              <div class="form-group">
+                <label for="idtxtColor">Color:</label>
+                <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF" value="{{ service.color }}" required >
+              </div>
+              <div class="form-group">
+                <label for="idSlEstado">Estado:</label>
+                <select class="custom-select" id="idSlEstado" name="idSlEstado" required>
+                  {% if service.status == 1 %}
+                    <option value="1" selected>Habilitado</option>
+                    <option value="0">Deshabilitado</option>
+                  {% else %}
+                    <option value="1" >Habilitado</option>
+                    <option value="0" selected>Deshabilitado</option>
+                  {% endif %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="idFileImage">Imagen:</label>
+                <input type="file" class="form-control-file" id="idFileImage" name="idFileImage">
+                <br>
+                <img src="data:image/png;base64, {{ service.file_image }}" />
+              </div>
+            {% else %}
+              <div class="form-group">
+                <label for="idTxtFullName">Nombre Completo:</label>
+                <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="servicio" required  >
+              </div>
+              <div class="form-group">
+                <label for="idtxtColor">Color:</label>
+                <input type="text" class="form-control" id="idtxtColor" name="idtxtColor" placeholder="#FFFFFF" required >
+              </div>
+              <div class="form-group">
+                <label for="idSlEstado">Estado:</label>
+                <select class="custom-select" id="idSlEstado" name="idSlEstado" required>
+                  <option value="1" selected>Habilitado</option>
+                  <option value="0">Deshabilitado</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="idFileImage">Imagen:</label>
+                <input type="file" class="form-control-file" id="idFileImage" name="idFileImage" required>
+              </div>
+            {% endif %}
+
+            <div>
+              <input  class="btn btn-primary"  type="submit" value="Guardar Datos">
+              <a class="btn btn-dark" href="{{ url_for('wa_list_services') }}">Cancelar</a>              
+            </div>
+          </form>
+
+        </div>
+
+        <div>
+          <h4></h4>
+          <p>
+            <strong>**Consideraciones:</strong> <br>
+            <strong>Color:</strong>  Es el código Hexadecimal que se utilizá para el background (Fondo) de la imagen, ejemplo: Blanco  ->  #FFFFFF<br>
+            Link de apoyo: <a href="https://htmlcolorcodes.com" >Web Colores</a> <br>
+            <strong>Imagen:</strong> Debe ser una imagen con extensión .PNG , además con las sgtes características: <strong>width: 67 px & height: 68px .</strong><br>
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!--==========================
+    Footer
+  ============================-->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h4>Soporte</h4>
+            <p>
+              <strong>Celular:</strong> 955274509<br>
+              <strong>Email:</strong> pierjv1@gmail.com<br>
+              <strong>Appunto-JPV-Google Cloud Platform</strong> 
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer><!-- #footer -->
+
+
+  <!-- JavaScript Libraries -->
+  <script src="{{ url_for('static', filename='web/lib/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/js/main.js') }}"></script>
+
+</body>
+</html>

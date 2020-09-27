@@ -36,4 +36,4 @@ class userDateAvailabilityController(responseController):
             _status = self.interruption
             _message = self.messageInterruption + str(e)
             print('error: '+ str(e))
-        return responseEntity(_status,_message,_data).toJSON()
+        return responseEntity(_status,_message,_status).toJSON()

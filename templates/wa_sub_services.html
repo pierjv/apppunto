@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Appunto Web Admin</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='web/img/logo_appunto.png') }}" rel="icon">
+  <!-- Libraries & Bootstrap CSS File -->
+  <link href="{{ url_for('static', filename='web/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='web/css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+  <!--==========================
+  Header
+  ============================-->
+  <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{ url_for('wa_list_services') }}">Appunto</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('wa_list_sub_services') }}">Sub Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('wa_logout') }}">Salir</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+</header>
+
+  <!-- #header -->
+
+  <!--==========================
+    Section Body
+  ============================-->
+  <section id="intro" class="clearfix">
+    <div class="container">
+
+      <div class="intro-info">
+        <h2>[ Datos de Sub Servicio ]</h2>
+      </div>
+
+    </div>
+  </section><!-- #intro -->
+
+  <main id="main">
+
+    <section id="clients" class="">
+
+      <div class="container">
+
+        <div >
+          <form  action="/wa_sub_services" method="POST" enctype="multipart/form-data">
+
+            {% if sub_service %}
+              <div class="form-group">
+                <label for="idtxtSubService">ID:</label>
+                <input type="text" class="form-control" id="idtxtSubService" name="idtxtSubService" value="{{ sub_service.id }}" readonly="readonly" >
+              </div>
+              <div class="form-group">
+                <label for="iSlServicio">Servicio:</label>
+                <select class="custom-select" id="iSlServicio" name="iSlServicio" required>
+                  {% for data_service in data_services %}
+                      {% if data_service.id == sub_service.id_service %}
+                      <option value="{{ data_service.id }}" selected>{{ data_service.full_name }}</option>
+                      {% else %}
+                      <option value="{{ data_service.id }}">{{ data_service.full_name }}</option>
+                      {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="idTxtFullName">Nombre Completo:</label>
+                <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="sub servicio" value="{{ sub_service.full_name }}" required >
+              </div>
+              <div class="form-group">
+                <label for="idSlEnFiltro">En Filtro:</label>
+                <select class="custom-select" id="idSlEnFiltro" name="idSlEnFiltro" required>
+                  {% if sub_service.in_filter == 1 %}
+                    <option value="1" selected>Si</option>
+                    <option value="0">No</option>
+                  {% else %}
+                    <option value="1" >Si</option>
+                    <option value="0" selected>No</option>
+                  {% endif %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="idSlEstado">Estado:</label>
+                <select class="custom-select" id="idSlEstado" name="idSlEstado" required>
+                  {% if sub_service.status == 1 %}
+                    <option value="1" selected>Habilitado</option>
+                    <option value="0">Deshabilitado</option>
+                  {% else %}
+                    <option value="1" >Habilitado</option>
+                    <option value="0" selected>Deshabilitado</option>
+                  {% endif %}
+                </select>
+              </div>
+            {% else %}
+            <div class="form-group">
+              <label for="iSlServicio">Servicio:</label>
+              <select class="custom-select" id="iSlServicio" name="iSlServicio" required>
+                {% for data_service in data_services %}
+                  <option value="{{ data_service.id }}">{{ data_service.full_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="idTxtFullName">Nombre Completo:</label>
+              <input type="text" class="form-control" id="idTxtFullName" name="idTxtFullName"  placeholder="sub servicio" required >
+            </div>
+            <div class="form-group">
+              <label for="idSlEnFiltro">En Filtro:</label>
+              <select class="custom-select" id="idSlEnFiltro" name="idSlEnFiltro" required>
+                  <option value="1" selected>Si</option>
+                  <option value="0">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="idSlEstado">Estado:</label>
+              <select class="custom-select" id="idSlEstado" name="idSlEstado" required>
+                  <option value="1" selected>Habilitado</option>
+                  <option value="0">Deshabilitado</option>
+              </select>
+            </div>
+            {% endif %}
+
+            <div>
+              <input  class="btn btn-primary"  type="submit" value="Guardar Datos">
+              <a class="btn btn-dark" href="{{ url_for('wa_list_sub_services') }}">Cancelar</a>           
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!--==========================
+    Footer
+  ============================-->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h4>Soporte</h4>
+            <p>
+              <strong>Celular:</strong> 955274509<br>
+              <strong>Email:</strong> pierjv1@gmail.com<br>
+              <strong>Appunto-JPV-Google Cloud Platform</strong> 
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer><!-- #footer -->
+
+
+  <!-- JavaScript Libraries -->
+  <script src="{{ url_for('static', filename='web/lib/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/js/main.js') }}"></script>
+
+</body>
+</html>

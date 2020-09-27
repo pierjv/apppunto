@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Appunto Web Admin</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='web/img/logo_appunto.png') }}" rel="icon">
+  <!-- Libraries & Bootstrap CSS File -->
+  <link href="{{ url_for('static', filename='web/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='web/css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+  <!--==========================
+  Header
+  ============================-->
+  <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a class="navbar-brand" href="{{ url_for('wa_list_services') }}">Appunto</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                      <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('wa_list_sub_services') }}">Sub Servicios</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('wa_logout') }}">Salir</a>
+                  </li>
+              </ul>
+          </div>
+      </nav>
+  </header>
+  <!-- #header -->
+
+  <!--==========================
+    Section Body
+  ============================-->
+  <section id="intro" class="clearfix">
+    <div class="container">
+
+      <div class="intro-info">
+        <h2>[ Lista de Servicios ]</h2>
+      </div>
+
+    </div>
+  </section><!-- #intro -->
+
+  <main id="main">
+
+    <section id="clients" class="">
+
+      <div class="container">
+        
+        <div class="row_grilla">
+
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Servicio</th>
+                <th scope="col">Color</th>
+                <th scope="col">Imagen</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Editar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data_service in data_services %}
+              <tr>
+                <th scope="row">{{ data_service.id }}</th>
+                <td>{{ data_service.full_name }}</td>
+                <td>{{ data_service.color }}</td>
+                <td>
+                  <img height="20px" src="data:image/png;base64, {{ data_service.file_image }}" />
+                </td>
+                <td>
+                  {% if data_service.status == 1 %}
+                    <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
+                    {{ 'Habilitado' }}
+                  {% else %}
+                    <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
+                    {{ 'Deshabilitado' }}
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="{{ url_for('wa_services',index = data_service.id ) }}">
+                    <img height="20px" src="{{ url_for('static', filename='web/img/edit.png') }}">
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+
+        <div><a class="btn btn-primary"  href="{{ url_for('wa_services') }}">Agregar Servicio</a></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!--==========================
+    Footer
+  ============================-->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h4>Soporte</h4>
+            <p>
+              <strong>Celular:</strong> 955274509<br>
+              <strong>Email:</strong> pierjv1@gmail.com<br>
+              <strong>Appunto-JPV-Google Cloud Platform</strong> 
+            </p>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </footer><!-- #footer -->
+
+
+  <!-- JavaScript Libraries -->
+  <script src="{{ url_for('static', filename='web/lib/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/js/main.js') }}"></script>
+
+</body>
+</html>

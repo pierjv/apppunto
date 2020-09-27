@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Appunto Web Admin</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='web/img/logo_appunto.png') }}" rel="icon">
+  <!-- Libraries & Bootstrap CSS File -->
+  <link href="{{ url_for('static', filename='web/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='web/css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+  <!--==========================
+  Header
+  ============================-->
+  <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{ url_for('wa_list_services') }}">Appunto</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('wa_list_sub_services') }}">Sub Servicios</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('wa_logout') }}">Salir</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+</header><!-- #header -->
+
+  <!--==========================
+    Section Body
+  ============================-->
+  <section id="intro" class="clearfix">
+    <div class="container">
+
+      <div class="intro-info">
+        <h2>[ Dashboard ]</h2>
+      </div>
+
+    </div>
+  </section><!-- #intro -->
+
+  <main id="main">
+
+    <section id="clients" class="">
+
+      <div class="container">
+        <div class="row_grilla">
+
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Conceptos Generales</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Clientes</th>
+                <td>{{dashboardEntity.customers}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Usuarios</th>
+                <td>{{dashboardEntity.users}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Monto Recaudado</th>
+                <td>{{dashboardEntity.total_amount}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Cantidad de Pedido</th>
+                <td>{{dashboardEntity.sales}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Ticket promedio</th>
+                <td>{{dashboardEntity.average_amount}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Horario más reservado</th>
+                <td>{{dashboardEntity.max_hour_availability}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Promedio de reservas por día</th>
+                <td>{{dashboardEntity.sales_per_day}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Promedio de ingreso por día </th>
+                <td>{{dashboardEntity.amount_per_day}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+        <h4>Servicios</h4>
+        <br>
+        {% for dashboard_service in data_dashboard_services %}
+          <!-- INICIO -->
+          <h4>{{dashboard_service.service}}</h4>
+          <div class="row_grilla">
+          <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Usuarios</th>
+                  <th scope="col">Monto</th>
+                  <th scope="col">Pedidos</th>
+                  <th scope="col">Ticket promedio</th>
+                  <th scope="col">Hora con más reservas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{dashboard_service.users}}</td>
+                  <td>{{dashboard_service.amount}}</td>
+                  <td>{{dashboard_service.sales}}</td>
+                  <td>{{dashboard_service.average_sale}}</td>
+                  <td>{{dashboard_service.max_hour_availability}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <strong>Promedio de reservas por día</strong>
+          <div class="row_grilla">
+          <table class="table">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Lunes</th>
+                <th scope="col">Martes</th>
+                <th scope="col">Miércoles</th>
+                <th scope="col">Jueves</th>
+                <th scope="col">Viernes</th>
+                <th scope="col">Sábado</th>
+                <th scope="col">Domingo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{dashboard_service.sales_q_1}}</td>
+                <td>{{dashboard_service.sales_q_2}}</td>
+                <td>{{dashboard_service.sales_q_3}}</td>
+                <td>{{dashboard_service.sales_q_4}}</td>
+                <td>{{dashboard_service.sales_q_5}}</td>
+                <td>{{dashboard_service.sales_q_6}}</td>
+                <td>{{dashboard_service.sales_q_7}}</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <strong>Promedio de ingreso por día</strong>
+          <div class="row_grilla">
+          <table class="table">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Lunes</th>
+                <th scope="col">Martes</th>
+                <th scope="col">Miércoles</th>
+                <th scope="col">Jueves</th>
+                <th scope="col">Viernes</th>
+                <th scope="col">Sábado</th>
+                <th scope="col">Domingo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{dashboard_service.sales_a_1}}</td>
+                <td>{{dashboard_service.sales_a_2}}</td>
+                <td>{{dashboard_service.sales_a_3}}</td>
+                <td>{{dashboard_service.sales_a_4}}</td>
+                <td>{{dashboard_service.sales_a_5}}</td>
+                <td>{{dashboard_service.sales_a_6}}</td>
+                <td>{{dashboard_service.sales_a_7}}</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        {% endfor %}
+        <!-- FIN -->
+      </div>
+
+    </section>
+
+  </main>
+
+  <!--==========================
+    Footer
+  ============================-->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h4>Soporte</h4>
+            <p>
+              <strong>Celular:</strong> 955274509<br>
+              <strong>Email:</strong> pierjv1@gmail.com<br>
+              <strong>Appunto-JPV-Google Cloud Platform</strong> 
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer><!-- #footer -->
+
+
+  <!-- JavaScript Libraries -->
+  <script src="{{ url_for('static', filename='web/lib/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='web/js/main.js') }}"></script>
+
+</body>
+</html>

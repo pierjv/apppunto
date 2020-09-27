@@ -7,7 +7,30 @@ class notificationModel(dbModel):
     def __init__(self):
         dbModel.__init__(self)
     
-    def send_push_message(self, id_push_user):
+    def send_push_message(self, id_push_user,push_message):
+        _response = None
+        _value = None
+        try:
+            _post_data = {
+                "to": id_push_user,
+                "notification": {
+                    "body": push_message,
+                    "title":"Solicitud",
+                    "content_available" : True,
+                    "priority" : "high"
+                },
+                "data" : {
+                    "contents" :  {"type":1,"body":"cuerpo json"}
+                }
+            }
+            _headers = {"Authorization": self.push_firebase_key}
+            _response = requests.post(url=self.push_uri_post, json=_post_data,headers=_headers)
+            _value = _response.text
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        return _value
+
+    def send_push_message_2(self, id_push_user):
         _response = None
         _value = None
         try:
@@ -27,5 +50,24 @@ class notificationModel(dbModel):
             _response = requests.post(url=self.push_uri_post, json=_post_data,headers=_headers)
             _value = _response.text
         except(Exception) as e:
-             print('error: '+ str(e))
+            self.add_log(str(e),type(self).__name__)
         return _value
+    
+    def sen_sms_message(self,password,cellphone):
+        try:
+            params_data = {
+                "action":"sendmessage",
+                "username":self.text_user,
+                "password":self.text_password,
+                "recipient":cellphone,
+                "messagedata":"Appunto: Hola tu contrasena es " + str(password) ,
+                "longMessage":"false",
+                "flash":"false",
+                "premium":"false"   
+            }
+            r = requests.post(self.text_uri_get,params = params_data)
+            print(r.text)
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        
+

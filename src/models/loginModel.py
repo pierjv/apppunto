@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.userEntity import userEntity, typeDocumentEntity
+from src.entities.userEntity import userEntity, typeDocumentEntity, bankEntity
 from src.entities.userStoreEntity import userStoreEntity
 from src.entities.loginEntity import loginEntity , loadEntity
 from src.entities.customerEntity import customerEntity 
@@ -141,6 +141,7 @@ class loginModel(dbModel):
         _data_documents = []
         _data_users = []
         _data_delivery_costs = []
+        _data_banks= []
         _id_customer = id_customer
         _loadEntity = None
         try:
@@ -214,6 +215,18 @@ class loginModel(dbModel):
                 _data_delivery_costs.append(_delivery_cost)
 
             _loadEntity.delivery_costs = _data_delivery_costs
+
+            _sql_banks = """SELECT id, full_name FROM main.bank WHERE status = 1;"""
+            _cur.execute(_sql_banks)
+            _rows = _cur.fetchall()
+
+            for row in _rows:
+                _bankEntity = bankEntity()
+                _bankEntity.id  = row[0]
+                _bankEntity.full_name  = row[1] 
+                _data_banks.append(_bankEntity)
+
+            _loadEntity.banks = _data_banks
 
             if(_id_customer != 0):
                 _sql_users = """SELECT up.id as id_user, 

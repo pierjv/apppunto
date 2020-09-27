@@ -1,5 +1,5 @@
 from src.models.userModel import userModel
-from src.entities.userEntity import userEntity,lstuserServiceAddEntity, lstUserSubServiceAddEntity
+from src.entities.userEntity import userEntity,lstuserServiceAddEntity, lstUserSubServiceAddEntity, userBankEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
 
@@ -200,3 +200,70 @@ class userController(responseController):
             _message = self.messageInterruption +str(e)
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
+    
+    def get_user_bank_account_by_id_user(self,index):
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _model = userModel()
+            _data = _model.get_user_bank_account_by_id_user(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+    
+    def add_user_bank_account(self,request):
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _entity = userBankEntity()
+            _entity.requestToClass(request)
+            _model = userModel()
+            _data = _model.add_user_bank_account(_entity)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+
+    def update_user_bank_account(self,request):
+        print(1)
+        _message = None
+        _status = self.interruption
+        _data= None
+        try:
+            _entity = userBankEntity()
+            _entity.requestUpdateToClass(request)
+            _model = userModel()
+            _data = _model.update_user_bank_account(_entity)
+            print(_data)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+    
+    def delete_user_bank_account(self,index):
+        _message = None
+        _status = self.interruption
+        id_customer_address= None
+        try:
+            _model = userModel()
+            id_customer_address = _model.delete_user_bank_account(index)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,id_customer_address).toJSON()
+

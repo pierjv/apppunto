@@ -344,11 +344,11 @@ class customerModel(dbModel):
                 FROM   main.customer_card cc 
                     INNER JOIN main.type_card tc 
                             ON cc.id_type_card = tc.id 
-                WHERE  cc.status = 1 
-                    AND cc.id_customer = 3; """   
+                WHERE  cc.status = %s 
+                    AND cc.id_customer = %s; """   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_id_customer,_status,))
+            _cur.execute(_sql,(_status,_id_customer,))
             _rows = _cur.fetchall()
         
             for row in _rows:

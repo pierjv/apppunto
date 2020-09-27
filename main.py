@@ -106,6 +106,29 @@ def update_user_service():
 def update_user_sub_service():
     return userController().update_user_sub_service(request)
 
+
+@app.route('/userbankaccount/<int:index>', methods=['GET'])
+@jwt_required
+def get_user_bank_account_by_id_user(index):
+    return userController().get_user_bank_account_by_id_user(index)
+
+@app.route('/userbankaccount', methods=['POST'])
+@jwt_required
+def add_user_bank_account():
+    return userController().add_user_bank_account(request)
+
+@app.route('/userbankaccount', methods=['PUT'])
+@jwt_required
+def update_user_bank_account():
+    return userController().update_user_bank_account(request)
+
+@app.route('/userbankaccount/<int:index>', methods=['DELETE'])
+@jwt_required
+def delete_user_bank_account(index):
+    return userController().delete_user_bank_account(index)
+
+
+
 @app.route('/customer', methods=['POST'])
 @jwt_required
 def add_customer():

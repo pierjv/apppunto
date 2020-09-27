@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from src.cn.data_base_connection import Database
 from src.models.dbModel import dbModel
-from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity ,dashboardServiceEntity, userServiceEntity,userMobileDashboardEntity
+from src.entities.userEntity import userEntity,userDetailEntity,rateEntity,commentEntity, dashboardEntity ,dashboardServiceEntity, userServiceEntity,userMobileDashboardEntity, userBankEntity
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
 from src.entities.userStoreEntity import userStoreEntity
@@ -1062,3 +1062,121 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return userSubServices
+
+    def get_user_bank_account_by_id_user(self,id_user):
+        _db = None
+        _status = 1
+        _data = []
+        try:
+            _id_user= id_user
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT id, 
+                    id_user, 
+                    id_bank, 
+                    account_number, 
+                    cci
+                FROM   main.user_bank_account c
+                WHERE  id_user = %s 
+                    AND status = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_user,_status,))
+            _rows = _cur.fetchall()
+        
+            for row in _rows:
+                _entity  = userBankEntity()
+                _entity.id = row[0]
+                _entity.id_user = row[1]
+                _entity.id_bank =row[2]
+                _entity.account_number =row[3]
+                _entity.cci =row[4]
+                _data.append(_entity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data
+
+    def add_user_bank_account(self,entity):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """INSERT INTO main.user_bank_account(id_user, id_bank, account_number , cci,status) 
+                            VALUES(%s,%s,%s,%s,%s) RETURNING id;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (entity.id_user,entity.id_bank,entity.account_number,entity.cci,_status))
+            _id = _cur.fetchone()[0]
+            entity.id = _id
+
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return entity
+    
+    def update_user_bank_account(self,entity):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.user_bank_account 
+                    SET id_user = %s,
+                    id_bank = %s,
+                    account_number = %s,
+                    cci = %s
+                    WHERE id = %s;"""
+                    
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (entity.id_user,entity.id_bank,entity.account_number,entity.cci,entity.id))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return entity
+
+    def delete_user_bank_account(self,id_user_bank_account):
+        _db = None
+        _status = 0
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.user_bank_account 
+                    SET status = %s
+                    WHERE id = %s;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (_status,id_user_bank_account,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return id_user_bank_account

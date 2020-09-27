@@ -118,6 +118,12 @@ class typeDocumentEntity:
         self.id = id
         self.full_name = full_name
 
+class bankEntity:
+
+    def __init__(self,id=None,full_name= None):
+        self.id = id
+        self.full_name = full_name
+
 class rateEntity:
 
     def __init__(self,rate=None,total=None,quantity=None,percentage=None):
@@ -296,3 +302,34 @@ class lstUserSubServiceAddEntity:
             _entity.enable = us.enable
             _user_sub_services.append(_entity)
         self.user_sub_services = _user_sub_services 
+
+class userBankEntity:
+
+    def __init__(self,id=None,id_user = None, id_bank= None, account_number = None, cci= None):
+        self.id = id
+        self.id_user = id_user
+        self.id_bank = id_bank
+        self.account_number = account_number
+        self.cci = cci
+        
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+
+    def requestToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id_user = values.id_user
+        self.id_bank = values.id_bank
+        self.account_number = values.account_number
+        self.cci = values.cci
+    
+    def requestUpdateToClass(self,resquest):
+        data = resquest.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        self.id = values.id
+        self.id_user = values.id_user
+        self.id_bank = values.id_bank
+        self.account_number = values.account_number
+        self.cci = values.cci

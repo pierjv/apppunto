@@ -25,7 +25,7 @@ class serviceController(responseController):
         _data= None
         try:
             _serviceModel = serviceModel()
-            _data = _serviceModel.get_services()
+            _data = _serviceModel.get_services_wa()
         except(Exception) as e:
             print('error: '+ str(e))
         return _data

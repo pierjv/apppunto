@@ -1180,3 +1180,4 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return id_user_bank_account
+    

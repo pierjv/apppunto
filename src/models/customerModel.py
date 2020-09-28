@@ -15,17 +15,19 @@ class customerModel(dbModel):
         _db = None
         _id_customer = 0
         _status = 1
+        _status_first_sale = 0
         _i = 0
         try:
             _db = Database()
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.customer (mail,full_name,cellphone,photo,password,referred_code,status) 
-                    VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
+            _sql = """INSERT INTO main.customer (mail,full_name,cellphone,photo,password,referred_code,status,status_first_sale) 
+                    VALUES(%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (entity.mail,entity.full_name,entity.cellphone,
-                                entity.photo,entity.password,entity.referred_code,_status))
+                                entity.photo,entity.password,entity.referred_code,_status,
+                                _status_first_sale))
             _id_customer = _cur.fetchone()[0]
             entity.id = _id_customer
 
@@ -208,7 +210,7 @@ class customerModel(dbModel):
             _date = datetime.now()
             entity = customerCouponEntity()
             entity.id_customer = _id_customer
-            entity.coupon = "CON-APP"+ str(_id_customer) +"-"+ str(_date.hour)+str(_date.year)+str(_date.month)+str(_date.minute)
+            entity.coupon = "CPN-APP"+ str(_id_customer) +"-"+ str(_date.hour)+str(_date.year)+str(_date.month)+str(_date.minute)
             entity.amount = int(self.amount_coupon)
 
             _con_client = _db.get_client()
@@ -243,7 +245,8 @@ class customerModel(dbModel):
                     To_char(effective_date, 'DD-MM-YYY') AS effective_date, 
                     amount 
                 FROM   main.customer_coupon 
-                WHERE  id_customer = %s 
+                WHERE  current_date <= effective_date
+                    AND id_customer = %s 
                     AND status = %s; """   
 
             _cur = _con_client.cursor()
@@ -267,8 +270,29 @@ class customerModel(dbModel):
                 print("Se cerro la conexion")
         return _data_coupons
 
-    def delete_customer(self,id):
-        return None
+    def delete_customer_coupon(self,coupon):
+        _db = None
+        _status = 0
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.customer_coupon 
+                    SET status = %s
+                    WHERE coupon = %s;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (_status,coupon,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return coupon
     
     def get_customers(self):
         return None
@@ -566,4 +590,181 @@ class customerModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return customerUserFavorite
+
+
+    def update_first_sale(self,id_customer):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.customer 
+                    SET status_first_sale = %s
+                    WHERE id = %s;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (_status,id_customer,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return id_customer
     
+
+    def get_quantity_first_sales(self,id_customer):
+        _db = None
+        _status = 1
+        _referred_code = None
+        _quantity = None
+        _status_first_sale = 1
+        try:
+            _id_customer = id_customer
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _cur = _con_client.cursor()
+
+            _sql = """SELECT s.referred_code
+                    FROM   main.customer s 
+                    WHERE s.id = %s; """   
+
+            _cur.execute(_sql,(_id_customer,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _referred_code = _rows[0][0]
+
+            print(_referred_code)
+
+            _sql_quantity = """SELECT count(*) as quantity 
+                FROM   main.customer s 
+                WHERE s.referred_code = %s and s.status_first_sale = %s; """   
+            _cur.execute(_sql_quantity,(_referred_code,_status_first_sale,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _quantity = _rows[0][0]
+            print(_quantity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _quantity
+
+    
+    def update_first_sale_done(self,id_customer):
+        _db = None
+        _status_first_sale = 2
+        _referred_code = None
+        try:
+            _id_customer = id_customer
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _cur = _con_client.cursor()
+
+            _sql = """SELECT s.referred_code
+                    FROM   main.customer s 
+                    WHERE s.id = %s; """   
+
+ 
+            _cur.execute(_sql,(_id_customer,))
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _referred_code = _rows[0][0]
+
+            _sql_update = """UPDATE main.customer 
+                    SET status_first_sale = %s
+                    WHERE referred_code = %s and status_first_sale = 1;"""
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql_update, (_status_first_sale,_referred_code,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return id_customer
+
+    def get_id_customer_main_referred(self,id_customer):
+        _db = None
+        _status = 1
+        _referred_code = None
+        _id_customer_main = None
+        try:
+            _id_customer = id_customer
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _cur = _con_client.cursor()
+
+            _sql = """SELECT s.referred_code
+                    FROM   main.customer s 
+                    WHERE s.id = %s; """   
+
+            _cur.execute(_sql,(_id_customer,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _referred_code = _rows[0][0]
+
+            _sql_quantity = """SELECT s.id
+                FROM   main.customer s 
+                WHERE s.id_code = %s; """   
+            _cur.execute(_sql_quantity,(_referred_code,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _id_customer_main = _rows[0][0]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _id_customer_main
+
+    def get_cellphone_by_id(self,id_customer):
+        _db = None
+        _status = 1
+        _cellphone = None
+        try:
+            _id_customer = id_customer
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _cur = _con_client.cursor()
+
+            _sql = """SELECT s.cellphone
+                    FROM   main.customer s 
+                    WHERE s.id = %s; """   
+
+            _cur.execute(_sql,(_id_customer,))
+            _rows = _cur.fetchall()
+            if len(_rows) >= 1:
+                _cellphone = _rows[0][0]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _cellphone

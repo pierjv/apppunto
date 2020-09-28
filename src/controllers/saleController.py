@@ -44,10 +44,16 @@ class saleController(responseController):
         _status = self.interruption
         _entity= None
         _response = None
+        _coupon = None
+        _id_sale = None
+        _id_customer = None
+        _id_quantity_sales_referred = 0
+        _cellphone = None
         try:
 
             _entity = saleConfirmEntity()
             _model = saleModel()
+            _customerModel = customerModel()
             _chargeModel = chargeModel()
             _entity.requestToClass(request)
             
@@ -57,8 +63,27 @@ class saleController(responseController):
                 _status = self.interruption
                 _message = _data["user_message"]
             else:
-                print(_entity.id_sale)
-                _entity = _model.add_sale_confirm(_entity.id_sale)
+
+                _id_sale = _model.add_sale_confirm(_entity.id_sale)
+                _coupon = _model.get_coupon_by_id_sale(_entity.id_sale)
+                if _coupon is not None:
+                    _customerModel.delete_customer_coupon(_coupon)
+
+                _id_customer = _model.get_id_customer_by_id_sale(_entity.id_sale) 
+                if _id_customer is not None:
+                    _customerModel.update_first_sale(_id_customer)
+
+                _id_quantity_sales_referred = _customerModel.get_quantity_first_sales(_id_customer)
+                print("_id_quantity_sales_referred "  + str(_id_quantity_sales_referred))
+                if _id_quantity_sales_referred >= 3:
+                    _id_customer_main = _customerModel.get_id_customer_main_referred(_id_customer)
+                    _customerModel.add_customer_coupon(_id_customer_main,0)
+                    _customerModel.update_first_sale_done(_id_customer)
+                    _cellphone = _customerModel.get_cellphone_by_id(_id_customer)
+                    _notificationModel = notificationModel()
+                    print(_cellphone)
+                    _notificationModel.send_sms_coupon(_cellphone)
+                    
                 _status = self.OK
                 _message = self.saleSuccessConfirm
 
@@ -66,7 +91,7 @@ class saleController(responseController):
             _status = self.interruption
             _message = self.messageInterruption +str(e)
             print('error: '+ str(e))
-        return responseEntity(_status,_message,_entity).toJSON()
+        return responseEntity(_status,_message,_id_sale).toJSON()
 
     def add_sale_2(self,request):
         _message = None

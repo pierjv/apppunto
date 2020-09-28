@@ -24,14 +24,15 @@ class saleModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
             _sql = """INSERT INTO main.sale (id_type_availability, id_customer, id_user, coupon, date_availability, hour_availability, total_amount,
-                      status, date_transaction,id_type_card, document_number,expiration_year,expiration_month,mail,full_name_card,id_customer_address,status_sale)
-                      VALUES(%s,%s,%s,%s,to_date(%s,'DD-MM-YYY'),%s,%s,%s,current_timestamp,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
+                      status, date_transaction,id_type_card, document_number,expiration_year,expiration_month,mail,full_name_card,id_customer_address,status_sale, amount_coupon)
+                      VALUES(%s,%s,%s,%s,to_date(%s,'DD-MM-YYY'),%s,%s,%s,current_timestamp,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (saleEntity.id_type_availability,saleEntity.id_customer,saleEntity.id_user,
                                 saleEntity.coupon,saleEntity.date_availability,saleEntity.hour_availability,
                                 saleEntity.total_amount,_status,saleEntity.id_type_card,
                                 saleEntity.document_number,saleEntity.expiration_year,saleEntity.expiration_month,
-                                saleEntity.mail,saleEntity.full_name_card,saleEntity.id_customer_address,_status_sale))
+                                saleEntity.mail,saleEntity.full_name_card,saleEntity.id_customer_address,_status_sale,
+                                saleEntity.amount_coupon))
             _id_sale = _cur.fetchone()[0]
             saleEntity.id = _id_sale
             
@@ -437,3 +438,36 @@ class saleModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _id_customer
+
+    
+    def get_coupon_by_id_sale(self,id_sale):
+        _db = None
+        _status = 1
+        _coupon = None
+   
+        try:
+            _id_sale = id_sale
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT s.coupon
+                    FROM   main.sale s 
+                    WHERE s.id = %s; """   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_id_sale,))
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _coupon = _rows[0][0]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _coupon

@@ -101,6 +101,11 @@ def get_user_by_id_service(index):
 def update_user_service():
     return userController().update_user_service(request)
 
+@app.route('/usersubservice', methods=['POST'])
+#@jwt_required
+def get_user_by_sub_services():
+    return userController().get_user_by_sub_services(request)
+
 @app.route('/usersubserviceadd', methods=['POST'])
 @jwt_required
 def update_user_sub_service():
@@ -208,6 +213,11 @@ def get_users():
 def get_users_by_type(index):
     return userController().get_users_by_type(index)
 
+@app.route('/userstypefilter', methods=['POST'])
+#@jwt_required
+def get_users_by_type_sub_services():
+    return userController().get_users_by_type_sub_services(request)
+
 @app.route('/users', methods=['POST'])
 @jwt_required
 def add_user():
@@ -223,10 +233,21 @@ def update_user():
 def delete_user(index):
     return userController().delete_user(index)
 
-@app.route('/userstores/<int:index>', methods=['GET'])
+@app.route('/userstore/<int:index>', methods=['GET'])
 @jwt_required
-def get_user_stores(index):
-    return userStoreController().get_user_stores(index)
+def get_user_stores_by_id_user(index):
+    return userStoreController().get_user_stores_by_id_user(index)
+
+@app.route('/userstore', methods=['POST'])
+@jwt_required
+def add_user_store():
+    return userStoreController().add_user_store(request)
+
+@app.route('/userstore/<int:index>', methods=['DELETE'])
+@jwt_required
+def delete_user_store(index):
+    return userStoreController().delete_user_store(index)
+
 
 @app.route('/send', methods=['GET'])
 #@jwt_required    #pushController().send_message()

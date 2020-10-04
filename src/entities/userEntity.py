@@ -71,6 +71,44 @@ class userEntity:
         data = json.dumps(data)
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
         self.mail = values.mail
+    
+    def requestSubServiceToString(self,request):
+        data = request.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        _subs_services = ""
+        _len = len(values.sub_services)
+        _i = 1
+        for us in values.sub_services:
+            _subs_services += str(us) 
+            if _i < _len:
+                _subs_services += ","
+            _i = _i + 1
+            
+        return _subs_services
+
+class userSubServiceFilterEntity:
+
+    def __init__(self,type_user=None,sub_services = None):
+        self.type_user = type_user
+        self.sub_services = sub_services
+    
+    def requestToClass(self,request):
+        data = request.get_json() 
+        data = json.dumps(data)
+        values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        _subs_services = ""
+        _len = len(values.sub_services)
+        _i = 1
+        for us in values.sub_services:
+            _subs_services += str(us) 
+            if _i < _len:
+                _subs_services += ","
+            _i = _i + 1
+        self.sub_services = _subs_services
+        self.type_user = values.type_user
+        
+            
 
 class userServiceEntity:
 

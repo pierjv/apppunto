@@ -90,41 +90,73 @@ class serviceModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
             _sql = """SELECT s.id, 
-                        s.full_name, 
-                        s.color,
-                        encode(s.file_image,'base64') AS file_image,
-                        b.enable
-                    FROM   main.service s 
-                        LEFT JOIN (SELECT s.id AS id_service, 
-                                            us.enable 
-                                    FROM   main.service s 
-                                            LEFT JOIN main.user_service us 
-                                                    ON s.id = us.id_service 
-                                    WHERE  us.id_user = %s) b 
-                                ON s.id = b.id_service
-                    ORDER BY s.id; """
-                                        
+                    s.full_name, 
+                    s.color, 
+                    Encode(s.file_image, 'base64') AS file_image, 
+                    b.enable, 
+                    ss.id                          AS id_sub_service, 
+                    ss.full_name                   AS full_name_sub_service, 
+                    c.charge, 
+                    c."enable"                     AS enable_sub_service 
+                FROM   main.service s 
+                    LEFT JOIN (SELECT s.id AS id_service, 
+                                        us.enable 
+                                FROM   main.service s 
+                                        LEFT JOIN main.user_service us 
+                                                ON s.id = us.id_service 
+                                WHERE  us.id_user = %s) b 
+                            ON s.id = b.id_service 
+                    LEFT JOIN main.sub_service ss 
+                            ON s.id = ss.id_service 
+                    LEFT JOIN (SELECT uss.id_service, 
+                                        uss.id_sub_service, 
+                                        uss.charge, 
+                                        uss."enable" 
+                                FROM   main.user_sub_service uss 
+                                WHERE  uss.id_user = %s) c 
+                            ON c.id_service = s.id 
+                                AND c.id_sub_service = ss.id 
+                ORDER  BY s.id; """
+                                                    
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_id_user,))
+            _cur.execute(_sql,(_id_user,_id_user,))
             _rows = _cur.fetchall()
+
+            _id_service_old = None
             for row in _rows:
                 _serviceEntity = serviceEntity()
                 _serviceEntity.id  = row[0]
                 _serviceEntity.full_name  = row[1] 
                 _serviceEntity.color  = row[2] 
-
                 _file_image = row[3]
                 if _file_image is None:
                     _serviceEntity.file_image  = _file_image
                 else:
                     _serviceEntity.file_image  = _file_image.replace('\n','')
-
                 _enable = row[4]
                 if _enable is None:
                     _enable  = 0
-
                 _serviceEntity.enable  = _enable
-                _data_row.append(_serviceEntity)
+                _sub_service = row[5]
+                _sub_services = []
+                if _id_service_old  != _serviceEntity.id :
+                    for se in _rows:
+                        if row[0] == se[0] and _sub_service is not None:
+                            _subServiceEntity = subServiceEntity()
+                            _subServiceEntity.id = se[5]
+                            _subServiceEntity.full_name = se[6]
+                            _subServiceEntity.charge = se[7]
+                            _enable_s = se[8]
+                            if _enable_s is None:
+                                _enable_s  = 0
+                            _subServiceEntity.enable = _enable_s
+                            _subServiceEntity.id_service = _serviceEntity.id 
+                            _sub_services.append(_subServiceEntity)
+
+                    _serviceEntity.sub_services = _sub_services
+                    _data_row.append(_serviceEntity)
+                    _id_service_old = _serviceEntity.id 
+
 
             _cur.close()
         except(Exception) as e:

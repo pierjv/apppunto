@@ -20,7 +20,6 @@ class userStoreEntity:
         data = resquest.get_json() 
         data = json.dumps(data)
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
-        self.id = values.id
         self.id_user = values.id_user 
         self.full_name = values.full_name
         self.address = values.address

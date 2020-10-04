@@ -209,7 +209,7 @@ class userModel(dbModel):
             _cur.execute(_sql,(_type_user,))
             _rows = _cur.fetchall()
             
-            _id_user_old = None
+           
             _id_service_old = None
             for rowSer in _rows:
                 _userServiceEnity = userServiceEntity()
@@ -218,6 +218,7 @@ class userModel(dbModel):
 
                 if _id_service_old  != _userServiceEnity.id_service :
                     _data_row_user = []
+                    _id_user_old = None
                     for row in _rows:
                         if row[17] == rowSer[17]:
                             _userEntity= userEntity()
@@ -240,6 +241,118 @@ class userModel(dbModel):
                             if _id_user_old  != _userEntity.id :
                                 for se in _rows:
                                     if row[0] == se[0] and _userEntity is not None and rowSer[17] == se[17]:
+                                        _userStoreEntity = userStoreEntity()
+                                        _userStoreEntity.id = se[10]
+                                        _userStoreEntity.full_name = se[11]
+                                        _userStoreEntity.address = se[12]
+                                        _userStoreEntity.longitude = se[13]
+                                        _userStoreEntity.latitude = se[14]
+                                        _userStoreEntity.main = se[15]
+                                        _userStoreEntity.id_user = _userEntity.id 
+                                        _user_stores.append(_userStoreEntity)
+
+                                _userEntity.user_store = _user_stores
+                                _data_row_user.append(_userEntity)
+                                _id_user_old = _userEntity.id 
+
+                    _userServiceEnity.users = _data_row_user
+                    _data_row.append(_userServiceEnity)
+                    _id_service_old = _userServiceEnity.id_service 
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data_row
+    
+    def get_users_by_type_sub_services(self,entity):
+        _db = None
+        _status = 0
+        _id = id
+        _data_row = []
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """select distinct u.id, 
+                    u.mail, 
+                    u.social_name, 
+                    u.full_name, 
+                    u.id_type_document, 
+                    u.document_number, 
+                    u.type_user, 
+                    u.photo, 
+                    u.cellphone, 
+                    u.about, 
+                    us.id        AS id_user_store, 
+                    us.full_name AS name_user_store, 
+                    us.address, 
+                    us.longitude, 
+                    us.latitude, 
+                    us.main, 
+                    a.avg_rate,
+                    use.id_service,
+                    s.full_name   as service_full_name
+                FROM   main.user_p u 
+                    INNER JOIN main.user_store us 
+                            ON u.id = us.id_user
+                    INNER JOIN main.user_service use
+                            on use.id_user  = u.id
+                    INNER JOIN main.service s 
+                            on use.id_service  = s.id 
+                    inner join  main.user_sub_service uss
+                            on u.id  = uss.id_user 
+                            and uss.id_service = use.id_service 
+                    left JOIN (SELECT id_user, 
+                                        Avg(rate) :: float4 AS avg_rate 
+                                FROM   main.customer_rate 
+                                GROUP  BY 1) a 
+                            ON a.id_user = u.id  
+                WHERE  u.status = 1 
+                    AND us.status = 1 
+                    and uss.id_sub_service in ( """+ entity.sub_services + """)
+                    AND u.type_user = %s
+                ORDER  BY  use.id_service,s.full_name ,  u.id; """
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(entity.type_user,))
+            _rows = _cur.fetchall()
+            
+   
+            _id_service_old = None
+            for rowSer in _rows:
+                _userServiceEnity = userServiceEntity()
+                _userServiceEnity.id_service = rowSer[17]
+                _userServiceEnity.service_full_name = rowSer[18]
+
+                if _id_service_old  != _userServiceEnity.id_service :
+                    _data_row_user = []
+                    _id_user_old = None
+                    for row in _rows:
+                        if row[17] == rowSer[17]:
+                            _userEntity= userEntity()
+                            _userEntity.id  = row[0]
+                            _userEntity.mail  = row[1] 
+                            _userEntity.social_name  = row[2]
+                            _userEntity.full_name  = row[3]
+                            _userEntity.id_type_document  = row[4]
+                            _userEntity.document_number  = row[5]
+                            _userEntity.type_user  = row[6]
+                            _userEntity.photo  = row[7]
+                            _userEntity.cellphone  = row[8]
+                            _userEntity.about  = row[9]
+                            _avg_rate =  row[16]
+                            if _avg_rate is None:
+                                _avg_rate = 0
+                            _userEntity.avg_rate = _avg_rate
+                            _userEntity.id_service = _userServiceEnity.id_service
+                            _user_stores = []
+                            if _id_user_old  != _userEntity.id:
+                                for se in _rows:
+                                    if row[0] == se[0] and rowSer[17] == se[17]:
                                         _userStoreEntity = userStoreEntity()
                                         _userStoreEntity.id = se[10]
                                         _userStoreEntity.full_name = se[11]
@@ -395,6 +508,96 @@ class userModel(dbModel):
 
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_status,_status,_id_service,))
+            _rows = _cur.fetchall()
+
+            _id_user_old = None
+            for row in _rows:
+                _userEntity= userEntity()
+                _userEntity.id  = row[0]
+                _userEntity.mail  = row[1] 
+                _userEntity.social_name  = row[2]
+                _userEntity.full_name  = row[3]
+                _userEntity.id_type_document  = row[4]
+                _userEntity.document_number  = row[5]
+                _userEntity.type_user  = row[6]
+                _userEntity.photo  = row[7]
+                _userEntity.cellphone  = row[8]
+                _userEntity.about  = row[9]
+                _avg_rate =  row[16]
+                if _avg_rate is None:
+                    _avg_rate = 0
+                _userEntity.avg_rate = _avg_rate
+                _user_stores = []
+                if _id_user_old  != _userEntity.id :
+                    for se in _rows:
+                        if row[0] == se[0] and _userEntity is not None:
+                            _userStoreEntity = userStoreEntity()
+                            _userStoreEntity.id = se[10]
+                            _userStoreEntity.full_name = se[11]
+                            _userStoreEntity.address = se[12]
+                            _userStoreEntity.longitude = se[13]
+                            _userStoreEntity.latitude = se[14]
+                            _userStoreEntity.main = se[15]
+                            _userStoreEntity.id_user = _userEntity.id 
+                            _user_stores.append(_userStoreEntity)
+
+                    _userEntity.user_store = _user_stores
+                    _data_row.append(_userEntity)
+                    _id_user_old = _userEntity.id 
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data_row
+
+    def get_user_by_sub_services(self,sub_services):
+        _db = None
+        _status = 1
+        _sub_services = sub_services
+        _data_row =[]
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT distinct u.id, 
+                    u.mail, 
+                    u.social_name, 
+                    u.full_name, 
+                    u.id_type_document, 
+                    u.document_number, 
+                    u.type_user, 
+                    u.photo, 
+                    u.cellphone, 
+                    u.about, 
+                    us.id        AS id_user_store, 
+                    us.full_name AS name_user_store, 
+                    us.address, 
+                    us.longitude, 
+                    us.latitude, 
+                    us.main, 
+                    a.avg_rate 
+                FROM   main.user_p u 
+                        inner join main.user_store us 
+                                ON u.id = us.id_user 
+                        inner join main.user_sub_service uss  
+                                ON u.id = uss.id_user   
+                        left join (SELECT id_user, 
+                                            Avg(rate) :: float4 AS avg_rate 
+                                    FROM   main.customer_rate 
+                                    GROUP  BY 1) a 
+                                ON a.id_user =  u.id 
+                        WHERE  u.status = %s and us.status = %s
+                        AND uss.id_sub_service in ("""+ str(_sub_services) +""")
+                        order by 1;"""   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql,(_status,_status,))
             _rows = _cur.fetchall()
 
             _id_user_old = None
@@ -1113,9 +1316,13 @@ class userModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.user_bank_account(id_user, id_bank, account_number , cci,status) 
-                            VALUES(%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
+
+            _sql_delete = """DELETE FROM main.user_bank_account WHERE id_user = %s;"""        
+            _cur.execute(_sql_delete, (entity.id_user,))
+
+            _sql = """INSERT INTO main.user_bank_account(id_user, id_bank, account_number , cci,status) 
+                            VALUES(%s,%s,%s,%s,%s) RETURNING id;"""        
             _cur.execute(_sql, (entity.id_user,entity.id_bank,entity.account_number,entity.cci,_status))
             _id = _cur.fetchone()[0]
             entity.id = _id
@@ -1180,3 +1387,4 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return id_user_bank_account
+    

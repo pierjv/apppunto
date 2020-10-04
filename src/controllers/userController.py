@@ -1,5 +1,5 @@
 from src.models.userModel import userModel
-from src.entities.userEntity import userEntity,lstuserServiceAddEntity, lstUserSubServiceAddEntity, userBankEntity
+from src.entities.userEntity import userEntity,lstuserServiceAddEntity, lstUserSubServiceAddEntity, userBankEntity,userSubServiceFilterEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
 
@@ -34,6 +34,24 @@ class userController(responseController):
                 _type_user = self.typeUserFreelancer
                 
             _data = _userModel.get_users_by_type(_type_user)
+            _status = self.OK
+            _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption + str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+    
+    def get_users_by_type_sub_services(self,request):
+        _message = None
+        _status = self.interruption
+        _data= None
+        _type_user = None
+        try:
+            _userModel = userModel()
+            _entity = userSubServiceFilterEntity()
+            _entity.requestToClass(request)                
+            _data = _userModel.get_users_by_type_sub_services(_entity)
             _status = self.OK
             _message = self.messageOK
         except(Exception) as e:
@@ -104,6 +122,28 @@ class userController(responseController):
         try:
             _model = userModel()
             _data = _model.get_user_by_id_service(index)
+            if _data is None or len(_data) < 1:
+                _status = self.OK
+                _message = self.dontExistValues
+            else:
+                _status = self.OK
+                _message = self.messageOK
+        except(Exception) as e:
+            _status = self.interruption
+            _message = self.messageInterruption +str(e)
+            print('error: '+ str(e))
+        return responseEntity(_status,_message,_data).toJSON()
+
+    def get_user_by_sub_services(self,request):
+        _message = None
+        _status = self.interruption
+        _data = None
+        try:
+            _model = userModel() 
+            _entity = userEntity()
+            _sub_service = _entity.requestSubServiceToString(request)
+            print(_sub_service)
+            _data = _model.get_user_by_sub_services(_sub_service)
             if _data is None or len(_data) < 1:
                 _status = self.OK
                 _message = self.dontExistValues

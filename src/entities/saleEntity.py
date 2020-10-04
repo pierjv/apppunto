@@ -6,7 +6,7 @@ class saleEntity:
     def __init__(self,id=0,id_type_availability=None,id_customer=None,id_user=None,coupon=None,
                 date_availability=None,hour_availability= None,total_amount= None,id_type_card = None,
                 document_number=None,expiration_year =None,expiration_month=None,mail=None,
-                full_name_card=None,id_customer_address = None, type_sales = None):
+                full_name_card=None,id_customer_address = None, type_sales = None,amount_coupon = None):
         self.id = id
         self.id_type_availability = id_type_availability
         self.id_customer = id_customer
@@ -23,6 +23,7 @@ class saleEntity:
         self.full_name_card = full_name_card
         self.id_customer_address = id_customer_address
         self.type_sales = type_sales
+        self.amount_coupon = amount_coupon
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
@@ -45,6 +46,7 @@ class saleEntity:
         self.mail = values.mail
         self.full_name_card = values.full_name_card
         self.id_customer_address = values.id_customer_address
+        self.amount_coupon = values.amount_coupon
 
         _type_sales =[]
 

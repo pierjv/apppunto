@@ -28,7 +28,7 @@ class loginModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
 
-            _sql = """SELECT up.id,
+            _sql = """ SELECT up.id,
                         up.mail ,
                         up.social_name ,
                         up.full_name ,
@@ -37,20 +37,8 @@ class loginModel(dbModel):
                         up.type_user ,
                         up.photo,
                         up.cellphone ,
-                        up.about ,
-                        s.full_name  AS service, 
-                        ss.full_name AS sub_service, 
-                        uss.enable
+                        up.about 
                     FROM   main.user_p up 
-                        INNER JOIN main.user_service us 
-                            ON up.id = us.id_user 
-                        INNER JOIN main.service s 
-                            ON us.id_service = s.id 
-                        INNER JOIN main.user_sub_service uss 
-                            ON up.id = uss.id_user 
-                                AND uss.id_service = us.id_service 
-                        LEFT JOIN main.sub_service ss 
-                            ON uss.id_sub_service = ss.id
                     WHERE up.status = %s and up.mail = %s and up.password = %s;"""   
 
             _cur = _con_client.cursor()
@@ -241,14 +229,14 @@ class loginModel(dbModel):
                             up.about,
                             up.id_type_document
                         FROM  main.user_p up 
-                            INNER JOIN (SELECT cr.id_user, 
+                            INNER JOIN main.customer_user_favorite  cf
+                                    ON up.id = cf.id_user 
+                            LEFT JOIN (SELECT cr.id_user, 
                                                 Avg(rate) avg_rate, 
                                                 Count(*)  count_rate 
                                         FROM   main.customer_rate cr 
                                         GROUP  BY 1) b 
-                                    ON up.id = b.id_user 
-                            INNER JOIN main.customer_user_favorite  cf
-                                    ON up.id = cf.id_user 
+                                    ON up.id = b.id_user  
                         WHERE  cf.id_customer = %s and up.status = %s and cf."enable" = 1"""
                                         
                 _cur.execute(_sql_users,(_id_customer,_status,))

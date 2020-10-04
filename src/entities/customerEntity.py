@@ -116,7 +116,6 @@ class customerRateEntity:
 class customerCouponEntity:
 
     def __init__(self,id=0,coupon=None,id_customer=None,effective_date=None):
-        self.id = id
         self.coupon = coupon
         self.id_customer = id_customer
         self.effective_date = effective_date

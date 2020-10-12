@@ -217,45 +217,73 @@ class loginModel(dbModel):
             _loadEntity.banks = _data_banks
 
             if(_id_customer != 0):
-                _sql_users = """SELECT up.id as id_user, 
-                            b.avg_rate::float4, 
-                            up.mail, 
-                            up.social_name, 
-                            up.full_name, 
-                            up.document_number, 
-                            up.type_user, 
-                            up.photo, 
-                            up.cellphone, 
-                            up.about,
-                            up.id_type_document
-                        FROM  main.user_p up 
+                _sql_users = """SELECT u.id, 
+                                u.mail, 
+                                u.social_name, 
+                                u.full_name, 
+                                u.id_type_document, 
+                                u.document_number, 
+                                u.type_user, 
+                                u.photo, 
+                                u.cellphone, 
+                                u.about, 
+                                us.id        AS id_user_store, 
+                                us.full_name AS name_user_store, 
+                                us.address, 
+                                us.longitude, 
+                                us.latitude, 
+                                us.main, 
+                                b.avg_rate::float4
+                            FROM   main.user_p u 
+                            INNER JOIN main.user_store us 
+                                        ON u.id = us.id_user
                             INNER JOIN main.customer_user_favorite  cf
-                                    ON up.id = cf.id_user 
+                                    ON u.id = cf.id_user 
                             LEFT JOIN (SELECT cr.id_user, 
                                                 Avg(rate) avg_rate, 
                                                 Count(*)  count_rate 
                                         FROM   main.customer_rate cr 
                                         GROUP  BY 1) b 
-                                    ON up.id = b.id_user  
-                        WHERE  cf.id_customer = %s and up.status = %s and cf."enable" = 1"""
+                                    ON u.id = b.id_user  
+                        WHERE  cf.id_customer = %s and u.status = %s and cf."enable" = 1 AND us.status = 1 
+                        ORDER BY 1;"""
                                         
                 _cur.execute(_sql_users,(_id_customer,_status,))
                 _rows = _cur.fetchall()
+                _id_user_old = None
                 for row in _rows:
-                    _serviceEntity = serviceEntity()
-                    _userEntity = userEntity()
-                    _userEntity.id =  row[0]
-                    _userEntity.avg_rate  = row[1]
-                    _userEntity.mail =  row[2]
-                    _userEntity.social_name =  row[3]
-                    _userEntity.full_name =  row[4]
-                    _userEntity.document_number =  row[5]
-                    _userEntity.type_user =  row[6]
-                    _userEntity.photo =  row[7]
-                    _userEntity.cellphone = row[8]
-                    _userEntity.about =  row[9]
-                    _userEntity.id_type_document = row[10]
-                    _data_users.append(_userEntity)
+                    _userEntity= userEntity()
+                    _userEntity.id  = row[0]
+                    _userEntity.mail  = row[1] 
+                    _userEntity.social_name  = row[2]
+                    _userEntity.full_name  = row[3]
+                    _userEntity.id_type_document  = row[4]
+                    _userEntity.document_number  = row[5]
+                    _userEntity.type_user  = row[6]
+                    _userEntity.photo  = row[7]
+                    _userEntity.cellphone  = row[8]
+                    _userEntity.about  = row[9]
+                    _avg_rate =  row[16]
+                    if _avg_rate is None:
+                        _avg_rate = 0
+                    _userEntity.avg_rate = _avg_rate
+                    _user_stores = []
+                    if _id_user_old  != _userEntity.id :
+                        for se in _rows:
+                            if row[0] == se[0] and _userEntity is not None:
+                                _userStoreEntity = userStoreEntity()
+                                _userStoreEntity.id = se[10]
+                                _userStoreEntity.full_name = se[11]
+                                _userStoreEntity.address = se[12]
+                                _userStoreEntity.longitude = se[13]
+                                _userStoreEntity.latitude = se[14]
+                                _userStoreEntity.main = se[15]
+                                _userStoreEntity.id_user = _userEntity.id 
+                                _user_stores.append(_userStoreEntity)
+
+                        _userEntity.user_store = _user_stores
+                        _data_users.append(_userEntity)
+                        _id_user_old = _userEntity.id 
 
             _loadEntity.preferred_users = _data_users
             _cur.close()

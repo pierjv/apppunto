@@ -83,9 +83,17 @@ class saleController(responseController):
                     _notificationModel = notificationModel()
                     print(_cellphone)
                     _notificationModel.send_sms_coupon(_cellphone)
-                    
+                
+                _sale = _model.get_sale_by_id_sale(_id_sale)
                 _status = self.OK
-                _message = self.saleSuccessConfirm
+                if(_sale is not None):
+                    if(_sale.id_type_availability==1):
+                        _message = "Pago procesado con éxito, el profesional estará llegando a tu domicilio a las " + str(_sale.hour_availability) + ":00h el " + str(_sale.date_availability)
+                    else:
+                        _message = "Pago procesado con éxito, te esperamos en : " +str(_sale.address_store)
+
+                else: 
+                    _message = self.saleSuccessConfirm
 
         except(Exception) as e:
             _status = self.interruption

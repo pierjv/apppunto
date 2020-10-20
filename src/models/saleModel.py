@@ -277,6 +277,13 @@ class saleModel(dbModel):
                             _typeSaleResponseEntity.full_name = se[19]
                             _typeSaleResponseEntity.id_sale = _entity.id
                             _type_sales.append(_typeSaleResponseEntity)
+                    
+                    _typedeliveryEntity = typeSaleResponseEntity()
+                    _typedeliveryEntity.amount = _entity.amount_delivery
+                    _typedeliveryEntity.full_name = 'Delivery'
+                    _typedeliveryEntity.id_sale=_entity.id
+                    _typedeliveryEntity.id_sub_service = 0
+                    _type_sales.append(_typedeliveryEntity)
 
                     _entity.type_sales = _type_sales
                     _id_old = _entity.id 
@@ -389,6 +396,13 @@ class saleModel(dbModel):
                             _typeSaleResponseEntity.id_sale = _entity.id
                             _type_sales.append(_typeSaleResponseEntity)
 
+                    _typedeliveryEntity = typeSaleResponseEntity()
+                    _typedeliveryEntity.amount = _entity.amount_delivery
+                    _typedeliveryEntity.full_name = 'Delivery'
+                    _typedeliveryEntity.id_sale=_entity.id
+                    _typedeliveryEntity.id_sub_service = 0
+                    _type_sales.append(_typedeliveryEntity)
+                    
                     _entity.type_sales = _type_sales
                     _id_old = _entity.id 
                     _data.append(_entity)

@@ -316,6 +316,7 @@ class userModel(dbModel):
                     AND us.status = 1 
                     and uss.id_sub_service in ( """+ entity.sub_services + """)
                     AND u.type_user = %s
+                    AND uss."enable" = 1
                 ORDER  BY  use.id_service,s.full_name ,  u.id; """
             _cur = _con_client.cursor()
             _cur.execute(_sql,(entity.type_user,))
@@ -594,6 +595,7 @@ class userModel(dbModel):
                                 ON a.id_user =  u.id 
                         WHERE  u.status = %s and us.status = %s
                         AND uss.id_sub_service in ("""+ str(_sub_services) +""")
+                        AND uss."enable" = 1
                         order by 1;"""   
 
             _cur = _con_client.cursor()

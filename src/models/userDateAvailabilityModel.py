@@ -22,17 +22,28 @@ class userDateAvailabilityModel(dbModel):
             _sql = """SELECT ud.id_user, 
                         ud.id_type_availability, 
                         ta.full_name, 
-                        to_char(ud.date_availability,'DD-MM-YYYY') as date_availability, 
+                        To_char(ud.date_availability, 'DD-MM-YYYY') AS date_availability, 
                         ud.hour_availability, 
                         ud."enable"
                     FROM   main.user_date_availability ud 
                         INNER JOIN main.type_availability ta 
                                 ON ud.id_type_availability = ta.id 
-                    WHERE  ud.status = %s and ud.id_user = %s and ud."enable" = 1
-                    order by 4,5; """
+                        LEFT JOIN (SELECT DISTINCT 
+                            To_char(s.date_availability, 'DD-MM-YYYY') AS date_availability, 
+                            s.hour_availability 
+                            FROM   main.sale s 
+                            WHERE  s.id_user = %s 
+                            AND s.status_sale IN ( 3 )) x 
+                        ON x.date_availability = To_char(ud.date_availability, 'DD-MM-YYYY') 
+                        AND x.hour_availability = ud.hour_availability 
+                    WHERE  ud.status = %s 
+                        AND ud.id_user = %s 
+                        AND ud."enable" = 1 
+                        AND x.date_availability IS NULL 
+                    ORDER  BY 4, 5; """
                                         
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_status,_id_user,))
+            _cur.execute(_sql,(_id_user,_status,_id_user,))
             _rows = _cur.fetchall()
             _id_date_old = None
             for row in _rows:

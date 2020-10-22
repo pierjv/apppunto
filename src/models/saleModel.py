@@ -25,15 +25,15 @@ class saleModel(dbModel):
             _con_client = _db.get_client()
             _sql = """INSERT INTO main.sale (id_type_availability, id_customer, id_user, coupon, date_availability, hour_availability, total_amount,
                       status, date_transaction,id_type_card, document_number,expiration_year,expiration_month,mail,full_name_card,id_customer_address,status_sale, 
-                      amount_coupon,id_user_store,amount_delivery)
-                      VALUES(%s,%s,%s,%s,to_date(%s,'DD-MM-YYY'),%s,%s,%s,current_timestamp,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
+                      amount_coupon,id_user_store,amount_delivery,"comment")
+                      VALUES(%s,%s,%s,%s,to_date(%s,'DD-MM-YYY'),%s,%s,%s,current_timestamp,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql, (saleEntity.id_type_availability,saleEntity.id_customer,saleEntity.id_user,
                                 saleEntity.coupon,saleEntity.date_availability,saleEntity.hour_availability,
                                 saleEntity.total_amount,_status,saleEntity.id_type_card,
                                 saleEntity.document_number,saleEntity.expiration_year,saleEntity.expiration_month,
                                 saleEntity.mail,saleEntity.full_name_card,saleEntity.id_customer_address,_status_sale,
-                                saleEntity.amount_coupon,saleEntity.id_user_store,saleEntity.amount_delivery))
+                                saleEntity.amount_coupon,saleEntity.id_user_store,saleEntity.amount_delivery,saleEntity.comment))
             _id_sale = _cur.fetchone()[0]
             saleEntity.id = _id_sale
             
@@ -217,7 +217,8 @@ class saleModel(dbModel):
                         ser.full_name as full_name_service,
                         s.amount_coupon,
                         s.id_user_store,
-                        s.amount_delivery
+                        s.amount_delivery,
+                        s."comment"
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
@@ -265,6 +266,7 @@ class saleModel(dbModel):
                 _entity.amount_coupon = row[25]
                 _entity.id_user_store = row[26]
                 _entity.amount_delivery = row[27]
+                _entity.comment  = row[28]
 
                 _type_sales = []
                 if _id_old  != _entity.id :
@@ -335,7 +337,8 @@ class saleModel(dbModel):
                         ser.full_name as full_name_service,
                         s.amount_coupon,
                         s.id_user_store,
-                        s.amount_delivery
+                        s.amount_delivery,
+                        s."comment"
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
@@ -383,6 +386,7 @@ class saleModel(dbModel):
                 _entity.amount_coupon = row[25]
                 _entity.id_user_store = row[26]
                 _entity.amount_delivery = row[27]
+                _entity.comment  = row[28]
 
                 _type_sales = []
                 if _id_old  != _entity.id :

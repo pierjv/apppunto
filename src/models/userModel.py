@@ -811,7 +811,6 @@ class userModel(dbModel):
                 _commentEntity.rate = row[0]
                 _commentEntity.description = row[1]
                 _date_message = ""
-                print(row[2])
                 if row[2] <= 24:
                     _date_message = "Hace un momento"
                 else:

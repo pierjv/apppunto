@@ -194,7 +194,7 @@ class saleModel(dbModel):
                         id_type_availability, 
                         ta.full_name  as full_name_id_type_availability,
                         s.id_customer, 
-                        id_user, 
+                        s.id_user, 
                         coupon, 
                         to_char(date_availability,'DD-MM-YYYY') as date_availability, 
                         hour_availability, 
@@ -218,7 +218,8 @@ class saleModel(dbModel):
                         s.amount_coupon,
                         s.id_user_store,
                         s.amount_delivery,
-                        s."comment"
+                        s."comment",
+                        cr.status  as rate
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
@@ -232,6 +233,8 @@ class saleModel(dbModel):
        			                ON cus.id  = s.id_customer
                         INNER JOIN main.service ser
        			                ON ser.id  = ss.id_service 
+                        LEFT JOIN  main.customer_rate cr
+	        		            ON cr.id_sale  = s.id 
                     WHERE  s.id_customer = %s 
                         AND s.status = %s
                     ORDER BY s.id desc;"""
@@ -267,6 +270,7 @@ class saleModel(dbModel):
                 _entity.id_user_store = row[26]
                 _entity.amount_delivery = row[27]
                 _entity.comment  = row[28]
+                _entity.flag_rate  = 0 if row[29] is None else row[29] 
 
                 _type_sales = []
                 if _id_old  != _entity.id :

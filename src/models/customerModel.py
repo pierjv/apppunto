@@ -92,10 +92,10 @@ class customerModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """INSERT INTO main.customer_rate (id_user,id_service,id_customer,rate,description,status,date_transaction) 
+            _sql = """INSERT INTO main.customer_rate (id_user,id_sale,id_customer,rate,description,status,date_transaction) 
                     VALUES(%s,%s,%s,%s,%s,%s,current_timestamp);"""
             _cur = _con_client.cursor()
-            _cur.execute(_sql, (entity.id_user,entity.id_service,entity.id_customer,
+            _cur.execute(_sql, (entity.id_user,entity.id_sale,entity.id_customer,
                                 entity.rate,entity.description,_status))
                                 
             _con_client.commit()

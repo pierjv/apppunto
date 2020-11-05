@@ -504,11 +504,11 @@ class userModel(dbModel):
                                 FROM   main.customer_rate 
                                 GROUP  BY 1) a 
                             ON a.id_user =  u.id 
-                    WHERE  u.status = %s and us.status = %s
+                    WHERE  u.status = %s and us.status = %s and use."enable" = %s
                         AND use.id_service = %s;"""   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_status,_status,_id_service,))
+            _cur.execute(_sql,(_status,_status,_status,_id_service,))
             _rows = _cur.fetchall()
 
             _id_user_old = None
@@ -795,7 +795,7 @@ class userModel(dbModel):
 
             _sql_comment = """ SELECT cr.rate, 
                     cr.description, 
-                    date_part( 'day',current_date - cr.date_transaction) AS date_transaction,  
+                    abs(extract(epoch from current_timestamp - cr.date_transaction)/3600)   AS date_transaction,  
                     c.full_name 
                 FROM   main.customer_rate cr 
                     INNER JOIN main.customer c 
@@ -810,7 +810,15 @@ class userModel(dbModel):
                 _commentEntity = commentEntity()
                 _commentEntity.rate = row[0]
                 _commentEntity.description = row[1]
-                _commentEntity.date_transaction = str(int(row[2])) + " días antes" 
+                _date_message = ""
+                print(row[2])
+                if row[2] <= 24:
+                    _date_message = "Hace un momento"
+                else:
+                    _date_value = int(row[2]/24) + 1
+                    _date_message = "Hace " + str(_date_value) + " día(s)"
+
+                _commentEntity.date_transaction = _date_message
                 _commentEntity.full_name = row[3]
                 _data_comments.append(_commentEntity)
             

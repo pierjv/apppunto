@@ -83,14 +83,17 @@ class loginModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
 
-            _sql = """SELECT id, 
+            _sql = """SELECT c.id, 
                         mail, 
                         full_name, 
                         cellphone, 
                         photo,
                         id_code,
-                        referred_code
+                        referred_code,
+                        ca.id as id_customer_address
                     FROM   main.customer c 
+                    INNER JOIN main.customer_address ca 
+                    	on c.id  = ca.id_customer 
                     WHERE  c.status = %s
                         AND c.mail = %s 
                         AND c."password" = %s; """   
@@ -108,6 +111,7 @@ class loginModel(dbModel):
                 _entity.photo  =  _rows[0][4]
                 _entity.id_code  =  _rows[0][5]
                 _entity.referred_code  =  _rows[0][6]
+                _entity.id_customer_address = _rows[0][7]
 
                 _sql_fire_base = """UPDATE main.customer SET id_fire_base_token = %s WHERE id = %s;"""
                 _cur.execute(_sql_fire_base, (loginEntity.id_fire_base_token,_entity.id,))

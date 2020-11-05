@@ -40,7 +40,7 @@ class userDateAvailabilityModel(dbModel):
                         AND ud.id_user = %s 
                         AND ud."enable" = 1 
                         AND x.date_availability IS NULL 
-                    ORDER  BY 4, 5; """
+                    ORDER  BY 2,4, 5; """
                                         
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_id_user,_status,_id_user,))
@@ -56,12 +56,12 @@ class userDateAvailabilityModel(dbModel):
                 _hours = []
                 if _id_date_old  != _entity.date_availability :
                     for se in _rows:
-                        if row[3] == se[3]:
+                        if row[3] == se[3] and row[1] == se[1]:
                             _hours.append(se[4])
 
                     _entity.hours_availability = _hours
                     _data_row.append(_entity)
-                    _id_date_old = _entity.date_availability 
+                    _id_date_old = _entity.date_availability  
 
             _cur.close()
         except(Exception) as e:

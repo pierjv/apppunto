@@ -528,6 +528,25 @@ def wa_user_status():
     else:
         return redirect('/wa_login')
 
+@app.route('/wa_push_notification', methods=['GET'])
+def wa_push_notification():
+    if  'full_name' in session:
+        return render_template('wa_push_notification.html')
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_push_notification', methods=['POST'])
+def wa_push_notification_post():
+    if  'full_name' in session:
+
+        _id_destination= request.form.get("iSlDestino")
+        _message = request.form.get("idTxtMensaje")
+        print(_id_destination)
+        print(_message)
+        
+        return render_template('wa_push_notification.html')
+    else:
+        return redirect('/wa_login')
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

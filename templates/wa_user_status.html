@@ -26,7 +26,7 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
-                  <li class="nav-item active">
+                  <li class="nav-item">
                       <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios</a>
                   </li>
                   <li class="nav-item">
@@ -35,8 +35,11 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
                   </li>
-                  <li class="nav-item">
+                  <li class="nav-item active">
                     <a class="nav-link" href="{{ url_for('wa_list_users') }}">Usuarios</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('wa_push_notification') }}">Notificaciones</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('wa_logout') }}">Salir</a>

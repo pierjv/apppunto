@@ -37,8 +37,14 @@ class loginModel(dbModel):
                         up.type_user ,
                         up.photo,
                         up.cellphone ,
-                        up.about 
-                    FROM   main.user_p up 
+                        up.about,
+                        a.avg_rate
+                    FROM   main.user_p up
+                        LEFT JOIN (SELECT id_user, 
+                                        Avg(rate) :: float4 AS avg_rate 
+                                FROM   main.customer_rate 
+                                GROUP  BY 1) a 
+                            ON a.id_user = up.id  
                     WHERE up.status = %s and up.mail = %s and up.password = %s;"""   
 
             _cur = _con_client.cursor()
@@ -57,6 +63,10 @@ class loginModel(dbModel):
                 _userEntity.photo = _rows[0][7]
                 _userEntity.cellphone  = _rows[0][8]
                 _userEntity.about  = _rows[0][9]
+                _avg_rate =  _rows[0][10]
+                if _avg_rate is None:
+                    _avg_rate = 0
+                _userEntity.avg_rate = _avg_rate
 
                 _sql_fire_base = """UPDATE main.user_p SET id_fire_base_token = %s WHERE id = %s;"""
                 _cur.execute(_sql_fire_base, (loginEntity.id_fire_base_token,_userEntity.id,))

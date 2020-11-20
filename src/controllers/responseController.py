@@ -4,6 +4,7 @@ class responseController(object):
         self.interruption = -1
         self.failUser = -2
         self.messageOK = 'Proceso exitoso'
+        self.messageUserToBeConfirmed = 'Su Usuario está siendo validado, en breve le enviaremos un SMS.'
         self.messageInterruption = 'Presento una interrupcion: '
         self.messageFailUser = 'El usuario no existe o la clave es incorrecta'
         self.userDontExist = 'El usuario no existe'
@@ -30,4 +31,6 @@ class responseController(object):
         self.typeUserMarca = "MARCA"
         self.idTypeUserFreelancer = 1
         self.idTypeUserMarca =2
+        self.status_user_to_be_confirmed = 2
+        self.status_user_confirmed =1
         

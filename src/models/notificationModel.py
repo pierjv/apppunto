@@ -60,7 +60,7 @@ class notificationModel(dbModel):
                 "username":self.text_user,
                 "password":self.text_password,
                 "recipient":cellphone,
-                "messagedata":"Appunto: Hola tu contrasena es " + str(password) ,
+                "messagedata":"Appunto: Hola tu clave es " + str(password) ,
                 "longMessage":"false",
                 "flash":"false",
                 "premium":"false"   
@@ -86,6 +86,24 @@ class notificationModel(dbModel):
             print(r.text)
         except(Exception) as e:
             self.add_log(str(e),type(self).__name__)
+    
+    def send_sms_confirm_user(self,cellphone):
+        try:
+            params_data = {
+                "action":"sendmessage",
+                "username":self.text_user,
+                "password":self.text_password,
+                "recipient":cellphone,
+                "messagedata":"Appunto: Tu Usuario ha sido validado, puedes ingresar al APP." ,
+                "longMessage":"false",
+                "flash":"false",
+                "premium":"false"   
+            }
+            r = requests.post(self.text_uri_get,params = params_data)
+            print(r.text)
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+
 
         
 

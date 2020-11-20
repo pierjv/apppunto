@@ -12,10 +12,11 @@ class userModel(dbModel):
     def __init__(self):
         dbModel.__init__(self)
 
-    def add_user(self,userEntity):
+    def add_user(self,userEntity,status_user):
         _db = None
         _id_user = 0
         _status = 1
+        _status_user = status_user
         _i = 0
         try:
             _db = Database()
@@ -28,7 +29,7 @@ class userModel(dbModel):
             _cur.execute(_sql, (userEntity.mail,userEntity.social_name,userEntity.full_name,
                                 userEntity.document_number,userEntity.type_user,
                                 userEntity.photo,userEntity.cellphone,userEntity.about,userEntity.password,
-                                userEntity.id_type_document,_status))
+                                userEntity.id_type_document,_status_user))
             _id_user = _cur.fetchone()[0]
             userEntity.id = _id_user
             
@@ -403,11 +404,10 @@ class userModel(dbModel):
                         up.cellphone,
                         up.about
                     FROM   main.user_p up 
-                    WHERE  up.status = %s
-                        AND id = %s; """   
+                    WHERE id = %s; """   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_status,_id_user,))
+            _cur.execute(_sql,(_id_user,))
             _rows = _cur.fetchall()
         
             if len(_rows) >= 1:
@@ -1185,20 +1185,22 @@ class userModel(dbModel):
                         Count(id)         AS quantity_confirm 
                     FROM   main.sale s 
                     WHERE  s.id_user = %s
-                        AND s.status_sale = 4 
+                        AND s.status_sale = 3 
+                        AND extract(month from s.date_transaction) = extract(month from current_date)
                     GROUP  BY 1) a 
                 LEFT JOIN (SELECT id_user, 
                                     Count(id) AS quantity_refused 
                             FROM   main.sale s 
                             WHERE  id_user = %s 
-                                    AND status_sale = 3 
+                                    AND status_sale = 2
+                                    AND extract(month from s.date_transaction) = extract(month from current_date) 
                             GROUP  BY 1) b 
                         ON a.id_user = b.id_user;"""   
 
             _cur = _con_client.cursor()
             _cur.execute(_sql,(_id_user,_id_user,))
             _rows = _cur.fetchall()
-
+            print(len(_rows))
             if(len(_rows) >= 1):
                 _entity= userMobileDashboardEntity()
                 _entity.id  = 1
@@ -1396,4 +1398,79 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return id_user_bank_account
+
+    def update_user_status(self,id_user,user_status):
+        _db = None
+        _status = 1
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.user_p 
+                    SET status = %s
+                    WHERE id = %s;"""
+                    
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (user_status,id_user))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return id_user
     
+    def get_users_wa(self):
+        _db = None
+        _status = 0
+        _id = id
+        _data_row = []
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """ SELECT u.id, 
+                    u.mail, 
+                    u.social_name, 
+                    u.full_name, 
+                    u.id_type_document, 
+                    u.document_number, 
+                    u.type_user, 
+                    u.photo, 
+                    u.cellphone, 
+                    u.about,
+                    u.status
+                FROM   main.user_p u 
+                WHERE  u.status IN(2) 
+                ORDER  BY 1 DESC;"""
+            _cur = _con_client.cursor()
+            _cur.execute(_sql)
+            _rows = _cur.fetchall()
+            
+            for row in _rows:
+                _userEntity= userEntity()
+                _userEntity.id  = row[0]
+                _userEntity.mail  = row[1] 
+                _userEntity.social_name  = row[2]
+                _userEntity.full_name  = row[3]
+                _userEntity.id_type_document  = row[4]
+                _userEntity.document_number  = row[5]
+                _userEntity.type_user  = row[6]
+                _userEntity.photo  = row[7]
+                _userEntity.cellphone  = row[8]
+                _userEntity.about  = row[9]
+                _userEntity.status  = row[10]
+                _data_row.append(_userEntity)
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _data_row

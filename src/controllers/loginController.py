@@ -26,7 +26,7 @@ class loginController(responseController):
                 _message = self.messageFailUser
             else:
                 _status = self.OK
-                _message = self.messageOK
+                _message = self.messageUserToBeConfirmed
         except(Exception) as e:
             _status = self.interruption
             _message = self.messageInterruption + str(e)

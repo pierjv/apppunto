@@ -505,6 +505,25 @@ def upload_image():
     #uploadController().get()
     #uploadController().implicit()
 
+@app.route('/wa_list_users', methods=['GET'])
+def wa_list_users():
+    if  'full_name' in session:
+        _users = userController().get_users_wa()
+        return render_template('wa_list_users.html', data_users = _users)
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_user_status', methods=['GET'])
+def wa_user_status():
+    if  'full_name' in session:
+        id_user = request.args.get('index')
+        _entity = None
+        _data_services = userController().confirm_user_status(id_user)
+        return render_template('wa_user_status.html')
+    else:
+        return redirect('/wa_login')
+
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
 

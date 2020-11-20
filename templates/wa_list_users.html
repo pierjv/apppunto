@@ -54,7 +54,7 @@
     <div class="container">
 
       <div class="intro-info">
-        <h2>[ Lista de Servicios ]</h2>
+        <h2>[ Solicitudes de Registro de Usuarios ]</h2>
       </div>
 
     </div>
@@ -72,35 +72,39 @@
             <thead class="thead-dark">
               <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Servicio</th>
-                <th scope="col">Color</th>
-                <th scope="col">Imagen</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Celular</th>
+                <th scope="col">Documento</th>
                 <th scope="col">Estado</th>
-                <th scope="col">Editar</th>
+                <th scope="col">Acción</th>
               </tr>
             </thead>
             <tbody>
-              {% for data_service in data_services %}
+              {% for data_user in data_users %}
               <tr>
-                <th scope="row">{{ data_service.id }}</th>
-                <td>{{ data_service.full_name }}</td>
-                <td>{{ data_service.color }}</td>
-                <td>
-                  <img height="20px" src="data:image/png;base64, {{ data_service.file_image }}" />
+                <th scope="row">{{ data_user.id }}</th>
+                <td>{{ data_user.type_user }}</td>
+                <td> 
+                  {% if data_user.type_user == 'FREELANCER' %}
+                    {{ data_user.full_name }}
+                  {% else %}
+                    {{ data_user.social_name }}
+                  {% endif %} 
                 </td>
+                <td>{{ data_user.mail }}</td>
+                <td>{{ data_user.cellphone }}</td>
+                <td>{{ data_user.document_number }}</td>
                 <td>
-                  {% if data_service.status == 1 %}
+                  {% if data_user.status == 1 %}
                     <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
-                    {{ 'Habilitado' }}
                   {% else %}
                     <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
-                    {{ 'Deshabilitado' }}
                   {% endif %}
                 </td>
                 <td>
-                  <a href="{{ url_for('wa_services',index = data_service.id ) }}">
-                    <img height="20px" src="{{ url_for('static', filename='web/img/edit.png') }}">
-                  </a>
+                  <div><a class="btn btn-success"  href="{{ url_for('wa_user_status',index = data_user.id ) }}">Aceptar</a></div>
                 </td>
               </tr>
               {% endfor %}
@@ -109,7 +113,8 @@
 
         </div>
 
-        <div><a class="btn btn-primary"  href="{{ url_for('wa_services') }}">Agregar Servicio</a></div>
+
+
 
       </div>
 

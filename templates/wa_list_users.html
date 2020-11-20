@@ -77,8 +77,8 @@
                 <th scope="col">Correo</th>
                 <th scope="col">Celular</th>
                 <th scope="col">Documento</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Acción</th>
+                <th scope="col">Aceptar</th>
+                <th scope="col">Rechazar</th>
               </tr>
             </thead>
             <tbody>
@@ -97,14 +97,10 @@
                 <td>{{ data_user.cellphone }}</td>
                 <td>{{ data_user.document_number }}</td>
                 <td>
-                  {% if data_user.status == 1 %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
-                  {% else %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
-                  {% endif %}
+                  <div><a class="btn btn-success"  href="{{ url_for('wa_user_status',index = data_user.id,status = 1 ) }}">Aceptar</a></div>
                 </td>
                 <td>
-                  <div><a class="btn btn-success"  href="{{ url_for('wa_user_status',index = data_user.id ) }}">Aceptar</a></div>
+                  <div><a class="btn btn-danger"  href="{{ url_for('wa_user_status',index = data_user.id, status = 3 ) }}">Rechazar</a></div>
                 </td>
               </tr>
               {% endfor %}

@@ -33,4 +33,5 @@ class responseController(object):
         self.idTypeUserMarca =2
         self.status_user_to_be_confirmed = 2
         self.status_user_confirmed =1
+        self.status_user_refused = 3
         

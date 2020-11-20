@@ -329,4 +329,17 @@ class userController(responseController):
         except(Exception) as e:
             print('error: '+ str(e))
         return _data
+    
+    def refuse_user_status(self,index):
+        _data= None
+        try:
+            _userModel = userModel()
+            _notificationModel = notificationModel()
+            _entity = _userModel.get_user_by_id(index)
+            _data = _userModel.update_user_status(index,self.status_user_refused)
+            _notificationModel.send_sms_refuse_user(_entity.cellphone)
+             
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data
 

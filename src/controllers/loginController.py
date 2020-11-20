@@ -25,8 +25,21 @@ class loginController(responseController):
                 _status = self.failUser
                 _message = self.messageFailUser
             else:
-                _status = self.OK
-                _message = self.messageUserToBeConfirmed
+                _user_status = _userEntity.status
+                if _user_status == self.status_user_to_be_confirmed:
+                    _status = self.failUser
+                    _message = self.messageUserToBeConfirmed
+                    _userEntity = None
+                
+                if _user_status == self.status_user_refused:
+                    _status = self.failUser
+                    _message = self.messageUserToBeConfirmed
+                    _userEntity = None
+
+                if _user_status == self.status_user_confirmed:
+                    _status = self.OK
+                    _message = self.messageOK
+                
         except(Exception) as e:
             _status = self.interruption
             _message = self.messageInterruption + str(e)

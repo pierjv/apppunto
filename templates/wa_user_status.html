@@ -52,9 +52,17 @@
 
     <section id="intro" class="clearfix">
       <div class="container">
-        <div class="alert alert-success" role="alert">
-          Se Confirmó el registro del Usurio y se envió un SMS a su celular.
-        </div> 
+        {% if status == '1' %}
+          <div class="alert alert-success" role="alert">
+            Se Confirmó el registro del Usuario y se envió un SMS a su celular.
+          </div> 
+        {% else %}
+          <div class="alert alert-danger" role="alert">
+            Se Rechazó el registro del Usuario y se envió un SMS a su celular.
+          </div> 
+        {% endif %} 
+        
+        
         <a class="btn btn-dark" href="{{ url_for('wa_list_users') }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ir a solicitudes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>  
       </div>
       <br>

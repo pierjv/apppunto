@@ -516,10 +516,15 @@ def wa_list_users():
 @app.route('/wa_user_status', methods=['GET'])
 def wa_user_status():
     if  'full_name' in session:
-        id_user = request.args.get('index')
-        _entity = None
-        _data_services = userController().confirm_user_status(id_user)
-        return render_template('wa_user_status.html')
+        _id_user = request.args.get('index')
+        _status = request.args.get('status')
+        print(_status)
+        if _status == '1':
+            userController().confirm_user_status(_id_user)
+        if _status == '3':
+            print(3)
+            userController().refuse_user_status(_id_user)
+        return render_template('wa_user_status.html',status = _status)
     else:
         return redirect('/wa_login')
 

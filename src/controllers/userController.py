@@ -74,8 +74,8 @@ class userController(responseController):
                 _message = self.duplicatedMail
             else:
                 _entity = _model.add_user(_entity,self.status_user_to_be_confirmed)
-                _status = self.OK
-                _message = self.messageOK
+                _status = self.status_user_to_be_confirmed_admin
+                _message = self.messageUserToBeConfirmedAdmin
         except(Exception) as e:
             _status = self.interruption
             _message = self.messageInterruption +str(e)

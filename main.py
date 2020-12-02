@@ -531,20 +531,19 @@ def wa_user_status():
 @app.route('/wa_push_notification', methods=['GET'])
 def wa_push_notification():
     if  'full_name' in session:
-        return render_template('wa_push_notification.html')
+        _status = request.args.get('status')
+        return render_template('wa_push_notification.html',status = _status)
     else:
         return redirect('/wa_login')
 
 @app.route('/wa_push_notification', methods=['POST'])
 def wa_push_notification_post():
     if  'full_name' in session:
-
         _id_destination= request.form.get("iSlDestino")
         _message = request.form.get("idTxtMensaje")
-        print(_id_destination)
-        print(_message)
-        
-        return render_template('wa_push_notification.html')
+        notificationController().send_notifiacion_message(_id_destination,_message)
+        _status = 1
+        return redirect('/wa_push_notification?status='+str(_status))
     else:
         return redirect('/wa_login')
 

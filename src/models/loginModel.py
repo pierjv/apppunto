@@ -164,6 +164,7 @@ class loginModel(dbModel):
                     FROM   main.service s 
                         LEFT JOIN main.sub_service ss 
                                 ON s.id = ss.id_service 
+                    WHERE s.status = 1
                     ORDER  BY 1;"""
                                         
             _cur = _con_client.cursor()

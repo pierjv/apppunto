@@ -19,7 +19,7 @@ class serviceModel(dbModel):
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
             _con_client = _db.get_client()
-            _sql = """SELECT id, full_name, color,encode(file_image,'base64') AS file_image FROM main.service ORDER BY 1;"""
+            _sql = """SELECT id, full_name, color,encode(file_image,'base64') AS file_image FROM main.service WHERE status = 1 ORDER BY 1;"""
             _cur = _con_client.cursor()
             _cur.execute(_sql)
             _rows = _cur.fetchall()

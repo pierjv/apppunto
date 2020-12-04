@@ -185,7 +185,7 @@ class notificationModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
             _sql = """SELECT up.id_fire_base_token
-                        FROM main.user_p up 
+                        FROM main.customer up 
                         WHERE up.id_fire_base_token IS NOT NULL
                         AND up.id_fire_base_token <> ''
                         AND up.status = %s; """
@@ -195,7 +195,7 @@ class notificationModel(dbModel):
             _rows = _cur.fetchall()
 
             for row in _rows:
-                _data.append(row[0])
+                _data.append(row[0]) 
 
             _cur.close()
         except(Exception) as e:

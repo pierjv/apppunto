@@ -505,6 +505,65 @@ def upload_image():
     #uploadController().get()
     #uploadController().implicit()
 
+@app.route('/wa_list_users', methods=['GET'])
+def wa_list_users():
+    if  'full_name' in session:
+        _users = userController().get_users_wa()
+        return render_template('wa_list_users.html', data_users = _users)
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_user_status', methods=['GET'])
+def wa_user_status():
+    if  'full_name' in session:
+        _id_user = request.args.get('index')
+        _status = request.args.get('status')
+        print(_status)
+        if _status == '1':
+            userController().confirm_user_status(_id_user)
+        if _status == '3':
+            print(3)
+            userController().refuse_user_status(_id_user)
+        return render_template('wa_user_status.html',status = _status)
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_push_notification', methods=['GET'])
+def wa_push_notification():
+    if  'full_name' in session:
+        _status = request.args.get('status')
+        return render_template('wa_push_notification.html',status = _status)
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_push_notification', methods=['POST'])
+def wa_push_notification_post():
+    if  'full_name' in session:
+        _id_destination= request.form.get("iSlDestino")
+        _message = request.form.get("idTxtMensaje")
+        notificationController().send_notifiacion_message(_id_destination,_message)
+        _status = 1
+        return redirect('/wa_push_notification?status='+str(_status))
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_coupon', methods=['GET'])
+def wa_coupon():
+    if  'full_name' in session:
+        _status = userController().get_coupon_status_wa()
+        return render_template('wa_coupon.html',status = _status)
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_coupon', methods=['POST'])
+def wa_coupon_post():
+    if  'full_name' in session:
+        _status= request.form.get("iSlEstado")
+        userController().update_coupon_status_wa(_status)
+        return redirect('/wa_coupon')
+    else:
+        return redirect('/wa_login')
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
 

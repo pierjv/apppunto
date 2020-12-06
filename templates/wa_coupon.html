@@ -29,19 +29,19 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios</a>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('wa_list_sub_services') }}">Sub Servicios</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="{{ url_for('wa_list_users') }}">Usuarios</a>
+                        <a class="nav-link" href="{{ url_for('wa_list_users') }}">Usuarios</a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="{{ url_for('wa_push_notification') }}">Notificaciones</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                       <a class="nav-link" href="{{ url_for('wa_coupon') }}">Cupones</a>
                     </li>
                     <li class="nav-item">
@@ -51,7 +51,8 @@
             </div>
         </nav>
 </header>
-<!-- #header -->
+
+  <!-- #header -->
 
   <!--==========================
     Section Body
@@ -60,7 +61,7 @@
     <div class="container">
 
       <div class="intro-info">
-        <h2>[ Lista de Sub Servicios ]</h2>
+        <h2>[Estado de Cupones]</h2>
       </div>
 
     </div>
@@ -71,73 +72,35 @@
     <section id="clients" class="">
 
       <div class="container">
+
         <div >
-          <form  action="/wa_list_sub_services" method="GET" enctype="multipart/form-data">
+          <form  action="/wa_coupon" method="POST" enctype="multipart/form-data">
+
+          <div class="form-group">
+              <label for="iSlEstado">Estado Actual:</label>
+              {% if status == 1 %}
+               {{ 'Habilitado' }}
+              <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
+              {% else %}
+                {{ 'Deshabilitado' }}
+                <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
+              {% endif %}
+          </div>
+
             <div class="form-group">
-              <label for="iSlServicio">Servicio:</label>
-              <select class="custom-select" id="iSlServicio" name="iSlServicio" required>
-                 <option value="0" selected>-Todos-</option>
-                {% for data_service in data_services %}
-                  <option value="{{ data_service.id }}">{{ data_service.full_name }}</option>
-                {% endfor %}
+              <label for="iSlEstado">Estado:</label>
+              <select class="custom-select" id="iSlEstado" name="iSlEstado" required>
+                  <option value="1">Habilitado</option>
+                  <option value="0">Deshabilitado</option>
               </select>
             </div>
             <div>
-              <input  class="btn btn-dark"  type="submit" value="Buscar">          
+              <input  class="btn btn-primary"  type="submit" value="Guardar">         
             </div>
+
           </form>
-          <br>
-        </div>
-        <div class="row_grilla">
-
-          <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Servicio</th>
-                <th scope="col">Sub Servicio</th>
-                <th scope="col">En Filtro</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Editar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for data_sub_service in data_sub_services %}
-              <tr>
-                <th scope="row">{{ data_sub_service.id }}</th>
-                <td>{{ data_sub_service.service }}</td>
-                <td>{{ data_sub_service.full_name }}</td>
-                <td>
-                  {% if data_sub_service.in_filter == 1 %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
-                    {{ 'Si' }}
-                  {% else %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
-                    {{ 'No' }}
-                  {% endif %}
-                </td>
-                <td>
-                  {% if data_sub_service.status == 1 %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
-                    {{ 'Habilitado' }}
-                  {% else %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
-                    {{ 'Deshabilitado' }}
-                  {% endif %}
-                </td>
-                <td>
-                  <a href="{{ url_for('wa_sub_services',index = data_sub_service.id ) }}">
-                    <img height="20px" src="{{ url_for('static', filename='web/img/edit.png') }}">
-                  </a>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
 
         </div>
-
-        <div><a class="btn btn-primary"  href="{{ url_for('wa_sub_services') }}">Agregar Sub Servicio</a></div>
 
       </div>
 
@@ -148,12 +111,10 @@
   <!--==========================
     Footer
   ============================-->
-
   <footer id="footer">
     <div class="footer-top">
       <div class="container">
         <div class="row">
-
           <div class="col-lg-3 col-md-6 footer-contact">
             <h4>Soporte</h4>
             <p>
@@ -161,9 +122,7 @@
               <strong>Email:</strong> pierjv1@gmail.com<br>
               <strong>Appunto-JPV-Google Cloud Platform</strong> 
             </p>
-
           </div>
-
         </div>
       </div>
     </div>

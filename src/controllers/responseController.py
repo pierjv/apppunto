@@ -3,7 +3,9 @@ class responseController(object):
         self.OK = 1
         self.interruption = -1
         self.failUser = -2
+        self.status_user_to_be_confirmed_admin = -2
         self.messageOK = 'Proceso exitoso'
+        self.messageUserToBeConfirmed = 'Su Usuario está siendo validado, en breve le enviaremos un SMS.'
         self.messageInterruption = 'Presento una interrupcion: '
         self.messageFailUser = 'El usuario no existe o la clave es incorrecta'
         self.userDontExist = 'El usuario no existe'
@@ -16,6 +18,7 @@ class responseController(object):
         self.saleSuccessConfirm = "La transacción fue exitosa"
         self.addCustomer = "Se registraron los datos exitosamente."
         self.addCustomerAndCode = "Se registraron los datos exitosamente y tiene un cupón de descuento." 
+        self.messageUserToBeConfirmedAdmin = "Su registro ha sido enviado a los administradores. En las próximas horas, se le informará, sobre su aceptación o rechazo"
         self.status_sale_accept = 1
         self.status_sale_refuse = 2
         self.status_sale_confirm = 3
@@ -30,4 +33,7 @@ class responseController(object):
         self.typeUserMarca = "MARCA"
         self.idTypeUserFreelancer = 1
         self.idTypeUserMarca =2
+        self.status_user_to_be_confirmed = 2
+        self.status_user_confirmed =1
+        self.status_user_refused = 3
         

@@ -2,6 +2,7 @@ from src.models.userModel import userModel
 from src.entities.userEntity import userEntity,lstuserServiceAddEntity, lstUserSubServiceAddEntity, userBankEntity,userSubServiceFilterEntity
 from src.entities.responseEntity import responseEntity
 from src.controllers.responseController import responseController
+from src.models.notificationModel import notificationModel
 
 class userController(responseController):
 
@@ -72,9 +73,9 @@ class userController(responseController):
                 _status = self.interruption
                 _message = self.duplicatedMail
             else:
-                _entity = _model.add_user(_entity)
-                _status = self.OK
-                _message = self.messageOK
+                _entity = _model.add_user(_entity,self.status_user_to_be_confirmed)
+                _status = self.status_user_to_be_confirmed_admin
+                _message = self.messageUserToBeConfirmedAdmin
         except(Exception) as e:
             _status = self.interruption
             _message = self.messageInterruption +str(e)
@@ -307,3 +308,55 @@ class userController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,id_customer_address).toJSON()
 
+    def get_users_wa(self):
+        _data= None
+        try:
+            _userModel = userModel()
+            _data = _userModel.get_users_wa()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data
+
+    def confirm_user_status(self,index):
+        _data= None
+        try:
+            _userModel = userModel()
+            _notificationModel = notificationModel()
+            _entity = _userModel.get_user_by_id(index)
+            _data = _userModel.update_user_status(index,self.status_user_confirmed)
+            _notificationModel.send_sms_confirm_user(_entity.cellphone)
+             
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data
+    
+    def refuse_user_status(self,index):
+        _data= None
+        try:
+            _userModel = userModel()
+            _notificationModel = notificationModel()
+            _entity = _userModel.get_user_by_id(index)
+            _data = _userModel.update_user_status(index,self.status_user_refused)
+            _notificationModel.send_sms_refuse_user(_entity.cellphone)
+             
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data
+    
+    def update_coupon_status_wa(self,status):
+        _data= None
+        try:
+            _model = userModel()
+            _data = _model.update_coupon_status_wa(status)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data
+
+    def get_coupon_status_wa(self):
+        _data= None
+        try:
+            _model = userModel()
+            _data = _model.get_coupon_status_wa()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data

@@ -37,12 +37,19 @@ class loginModel(dbModel):
                         up.type_user ,
                         up.photo,
                         up.cellphone ,
-                        up.about 
-                    FROM   main.user_p up 
-                    WHERE up.status = %s and up.mail = %s and up.password = %s;"""   
+                        up.about,
+                        a.avg_rate,
+                        up.status
+                    FROM   main.user_p up
+                        LEFT JOIN (SELECT id_user, 
+                                        Avg(rate) :: float4 AS avg_rate 
+                                FROM   main.customer_rate 
+                                GROUP  BY 1) a 
+                            ON a.id_user = up.id  
+                    WHERE up.mail = %s and up.password = %s;"""   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(_status,_mail,_password,))
+            _cur.execute(_sql,(_mail,_password,))
             _rows = _cur.fetchall()
 
             if len(_rows) >= 1:
@@ -57,6 +64,11 @@ class loginModel(dbModel):
                 _userEntity.photo = _rows[0][7]
                 _userEntity.cellphone  = _rows[0][8]
                 _userEntity.about  = _rows[0][9]
+                _avg_rate =  _rows[0][10]
+                if _avg_rate is None:
+                    _avg_rate = 0
+                _userEntity.avg_rate = _avg_rate
+                _userEntity.status = _rows[0][11]
 
                 _sql_fire_base = """UPDATE main.user_p SET id_fire_base_token = %s WHERE id = %s;"""
                 _cur.execute(_sql_fire_base, (loginEntity.id_fire_base_token,_userEntity.id,))
@@ -83,14 +95,17 @@ class loginModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
 
-            _sql = """SELECT id, 
+            _sql = """SELECT c.id, 
                         mail, 
                         full_name, 
                         cellphone, 
                         photo,
                         id_code,
-                        referred_code
+                        referred_code,
+                        ca.id as id_customer_address
                     FROM   main.customer c 
+                    INNER JOIN main.customer_address ca 
+                    	on c.id  = ca.id_customer 
                     WHERE  c.status = %s
                         AND c.mail = %s 
                         AND c."password" = %s; """   
@@ -108,6 +123,7 @@ class loginModel(dbModel):
                 _entity.photo  =  _rows[0][4]
                 _entity.id_code  =  _rows[0][5]
                 _entity.referred_code  =  _rows[0][6]
+                _entity.id_customer_address = _rows[0][7]
 
                 _sql_fire_base = """UPDATE main.customer SET id_fire_base_token = %s WHERE id = %s;"""
                 _cur.execute(_sql_fire_base, (loginEntity.id_fire_base_token,_entity.id,))
@@ -148,6 +164,7 @@ class loginModel(dbModel):
                     FROM   main.service s 
                         LEFT JOIN main.sub_service ss 
                                 ON s.id = ss.id_service 
+                    WHERE s.status = 1
                     ORDER  BY 1;"""
                                         
             _cur = _con_client.cursor()

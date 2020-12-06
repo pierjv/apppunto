@@ -26,7 +26,7 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
-                  <li class="nav-item active">
+                  <li class="nav-item">
                       <a class="nav-link" href="{{ url_for('wa_list_services') }}">Servicios</a>
                   </li>
                   <li class="nav-item">
@@ -35,7 +35,7 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('wa_dashboard') }}">Dashboard</a>
                   </li>
-                  <li class="nav-item">
+                  <li class="nav-item active">
                     <a class="nav-link" href="{{ url_for('wa_list_users') }}">Usuarios</a>
                   </li>
                   <li class="nav-item">
@@ -51,74 +51,27 @@
           </div>
       </nav>
   </header>
+  
   <!-- #header -->
-
-  <!--==========================
-    Section Body
-  ============================-->
-  <section id="intro" class="clearfix">
-    <div class="container">
-
-      <div class="intro-info">
-        <h2>[ Lista de Servicios ]</h2>
-      </div>
-
-    </div>
-  </section><!-- #intro -->
 
   <main id="main">
 
-    <section id="clients" class="">
-
+    <section id="intro" class="clearfix">
       <div class="container">
+        {% if status == '1' %}
+          <div class="alert alert-success" role="alert">
+            Se Confirmó el registro del Usuario y se envió un SMS a su celular.
+          </div> 
+        {% else %}
+          <div class="alert alert-danger" role="alert">
+            Se Rechazó el registro del Usuario y se envió un SMS a su celular.
+          </div> 
+        {% endif %} 
         
-        <div class="row_grilla">
-
-          <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Servicio</th>
-                <th scope="col">Color</th>
-                <th scope="col">Imagen</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Editar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for data_service in data_services %}
-              <tr>
-                <th scope="row">{{ data_service.id }}</th>
-                <td>{{ data_service.full_name }}</td>
-                <td>{{ data_service.color }}</td>
-                <td>
-                  <img height="20px" src="data:image/png;base64, {{ data_service.file_image }}" />
-                </td>
-                <td>
-                  {% if data_service.status == 1 %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/enabled.png') }}">
-                    {{ 'Habilitado' }}
-                  {% else %}
-                    <img height="20px" src="{{ url_for('static', filename='web/img/disabled.png') }}">
-                    {{ 'Deshabilitado' }}
-                  {% endif %}
-                </td>
-                <td>
-                  <a href="{{ url_for('wa_services',index = data_service.id ) }}">
-                    <img height="20px" src="{{ url_for('static', filename='web/img/edit.png') }}">
-                  </a>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-
-        </div>
-
-        <div><a class="btn btn-primary"  href="{{ url_for('wa_services') }}">Agregar Servicio</a></div>
-
+        
+        <a class="btn btn-dark" href="{{ url_for('wa_list_users') }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ir a solicitudes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>  
       </div>
-
+      <br>
     </section>
 
   </main>
@@ -130,7 +83,6 @@
     <div class="footer-top">
       <div class="container">
         <div class="row">
-
           <div class="col-lg-3 col-md-6 footer-contact">
             <h4>Soporte</h4>
             <p>
@@ -138,9 +90,7 @@
               <strong>Email:</strong> pierjv1@gmail.com<br>
               <strong>Appunto-JPV-Google Cloud Platform</strong> 
             </p>
-
           </div>
-
         </div>
       </div>
     </div>

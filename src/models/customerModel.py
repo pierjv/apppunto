@@ -5,6 +5,7 @@ from src.entities.customerEntity import customerEntity,customerRateEntity, custo
 from datetime import datetime
 from src.entities.serviceEntity import serviceEntity
 from src.entities.subServiceEntity import subServiceEntity
+from src.models.userModel import userModel
 
 class customerModel(dbModel):
 
@@ -202,10 +203,12 @@ class customerModel(dbModel):
         _id_customer_main = id_customer_main
         _status = 1
         _i = 0
+        _userModel = None
         try:
             _db = Database()
             _db.connect(self.host,self.port,self.user,self.password,self.database)
             print('Se conecto a la bd')
+            _userModel = userModel()
 
             _date = datetime.now()
             entity = customerCouponEntity()
@@ -213,14 +216,17 @@ class customerModel(dbModel):
             entity.coupon = "CPN-APP"+ str(_id_customer) +"-"+ str(_date.hour)+str(_date.year)+str(_date.month)+str(_date.minute)
             entity.amount = int(self.amount_coupon)
 
-            _con_client = _db.get_client()
-            _sql = """INSERT INTO main.customer_coupon (coupon, id_customer, id_customer_main,effective_date, amount, status)
-                    VALUES(%s,%s,%s,current_date + 30,%s,%s);"""
-            _cur = _con_client.cursor()
-            _cur.execute(_sql,(entity.coupon,entity.id_customer,_id_customer_main,entity.amount,_status))
-                                
-            _con_client.commit()
-            _cur.close()
+            if (int(_userModel.get_coupon_status_wa()) == 1):
+                _con_client = _db.get_client()
+                _sql = """INSERT INTO main.customer_coupon (coupon, id_customer, id_customer_main,effective_date, amount, status)
+                        VALUES(%s,%s,%s,current_date + 30,%s,%s);"""
+                _cur = _con_client.cursor()
+
+                _cur.execute(_sql,(entity.coupon,entity.id_customer,_id_customer_main,entity.amount,_status))
+                                    
+                _con_client.commit()
+                _cur.close()
+
         except(Exception) as e:
             self.add_log(str(e),type(self).__name__)
         finally:

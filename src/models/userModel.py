@@ -204,6 +204,7 @@ class userModel(dbModel):
                         ON a.id_user = u.id  
             WHERE  u.status = 1 
                 AND us.status = 1 
+                AND s.status = 1
                 AND u.type_user = %s
             ORDER  BY s.full_name ,  u.id; """
             _cur = _con_client.cursor()
@@ -1474,3 +1475,54 @@ class userModel(dbModel):
                 _db.disconnect()
                 print("Se cerro la conexion")
         return _data_row
+
+    def update_coupon_status_wa(self,status):
+        _db = None
+        _status = status
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+            _sql = """UPDATE main.coupon 
+                    SET status = %s;"""
+                    
+            _cur = _con_client.cursor()
+            _cur.execute(_sql, (_status,))
+            _con_client.commit()
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _status
+    
+    def get_coupon_status_wa(self):
+        _db = None
+        _status = None
+        try:
+            _db = Database()
+            _db.connect(self.host,self.port,self.user,self.password,self.database)
+            print('Se conecto a la bd')
+            _con_client = _db.get_client()
+
+            _sql = """SELECT c.status
+                    FROM   main.coupon c;"""   
+
+            _cur = _con_client.cursor()
+            _cur.execute(_sql)
+            _rows = _cur.fetchall()
+        
+            if len(_rows) >= 1:
+                _status = _rows[0][0]
+
+            _cur.close()
+        except(Exception) as e:
+            self.add_log(str(e),type(self).__name__)
+        finally:
+            if _db is not None:
+                _db.disconnect()
+                print("Se cerro la conexion")
+        return _status

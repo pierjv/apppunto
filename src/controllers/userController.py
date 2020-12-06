@@ -342,4 +342,21 @@ class userController(responseController):
         except(Exception) as e:
             print('error: '+ str(e))
         return _data
+    
+    def update_coupon_status_wa(self,status):
+        _data= None
+        try:
+            _model = userModel()
+            _data = _model.update_coupon_status_wa(status)
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data
 
+    def get_coupon_status_wa(self):
+        _data= None
+        try:
+            _model = userModel()
+            _data = _model.get_coupon_status_wa()
+        except(Exception) as e:
+            print('error: '+ str(e))
+        return _data

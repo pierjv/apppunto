@@ -547,6 +547,23 @@ def wa_push_notification_post():
     else:
         return redirect('/wa_login')
 
+@app.route('/wa_coupon', methods=['GET'])
+def wa_coupon():
+    if  'full_name' in session:
+        _status = userController().get_coupon_status_wa()
+        return render_template('wa_coupon.html',status = _status)
+    else:
+        return redirect('/wa_login')
+
+@app.route('/wa_coupon', methods=['POST'])
+def wa_coupon_post():
+    if  'full_name' in session:
+        _status= request.form.get("iSlEstado")
+        userController().update_coupon_status_wa(_status)
+        return redirect('/wa_coupon')
+    else:
+        return redirect('/wa_login')
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
 

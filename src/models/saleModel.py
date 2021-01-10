@@ -200,7 +200,7 @@ class saleModel(dbModel):
                         hour_availability, 
                         total_amount,  
                         id_type_card, 
-                        document_number, 
+                        s.document_number, 
                         expiration_year, 
                         expiration_month, 
                         s.mail, 
@@ -219,7 +219,15 @@ class saleModel(dbModel):
                         s.id_user_store,
                         s.amount_delivery,
                         s."comment",
-                        cr.status  as rate
+                        cr.status  as rate,
+                        ca.latitude as customer_latitude,
+                        ca.longitude as customer_longitude,
+                        us.address  as user_address,
+                        us.latitude  as user_latitude,
+                        us.longitude  as user_longitude,
+                        s.hour_availability,
+                       	up.social_name,
+                       	up.full_name 
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
@@ -233,6 +241,10 @@ class saleModel(dbModel):
        			                ON cus.id  = s.id_customer
                         INNER JOIN main.service ser
        			                ON ser.id  = ss.id_service 
+                        INNER JOIN main.user_p up 
+       			        		on up.id  = s.id_user 
+                        LEFT JOIN main.user_store us 
+       			        		ON us.id  = s.id_user_store 
                         LEFT JOIN  main.customer_rate cr
 	        		            ON cr.id_sale  = s.id 
                     WHERE  s.id_customer = %s 
@@ -271,6 +283,14 @@ class saleModel(dbModel):
                 _entity.amount_delivery = row[27]
                 _entity.comment  = row[28]
                 _entity.flag_rate  = 0 if row[29] is None else row[29] 
+                _entity.customer_latitude  = row[30]
+                _entity.customer_longitude  = row[31]
+                _entity.user_address  = row[32]
+                _entity.user_latitude  = row[33]
+                _entity.user_longitude  = row[34]
+                _entity.hour_availability  = row[35]
+                _entity.social_name  = row[36]
+                _entity.full_name  = row[37]
 
                 _type_sales = []
                 if _id_old  != _entity.id :
@@ -318,7 +338,7 @@ class saleModel(dbModel):
                         id_type_availability, 
                         ta.full_name  as full_name_id_type_availability,
                         s.id_customer, 
-                        id_user, 
+                        s.id_user, 
                         coupon, 
                         to_char(date_availability,'DD-MM-YYYY') as date_availability, 
                         hour_availability, 
@@ -342,7 +362,12 @@ class saleModel(dbModel):
                         s.amount_coupon,
                         s.id_user_store,
                         s.amount_delivery,
-                        s."comment"
+                        s."comment",
+                        ca.latitude as customer_latitude,
+                        ca.longitude as customer_longitude,
+                        us.address  as user_address,
+                        us.latitude  as user_latitude,
+                        us.longitude  as user_longitude
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
@@ -356,6 +381,8 @@ class saleModel(dbModel):
        			                ON cus.id  = s.id_customer
                         INNER JOIN main.service ser
        			                ON ser.id  = ss.id_service 
+                        LEFT JOIN main.user_store us 
+       			        		ON us.id  = s.id_user_store 
                     WHERE  s.id_user = %s 
                         AND s.status = %s
                     ORDER BY s.id desc;"""
@@ -391,6 +418,11 @@ class saleModel(dbModel):
                 _entity.id_user_store = row[26]
                 _entity.amount_delivery = row[27]
                 _entity.comment  = row[28]
+                _entity.customer_latitude  = row[29]
+                _entity.customer_longitude  = row[30]
+                _entity.user_address  = row[31]
+                _entity.user_latitude  = row[32]
+                _entity.user_longitude  = row[33]
 
                 _type_sales = []
                 if _id_old  != _entity.id :

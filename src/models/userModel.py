@@ -872,11 +872,11 @@ class userModel(dbModel):
                             Count(s.id)         AS sales, 
                             Avg(s.total_amount) AS average_amount 
                         FROM   main.sale s 
-                        WHERE  s.status = 1) s, 
+                        WHERE  s.status = 1 and s.status_sale = 3) s, 
                     (SELECT s.hour_availability AS max_hour_availability, 
                             Count(s.id)         AS sales 
                         FROM   main.sale s 
-                        WHERE  s.status  = 1
+                        WHERE  s.status  = 1 and s.status_sale = 3
                         GROUP  BY 1 
                         ORDER  BY 2 DESC 
                         LIMIT  1) h, 
@@ -886,7 +886,7 @@ class userModel(dbModel):
                                     Count(s.id)         AS sales, 
                                     Sum(s.total_amount) AS total_amount 
                                 FROM   main.sale s 
-                                WHERE  s.status = 1 
+                                WHERE  s.status = 1 and s.status_sale = 3
                                 GROUP  BY 1) AS a) AS a;"""   
 
             _cur = _con_client.cursor()
@@ -939,15 +939,16 @@ class userModel(dbModel):
                         amount = b.amount, 
                         average_sale = b.average_sale 
                     FROM   (SELECT ss.id_service, 
-                                Count(ts.id)              AS sales, 
+                                Count( distinct s.id)      AS sales, 
                                 Sum(ts.amount)            AS amount, 
                                 Count(DISTINCT s.id_user) AS users, 
-                                Avg(ts.amount)            AS average_sale 
+                                sum(ts.amount) /  Count( distinct s.id)            AS average_sale 
                             FROM   main.type_sale ts 
                                 INNER JOIN main.sub_service ss 
                                         ON ts.id_sub_service = ss.id 
                                 INNER JOIN main.sale s 
                                         ON ts.id_sale = s.id 
+                                        and s.status_sale = 3
                             GROUP  BY 1) b 
                     WHERE  a.id_service = b.id_service; 
 
@@ -959,26 +960,26 @@ class userModel(dbModel):
                                 b.quantity 
                             FROM   (SELECT s.hour_availability, 
                                         ss.id_service, 
-                                        Count(s.id) AS quantity 
+                                        Count( distinct s.id) AS quantity 
                                     FROM   main.sale s 
                                         INNER JOIN main.type_sale ts 
                                                 ON s.id = ts.id_sale 
                                         INNER JOIN main.sub_service ss 
                                                 ON ss.id = ts.id_sub_service 
-                                    WHERE  s.status = 1 
+                                    WHERE  s.status = 1 and s.status_sale = 3
                                     GROUP  BY 1, 
                                             2) b 
                                 INNER JOIN (SELECT a.id_service, 
                                                     Max(a.quantity) AS quantity 
                                             FROM   (SELECT s.hour_availability, 
                                                             ss.id_service, 
-                                                            Count(s.id) AS quantity 
+                                                            Count( distinct s.id) AS quantity 
                                                     FROM   main.sale s 
                                                             INNER JOIN main.type_sale ts 
                                                                     ON s.id = ts.id_sale 
                                                             INNER JOIN main.sub_service ss 
                                                                     ON ss.id = ts.id_sub_service 
-                                                    WHERE  s.status = 1 
+                                                    WHERE  s.status = 1 and s.status_sale = 3
                                                     GROUP  BY 1, 
                                                                 2) a 
                                             GROUP  BY 1) c 
@@ -995,13 +996,14 @@ class userModel(dbModel):
                                 average_amount) 
                     SELECT Extract(dow FROM date_availability)                AS number_day, 
                         ss.id_service, 
-                        Count(ts.id) / Count(DISTINCT s.date_availability) AS average_sales, 
-                        Avg(ts.amount)                                     AS average_amount 
+                        count( distinct s.id)*1.0 / Count(DISTINCT date_availability)  AS average_sales, 
+                        sum(ts.amount)*1.0 /  Count(DISTINCT date_availability)     AS average_amount 
                     FROM   main.sale s 
                         INNER JOIN main.type_sale ts 
                                 ON s.id = ts.id_sale 
                         INNER JOIN main.sub_service ss 
-                                ON ss.id = ts.id_sub_service 
+                                ON ss.id = ts.id_sub_service
+                        where  s.status_sale = 3 
                     GROUP  BY 1, 
                             2; 
 

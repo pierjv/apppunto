@@ -195,7 +195,7 @@ class customerController(responseController):
             _entity.requestToClass(request)
             _model = customerModel()
             _chargeModel = chargeModel()
-            _data = _chargeModel.add_card_culqi(_entity.cvv,_entity.document_number,_entity.expiration_year,_entity.expiration_month,_entity.email)
+            _data = _chargeModel.add_card_culqi(_entity.cvv,_entity.cardNumberNotEncrypted,_entity.expYearNotEncripted,_entity.expMonthNotEcrypted,_entity.email)
             
             if _data["object"] == "error":
                 _status = self.interruption

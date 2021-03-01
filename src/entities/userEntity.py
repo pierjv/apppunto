@@ -197,8 +197,8 @@ class userDetailEntity:
     
 class dashboardEntity:
 
-    def __init__(self,users=None,customers=None,total_amount=None,sales=None,average_amount=None,
-                max_hour_availability=None,sales_per_day=None,amount_per_day= None):
+    def __init__(self,users=0,customers=0,total_amount=0,sales=0,average_amount=0,
+                max_hour_availability=0,sales_per_day=0,amount_per_day= 0):
         self.users = users
         self.customers = customers
         self.total_amount = total_amount

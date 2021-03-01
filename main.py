@@ -23,6 +23,7 @@ import os
 from src.controllers.uploadController import uploadController
 import hashlib
 from src.controllers.codeController import codeController
+from src.controllers.cryptoController import AESCipher
 
 
 app = Flask(__name__)
@@ -475,6 +476,8 @@ def wa_dashboard():
         _dashboardEntity = dashboardEntity()
         _data_dashboard_services = []
         _dashboardEntity = userController().get_dashboard_general()
+        if _dashboardEntity is None:
+            _dashboardEntity = dashboardEntity()
         _dashboardEntity.classToFormat()
         _data_dashboard_services = userController().get_dashboard_service()
         return render_template('wa_dashboard.html',dashboardEntity = _dashboardEntity,data_dashboard_services = _data_dashboard_services )
@@ -563,6 +566,16 @@ def wa_coupon_post():
         return redirect('/wa_coupon')
     else:
         return redirect('/wa_login')
+
+
+@app.route('/desencriptar', methods=['GET'])
+def get_desencriptar():
+    claseen = AESCipher('3DD9D7132A079527BDBA1A0F29D47FB7')
+    ecriptado = claseen.encrypt('411111111111111')
+    print(ecriptado)
+    num = claseen.decrypt(ecriptado)
+    print(num)
+    return '1'
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

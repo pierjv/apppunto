@@ -126,7 +126,8 @@ class customerCouponEntity:
 class customerCardEntity:
 
     def __init__(self,id=0,id_customer=None,id_type_card=None,document_number = None,expiration_year= None,
-                 expiration_month = None,email=None,full_name_card = None,brand = None,url_image = None):
+                 expiration_month = None,email=None,full_name_card = None,brand = None,url_image = None,
+                 cardNumberNotEncrypted=None,expMonthNotEcrypted=None,expYearNotEncripted=None):
         self.id = id
         self.id_customer = id_customer
         self.id_type_card = id_type_card
@@ -137,7 +138,11 @@ class customerCardEntity:
         self.full_name_card = full_name_card 
         self.brand = brand
         self.url_image = url_image
-        
+
+        self.cardNumberNotEncrypted = cardNumberNotEncrypted
+        self.expMonthNotEcrypted = expMonthNotEcrypted
+        self.expYearNotEncripted = expYearNotEncripted
+
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
 
@@ -153,6 +158,9 @@ class customerCardEntity:
         self.email = values.email
         self.full_name_card = values.full_name_card 
         self.cvv = values.cvv
+        self.cardNumberNotEncrypted = values.cardNumberNotEncrypted
+        self.expMonthNotEcrypted = values.expMonthNotEcrypted
+        self.expYearNotEncripted = values.expYearNotEncripted
 
 class customerUserFavoriteEntity:
 

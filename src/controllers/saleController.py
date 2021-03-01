@@ -79,7 +79,7 @@ class saleController(responseController):
                     _id_customer_main = _customerModel.get_id_customer_main_referred(_id_customer)
                     _customerModel.add_customer_coupon(_id_customer_main,0)
                     _customerModel.update_first_sale_done(_id_customer)
-                    _cellphone = _customerModel.get_cellphone_by_id(_id_customer)
+                    _cellphone = _customerModel.get_cellphone_by_id(_id_customer_main)
                     _notificationModel = notificationModel()
                     print(_cellphone)
                     _notificationModel.send_sms_coupon(_cellphone)
